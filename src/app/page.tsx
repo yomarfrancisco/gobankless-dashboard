@@ -1,24 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import CardStack from '@/components/CardStack'
 
 export default function Home() {
-  const [activeCard, setActiveCard] = useState('pepe')
-
-  const handleCardClick = (cardType: string) => {
-    setActiveCard(cardType)
-  }
-
-  const getCardZIndex = (cardType: string) => {
-    if (activeCard === cardType) return 3
-    // Default z-index based on card position
-    if (cardType === 'pepe') return 1
-    if (cardType === 'savings') return 2
-    if (cardType === 'yield') return 1
-    return 1
-  }
-
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -48,8 +33,8 @@ export default function Home() {
               src="/assets/gobankless-logo.png"
               alt="GoBankless"
               className="gobankless-logo"
-              width={244}
-              height={72}
+              width={220}
+              height={65}
               priority
               unoptimized
             />
@@ -85,87 +70,25 @@ export default function Home() {
               </div>
 
               {/* Card Stack */}
-              <div className="card-stack">
-                <div
-                  className={`card card-pepe ${activeCard === 'pepe' ? 'active' : ''}`}
-                  onClick={() => handleCardClick('pepe')}
-                  style={{ zIndex: getCardZIndex('pepe') }}
-                >
-                  <Image
-                    src="/assets/card-pepe.jpg"
-                    alt="PEPE Card"
-                    width={398}
-                    height={238}
-                    unoptimized
-                  />
-                  <div className="card-content-overlay">
-                    <div className="card-balance-section">
-                      <div className="card-balance-amount">
-                        R1,812<span className="card-balance-amount-decimal">.88</span>
-                      </div>
-                      <div className="card-balance-usdc">100 USDC</div>
-                    </div>
-                    <div className="card-yield-badge">
-                      <span className="card-yield-percentage">138%</span>
-                      <span className="card-yield-text">annual yield</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className={`card card-savings ${activeCard === 'savings' ? 'active' : ''}`}
-                  onClick={() => handleCardClick('savings')}
-                  style={{ zIndex: getCardZIndex('savings') }}
-                >
-                  <Image
-                    src="/assets/card-savings.jpg"
-                    alt="Savings Card"
-                    width={342}
-                    height={213}
-                    unoptimized
-                  />
-                  <div className="card-content-overlay">
-                    <div className="card-balance-section">
-                      <div className="card-balance-amount">
-                        5,678<span className="card-balance-amount-decimal">.90</span>
-                      </div>
-                      <div className="card-balance-usdc">USDC</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className={`card card-yield ${activeCard === 'yield' ? 'active' : ''}`}
-                  onClick={() => handleCardClick('yield')}
-                  style={{ zIndex: getCardZIndex('yield') }}
-                >
-                  <Image
-                    src="/assets/card-yield.jpg"
-                    alt="Yield Card"
-                    width={310}
-                    height={193}
-                    unoptimized
-                  />
-                  <div className="card-content-overlay">
-                    <div className="card-balance-section">
-                      <div className="card-balance-amount">
-                        9,012<span className="card-balance-amount-decimal">.34</span>
-                      </div>
-                      <div className="card-balance-usdc">USDC</div>
-                    </div>
-                    <div className="card-yield-badge">
-                      <span className="card-yield-percentage">4.2%</span>
-                      <span className="card-yield-text">APY</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <CardStack />
             </div>
 
             {/* Action Buttons */}
             <div className="action-buttons">
-              <button className="btn btn-deposit">Deposit</button>
-              <button className="btn btn-withdraw">Withdraw</button>
+              <button className="btn btn-deposit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M7 17L17 7" />
+                  <path d="M7 7h10v10" />
+                </svg>
+                Deposit
+              </button>
+              <button className="btn btn-withdraw">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M17 7L7 17" />
+                  <path d="M17 17H7V7" />
+                </svg>
+                Withdraw
+              </button>
             </div>
           </div>
 
@@ -189,7 +112,6 @@ export default function Home() {
                     width={28}
                     height={28}
                   />
-                  <div className="nav-label">Home</div>
                 </div>
                 <div className="dollar-sign-container">
                   <div className="dollar-sign-contained">
@@ -211,7 +133,6 @@ export default function Home() {
                     width={28}
                     height={28}
                   />
-                  <div className="nav-label">Profile</div>
                 </div>
               </div>
             </div>
