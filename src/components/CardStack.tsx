@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 type CardType = 'pepe' | 'savings' | 'yield'
 
@@ -61,12 +61,28 @@ const cardsData: CardData[] = [
   },
 ]
 
-export default function CardStack() {
+interface CardStackProps {
+  onTopCardChange?: (cardType: 'pepe' | 'savings' | 'yield') => void
+}
+
+export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
   const [order, setOrder] = useState<number[]>([0, 1, 2]) // [top, middle, bottom]
   const [isAnimating, setIsAnimating] = useState(false)
   const [phase, setPhase] = useState<'idle' | 'animating'>('idle')
   const touchStartY = useRef<number>(0)
   const touchEndY = useRef<number>(0)
+
+  // Notify parent of top card change
+  useEffect(() => {
+    if (onTopCardChange) {
+      const topCardIndex = order[0]
+      const topCard = cardsData[topCardIndex]
+      if (topCard) {
+        onTopCardChange(topCard.type)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order])
 
   const cycle = () => {
     if (isAnimating) return

@@ -1,9 +1,12 @@
 'use client'
 
 import Image from 'next/image'
+import { useState } from 'react'
 import CardStack from '@/components/CardStack'
 
 export default function Home() {
+  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('pepe')
+
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -66,11 +69,17 @@ export default function Home() {
                   <h1 className="wallet-title">Wallet</h1>
                   <div className="help-icon">?</div>
                 </div>
-                <p className="wallet-subtitle">Your digital cash card</p>
+                <p className="wallet-subtitle">
+                  {topCardType === 'pepe' 
+                    ? '$PEPE stablecoin' 
+                    : topCardType === 'savings' 
+                    ? 'ZAR stablecoin' 
+                    : 'ETH stablecoin'}
+                </p>
               </div>
 
               {/* Card Stack */}
-              <CardStack />
+              <CardStack onTopCardChange={setTopCardType} />
             </div>
 
             {/* Action Buttons */}
