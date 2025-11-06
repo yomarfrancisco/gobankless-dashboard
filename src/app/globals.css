@@ -362,8 +362,8 @@ body {
 }
 
 .btn {
-  width: calc(100% - 32px);
-  max-width: 398px;
+  width: calc(100% - 64px);
+  max-width: 334px;
   height: 56px;
   border-radius: 42px;
   display: flex;
