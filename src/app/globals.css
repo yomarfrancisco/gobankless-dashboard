@@ -450,7 +450,7 @@ body {
 
 .bottom-glass-texture {
   position: relative;
-  bottom: -450px;
+  bottom: -445px;
   width: 100%;
   height: auto;
   object-fit: contain;
@@ -528,8 +528,8 @@ body {
 }
 
 .dollar-sign-contained img {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
 }
 

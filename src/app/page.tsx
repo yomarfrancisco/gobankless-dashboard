@@ -120,8 +120,8 @@ export default function Home() {
                     <Image
                       src="/assets/dollar-sign.png"
                       alt="Direct Payment"
-                      width={40}
-                      height={40}
+                      width={44}
+                      height={44}
                       unoptimized
                     />
                   </div>
