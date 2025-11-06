@@ -95,14 +95,16 @@ export default function Home() {
           {/* Bottom Menu with Glass Texture */}
           <div className="bottom-menu">
             <div className="bottom-menu-container">
-              <Image
-                src="/assets/glass-bottom-1.png"
-                alt=""
-                className="bottom-glass-texture"
-                width={700}
-                height={600}
-                unoptimized
-              />
+              <div className="bottom-glass-wrapper">
+                <Image
+                  src="/assets/glass-bottom-1.png"
+                  alt=""
+                  className="bottom-glass-texture"
+                  width={700}
+                  height={600}
+                  unoptimized
+                />
+              </div>
               <div className="nav-container">
                 <div className="nav-item">
                   <Image
