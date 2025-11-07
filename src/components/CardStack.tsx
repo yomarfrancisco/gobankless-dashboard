@@ -182,15 +182,14 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
             }}
           >
             {card.type === 'yield' ? (
-              <div className="card-canvas">
+              <div className="card-canvas card-yield-rounded">
                 <Image
                   src={card.image}
-                  alt={card.alt}
+                  alt=""
                   fill
                   sizes="(max-width: 768px) 88vw, 420px"
-                  style={{ objectFit: 'cover', borderRadius: 'inherit' }}
                   priority={false}
-                  unoptimized
+                  style={{ objectFit: 'cover' }}
                 />
               </div>
             ) : (
