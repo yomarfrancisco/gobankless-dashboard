@@ -23,6 +23,7 @@ export default function BottomGlassBar({ currentPath = '/' }: BottomGlassBarProp
             height={600}
             unoptimized
           />
+          <div className="bottom-glass-blur" />
         </div>
         <div className="nav-container">
           <div className="nav-item">

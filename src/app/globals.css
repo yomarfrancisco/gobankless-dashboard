@@ -762,3 +762,59 @@ body {
   background: #ff1a42;
 }
 
+/* Top glass: masked backdrop blur exactly following the PNG shape */
+.top-glass-blur {
+  position: absolute;
+  /* Use the SAME geometry as .glass-shard-small (do not change values) */
+  top: -390px;
+  left: -25px;
+  width: 729.4px;
+  height: 712.8px;
+  transform: rotate(-25deg);
+  /* Clip the blur to the PNG silhouette */
+  -webkit-mask-image: url('/assets/core/glass-top-1.png');
+  mask-image: url('/assets/core/glass-top-1.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  /* Frosted effect */
+  backdrop-filter: blur(10px) saturate(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  background: rgba(255, 255, 255, 0.025);
+  /* Layering: keep under icons/logo but above background */
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Bottom glass: masked backdrop blur exactly following the PNG shape */
+.bottom-glass-blur {
+  position: absolute;
+  /* Use the SAME geometry as .bottom-glass-texture (do not change values) */
+  bottom: -450px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140%;
+  max-width: 700px;
+  /* approximate natural ratio of current image usage */
+  height: 600px;
+  /* Clip the blur to the PNG silhouette */
+  -webkit-mask-image: url('/assets/core/glass-bottom-1.png');
+  mask-image: url('/assets/core/glass-bottom-1.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  /* Frosted effect */
+  backdrop-filter: blur(12px) saturate(1.05);
+  -webkit-backdrop-filter: blur(12px) saturate(1.05);
+  background: rgba(255, 255, 255, 0.03);
+  /* Layering: keep consistent with current stack; do not block taps */
+  z-index: 0;
+  pointer-events: none;
+}
+

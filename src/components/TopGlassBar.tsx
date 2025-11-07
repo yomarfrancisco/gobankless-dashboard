@@ -14,6 +14,7 @@ export default function TopGlassBar() {
         priority
         unoptimized
       />
+      <div className="top-glass-blur" />
       <Image
         src="/assets/core/spraypaint-2.png"
         alt=""
