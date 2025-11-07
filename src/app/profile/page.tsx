@@ -7,13 +7,16 @@ import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
+import SendDetailsSheet from '@/components/SendDetailsSheet'
 
 export default function ProfilePage() {
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
   const [openDirectPayment, setOpenDirectPayment] = useState(false)
+  const [openSendDetails, setOpenSendDetails] = useState(false)
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
+  const [sendAmountZAR, setSendAmountZAR] = useState(0)
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -22,6 +25,23 @@ export default function ProfilePage() {
   const closeDeposit = useCallback(() => setOpenDeposit(false), [])
   const closeWithdraw = useCallback(() => setOpenWithdraw(false), [])
   const closeAmount = useCallback(() => setOpenAmount(false), [])
+  const closeSendDetails = useCallback(() => setOpenSendDetails(false), [])
+
+  const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
+    if (method === 'email' || method === 'wallet' || method === 'brics') {
+      setAmountMode('send')
+      setOpenDirectPayment(false)
+      setTimeout(() => setOpenAmount(true), 220)
+    }
+  }, [])
+
+  const handleAmountSubmit = useCallback((amountZAR: number) => {
+    if (amountMode === 'send') {
+      setSendAmountZAR(amountZAR)
+      setOpenAmount(false)
+      setTimeout(() => setOpenSendDetails(true), 220)
+    }
+  }, [amountMode])
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -121,13 +141,7 @@ export default function ProfilePage() {
         open={openDirectPayment}
         onClose={closeDirectPayment}
         variant="direct-payment"
-        onSelect={(method) => {
-          if (method === 'email' || method === 'wallet' || method === 'brics') {
-            setAmountMode('send')
-            setOpenDirectPayment(false)
-            setTimeout(() => setOpenAmount(true), 220)
-          }
-        }}
+        onSelect={handleDirectSelect}
       />
       <DepositSheet
         open={openDeposit}
@@ -155,9 +169,19 @@ export default function ProfilePage() {
         balanceZAR={200}
         fxRateZARperUSDT={18.1}
         ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
-        onSubmit={({ amountZAR, amountUSDT }) => {
+        onSubmit={amountMode !== 'send' ? ({ amountZAR, amountUSDT }) => {
           setOpenAmount(false)
           console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
+        } : undefined}
+        onAmountSubmit={amountMode === 'send' ? handleAmountSubmit : undefined}
+      />
+      <SendDetailsSheet
+        open={openSendDetails}
+        onClose={closeSendDetails}
+        amountZAR={sendAmountZAR}
+        onPay={(payload) => {
+          console.log('PAY', payload)
+          setOpenSendDetails(false)
         }}
       />
     </div>

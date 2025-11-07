@@ -14,11 +14,12 @@ type AmountSheetProps = {
   balanceZAR?: number // show at top small "R200.00 balance"
   fxRateZARperUSDT?: number // default 18.10 if undefined
   ctaLabel?: string // default "Transfer USDT"
-  onSubmit: (payload: {
+  onSubmit?: (payload: {
     amountZAR: number
     amountUSDT: number
     mode: 'deposit' | 'withdraw' | 'send'
   }) => void
+  onAmountSubmit?: (amountZAR: number) => void // simpler callback for send flow
 }
 
 export default function AmountSheet({
@@ -27,8 +28,9 @@ export default function AmountSheet({
   mode,
   balanceZAR = 200,
   fxRateZARperUSDT = 18.1,
-  ctaLabel = 'Transfer USDT',
+  ctaLabel,
   onSubmit,
+  onAmountSubmit,
 }: AmountSheetProps) {
   const [amount, setAmount] = useState('0')
 
@@ -76,14 +78,21 @@ export default function AmountSheet({
   }
 
   const handleSubmit = () => {
-    onSubmit({
-      amountZAR: amountZAR,
-      amountUSDT: amountUSDT,
-      mode,
-    })
+    if (onAmountSubmit && mode === 'send') {
+      onAmountSubmit(amountZAR)
+    } else if (onSubmit) {
+      onSubmit({
+        amountZAR: amountZAR,
+        amountUSDT: amountUSDT,
+        mode,
+      })
+    }
   }
 
   const modeLabel = mode === 'deposit' ? 'Buy' : mode === 'withdraw' ? 'Withdraw' : 'Send'
+  const defaultCtaLabel = mode === 'send' ? 'Send' : 'Transfer USDT'
+  const finalCtaLabel = ctaLabel || defaultCtaLabel
+  const isPositive = amountZAR > 0
 
   // Format amount for display (remove leading zeros except "0.")
   const displayAmount = amount === '0' ? '0' : amount.replace(/^0+(?=\d)/, '')
@@ -113,13 +122,18 @@ export default function AmountSheet({
             onBackspace={handleBackspace}
             onDot={handleDot}
             onSubmit={handleSubmit}
-            ctaLabel={ctaLabel}
+            ctaLabel={finalCtaLabel}
             hideCTA
           />
         </div>
         <div className="amount-cta" style={{ ['--cta-h' as any]: '88px' }}>
-          <button className="amount-keypad__cta" onClick={handleSubmit} type="button">
-            {ctaLabel}
+          <button 
+            className="amount-keypad__cta" 
+            onClick={handleSubmit} 
+            type="button"
+            disabled={!isPositive}
+          >
+            {finalCtaLabel}
             <span className="amount-keypad__cta-arrow">→</span>
           </button>
         </div>
