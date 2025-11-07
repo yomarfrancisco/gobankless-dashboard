@@ -436,6 +436,16 @@ body {
   align-items: flex-end;
 }
 
+.bottom-menu-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+}
+
 .bottom-glass-wrapper {
   position: absolute;
   left: 50%;
