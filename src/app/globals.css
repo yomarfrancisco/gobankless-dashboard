@@ -1,6 +1,7 @@
 :root {
   --top-safe: 176px;
   --bottom-safe: 132px;
+  --sheet-max-h: 82vh;
 }
 
 * {
@@ -564,7 +565,9 @@ body {
   overflow: hidden;
   position: relative;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: none;
   cursor: pointer;
+  padding: 0;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
