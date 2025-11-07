@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import ActionSheet from './ActionSheet'
 import AmountKeypad from './AmountKeypad'
+import FitAmount from './FitAmount'
 import { formatZAR, formatZARWithDot, formatUSDT } from '@/lib/money'
 import '@/styles/amount-sheet.css'
 
@@ -98,7 +99,12 @@ export default function AmountSheet({
           </div>
           <div className="amount-sheet__title">{modeLabel}</div>
           <div className="amount-sheet__amount-display">
-            <div className="amount-sheet__zar">{formatZARWithDot(amountZAR)}</div>
+            <FitAmount
+              text={formatZARWithDot(amountZAR)}
+              maxPx={72}
+              minPx={28}
+              className="amount-sheet__zar amount-fit"
+            />
             <div className="amount-sheet__usdt-chip">{formatUSDT(amountUSDT)}</div>
           </div>
         </div>

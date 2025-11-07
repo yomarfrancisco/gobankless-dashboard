@@ -54,13 +54,20 @@
 }
 
 .amount-sheet__zar {
-  font-size: 62px; /* ~30% increase from 48px */
-  font-weight: 600;
-  color: #1a1a1a;
-  line-height: 1.05;
-  letter-spacing: 0; /* keep clean for big numerals */
-  margin-top: 6px; /* small top compacting */
-  margin-bottom: 8px; /* reduce vertical waste */
+  /* Font size is now controlled by FitAmount component */
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.amount-fit {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: 700;
+  color: #111;
 }
 
 .amount-sheet__usdt-chip {
@@ -81,6 +88,8 @@
   flex-direction: column;
   min-height: 0;
   overflow-y: auto;
+  /* Reserve space for sticky CTA height + safe area + small gap */
+  padding-bottom: calc(var(--cta-h, 88px) + env(safe-area-inset-bottom) + 16px);
 }
 
 /* Keypad container */
@@ -130,7 +139,7 @@
 /* Footer with fee note and CTA */
 .amount-keypad__footer {
   position: sticky;
-  bottom: 12px;
+  bottom: calc(env(safe-area-inset-bottom) + 12px);
   display: flex;
   flex-direction: column;
   gap: 12px;

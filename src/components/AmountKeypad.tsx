@@ -74,7 +74,7 @@ export default function AmountKeypad({
           &lt;
         </button>
       </div>
-      <div className="amount-keypad__footer">
+      <div className="amount-keypad__footer" style={{ ['--cta-h' as any]: '88px' }}>
         <div className="amount-keypad__fee-note">excl. 2.5–6.5% transaction fee</div>
         <button className="amount-keypad__cta" onClick={onSubmit} type="button">
           {ctaLabel}
