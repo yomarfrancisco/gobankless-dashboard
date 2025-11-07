@@ -347,6 +347,12 @@ body {
   z-index: auto;
 }
 
+/* Move yield card down 2px to eliminate bottom gap */
+.card-yield-rounded {
+  position: relative;
+  top: 2px;
+}
+
 /* Card Text Overlays */
 .card-content-overlay {
   position: absolute;
