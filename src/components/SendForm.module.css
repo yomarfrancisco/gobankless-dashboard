@@ -1,0 +1,124 @@
+.page {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  width: 100vw;
+  height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  flex-direction: column;
+  color: #0a0a0a;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 56px 1fr 72px; /* X | title | Pay */
+  align-items: center;
+  height: 56px;
+  padding: 0 12px;
+}
+
+.close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  font-size: 22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms ease;
+}
+
+.close:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.close:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.pay {
+  justify-self: end;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: 0;
+  background: #e5e5ea; /* disabled */
+  color: #9b9ba1;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.payEnabled {
+  background: #000;
+  color: #fff;
+}
+
+.pay:hover:not(:disabled) {
+  background: #333;
+}
+
+.pay:active:not(:disabled) {
+  background: #111;
+}
+
+.pay:disabled {
+  cursor: not-allowed;
+}
+
+.body {
+  padding: 20px 20px 0;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.row {
+  display: block;
+  margin: 22px 0;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  font-size: 16px;
+  padding: 6px 0;
+  background: transparent;
+  color: #0a0a0a;
+  font-family: inherit;
+}
+
+.input::placeholder {
+  color: #999;
+  opacity: 0.6;
+}
+
+.underline {
+  height: 1px;
+  background: #000;
+  opacity: 1;
+}
+
+.row:last-of-type .underline {
+  opacity: 0.3;
+}
+
