@@ -22,6 +22,16 @@ interface CardData {
 
 const cardsData: CardData[] = [
   {
+    type: 'savings',
+    image: '/assets/cards/card-savings.jpg',
+    alt: 'Savings Card',
+    width: 342,
+    height: 213,
+    balance: '5,678',
+    balanceDecimal: '.90',
+    usdt: 'USDT',
+  },
+  {
     type: 'pepe',
     image: '/assets/cards/card-pepe.jpg',
     alt: 'PEPE Card',
@@ -36,18 +46,8 @@ const cardsData: CardData[] = [
     },
   },
   {
-    type: 'savings',
-    image: '/assets/cards/card-savings.jpg',
-    alt: 'Savings Card',
-    width: 342,
-    height: 213,
-    balance: '5,678',
-    balanceDecimal: '.90',
-    usdt: 'USDT',
-  },
-  {
     type: 'yield',
-    image: '/assets/cards/card-yield.jpg',
+    image: '/assets/cards/card-GOB2.jpg',
     alt: 'Yield Card',
     width: 310,
     height: 193,
