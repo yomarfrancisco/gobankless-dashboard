@@ -565,40 +565,15 @@ body {
 }
 
 /* PROFILE */
-.profile-hero {
-  position: relative;
-  width: 100%;
-  height: 160px;
-  margin-top: 24px;
-}
-
-.profile-hero-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.7);
-}
-
-.profile-hero-curve {
-  position: absolute;
-  bottom: -28px;
-  left: 0;
-  right: 0;
-  height: 56px;
-  border-bottom-left-radius: 28px;
-  border-bottom-right-radius: 28px;
-  background: #111;
-}
-
 .profile-header {
-  margin-top: 48px;
+  margin-top: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   padding: 0 16px;
+  transform: translateY(-20%);
+  position: relative;
 }
 
 .profile-avatar {

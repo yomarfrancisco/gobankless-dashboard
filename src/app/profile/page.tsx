@@ -13,20 +13,6 @@ export default function ProfilePage() {
 
           {/* Content Area */}
           <div className="content" style={{ background: '#000' }}>
-            {/* Curved dark panel with a clipped skyline backdrop */}
-            <div className="profile-hero">
-              <Image
-                src="/assets/profile/sandton.png"
-                alt=""
-                className="profile-hero-bg"
-                width={900}
-                height={600}
-                priority
-                unoptimized
-              />
-              <div className="profile-hero-curve" />
-            </div>
-
             {/* Avatar + name + handle */}
             <div className="profile-header">
               <Image
