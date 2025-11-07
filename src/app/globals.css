@@ -1,7 +1,7 @@
 :root {
   --top-safe: 176px;
   --bottom-safe: 132px;
-  --sheet-max-h: 620px;
+  --sheet-max-h: 520px;
 }
 
 * {
