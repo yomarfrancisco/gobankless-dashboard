@@ -322,7 +322,6 @@ body {
 /* Next.js Image wrapper span defaults to inline-block; force block */
 .card-canvas > span {
   display: block;
-  vertical-align: top;
   line-height: 0;
   height: 100% !important;
   width: 100% !important;
