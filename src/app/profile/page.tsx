@@ -12,7 +12,7 @@ export default function ProfilePage() {
           <TopGlassBar />
 
           {/* Content Area */}
-          <div className="content" style={{ background: '#000' }}>
+          <div className="content" style={{ background: '#fff' }}>
             {/* Avatar + name + handle */}
             <div className="profile-header">
               <Image

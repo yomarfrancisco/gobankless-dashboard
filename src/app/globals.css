@@ -566,7 +566,7 @@ body {
 
 /* PROFILE */
 .profile-header {
-  margin-top: -32px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -588,13 +588,13 @@ body {
   font-size: 28px;
   font-weight: 600;
   letter-spacing: -0.2px;
-  color: #f5f5f5;
+  color: #000;
 }
 
 .profile-handle {
   opacity: 0.7;
   font-size: 16px;
-  color: #f5f5f5;
+  color: #000;
 }
 
 .profile-bio {
@@ -604,7 +604,7 @@ body {
   line-height: 1.3;
   opacity: 0.8;
   max-width: 360px;
-  color: #f5f5f5;
+  color: #000;
 }
 
 .profile-meta {
@@ -613,7 +613,7 @@ body {
   gap: 8px;
   opacity: 0.75;
   font-size: 13px;
-  color: #f5f5f5;
+  color: #000;
 }
 
 .meta-item {
@@ -626,7 +626,7 @@ body {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #fff;
+  background: #000;
   opacity: 0.25;
 }
 
@@ -667,7 +667,7 @@ body {
 
 .stat-value {
   font-size: 18px;
-  color: #f5f5f5;
+  color: #000;
   font-weight: 600;
 }
 
@@ -675,13 +675,13 @@ body {
   font-size: 15px;
   font-weight: 300;
   opacity: 0.5;
-  color: #f5f5f5;
+  color: #000;
 }
 
 .stat-divider {
   width: 1px;
   height: 33px;
-  background: rgba(245, 245, 245, 0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .network-pill {
@@ -713,7 +713,7 @@ body {
 .network-label {
   font-weight: 300;
   opacity: 0.5;
-  color: #f5f5f5;
+  color: #000;
 }
 
 .profile-social {
