@@ -42,7 +42,7 @@ export default function Home() {
                   </div>
                   <p className="wallet-subtitle">
                     {topCardType === 'pepe' 
-                      ? '$PEPE stablecoin' 
+                      ? 'PEPE stablecoin' 
                       : topCardType === 'savings' 
                       ? 'BRICS Stablecoin' 
                       : 'ETH stablecoin'}
