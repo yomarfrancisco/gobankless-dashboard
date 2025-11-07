@@ -208,7 +208,7 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
               className={`card-amounts--${card.type}`}
             />
             {card.yieldBadge && (
-              <div className="card-yield-badge">
+              <div className={`card-yield-badge ${card.type === 'yield' ? 'card-yield-badge--gob' : ''}`}>
                 <span className="card-yield-percentage">{card.yieldBadge.percentage}</span>
                 <span className="card-yield-text">{card.yieldBadge.text}</span>
               </div>

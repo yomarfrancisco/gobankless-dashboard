@@ -101,6 +101,11 @@
   display: inline-block;
 }
 
+/* GOB card specific styling */
+.card-yield-badge--gob {
+  background: #668991;
+}
+
 .card-yield-percentage {
   font-size: 13px;
   font-weight: 600;
