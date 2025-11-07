@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import ActionSheet from './ActionSheet'
 import AmountKeypad from './AmountKeypad'
 import { formatZAR, formatUSDT } from '@/lib/money'
@@ -89,15 +88,12 @@ export default function AmountSheet({
   const displayAmount = amount === '0' ? '0' : amount.replace(/^0+(?=\d)/, '')
 
   return (
-    <ActionSheet open={open} onClose={onClose} title=" ">
+    <ActionSheet open={open} onClose={onClose} title="">
       <div className="amount-sheet amount-sheet-wrapper">
         <div className="amount-sheet__header">
           <div className="amount-sheet__balance">
             {formatZAR(balanceZAR)} <span className="amount-sheet__balance-label">balance</span>
           </div>
-          <button className="amount-sheet__close" onClick={onClose} aria-label="Close" type="button">
-            <Image src="/assets/clear.svg" alt="" width={18} height={18} />
-          </button>
         </div>
         <div className="amount-sheet__title">{modeLabel}</div>
         <div className="amount-sheet__amount-display">

@@ -6,13 +6,13 @@
   min-height: 0;
 }
 
-/* Header with balance and close */
+/* Header with balance (close button is in ActionSheet header) */
 .amount-sheet__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px 24px 0 24px;
-  position: relative;
+  justify-content: center;
+  padding: 28px 24px 0 24px;
+  text-align: center;
 }
 
 .amount-sheet__balance {
@@ -20,36 +20,11 @@
   font-weight: 400;
   color: #666;
   text-align: center;
-  flex: 1;
 }
 
 .amount-sheet__balance-label {
   color: #999;
   font-weight: 300;
-}
-
-.amount-sheet__close {
-  position: absolute;
-  top: 16px;
-  right: 24px;
-  width: 32px;
-  height: 32px;
-  border-radius: 27px;
-  background: #E9E9EB;
-  display: grid;
-  place-items: center;
-  border: 0;
-  cursor: pointer;
-  padding: 0;
-  transition: background 150ms ease;
-}
-
-.amount-sheet__close:hover {
-  background: #D1D1D6;
-}
-
-.amount-sheet__close:active {
-  background: #C7C7CC;
 }
 
 /* Title below balance */
