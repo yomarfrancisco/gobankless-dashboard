@@ -84,8 +84,11 @@ export default function Home() {
         onClose={closeDirectPayment}
         variant="direct-payment"
         onSelect={(method) => {
-          setOpenDirectPayment(false)
-          console.log('Direct payment method selected', method)
+          if (method === 'email' || method === 'wallet' || method === 'brics') {
+            setAmountMode('send')
+            setOpenDirectPayment(false)
+            setTimeout(() => setOpenAmount(true), 220)
+          }
         }}
       />
       <DepositSheet
@@ -113,7 +116,7 @@ export default function Home() {
         mode={amountMode}
         balanceZAR={200}
         fxRateZARperUSDT={18.1}
-        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : 'Continue'}
+        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
         onSubmit={({ amountZAR, amountUSDT }) => {
           setOpenAmount(false)
           console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })

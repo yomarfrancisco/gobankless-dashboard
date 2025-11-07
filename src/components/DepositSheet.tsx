@@ -6,12 +6,12 @@ import ActionSheetItem from './ActionSheetItem'
 type Props = {
   open: boolean
   onClose: () => void
-  onSelect?: (method: 'bank' | 'card' | 'crypto') => void
+  onSelect?: (method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => void
   variant?: 'deposit' | 'direct-payment' // 'deposit' for Deposit button, 'direct-payment' for $ icon
 }
 
 export default function DepositSheet({ open, onClose, onSelect, variant = 'deposit' }: Props) {
-  const handleSelect = (method: 'bank' | 'card' | 'crypto') => {
+  const handleSelect = (method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
     if (onSelect) {
       onSelect(method)
     }
@@ -25,17 +25,17 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
         {
           title: 'Email or Phone',
           caption: 'Send a link to pay via email or phone.',
-          method: 'bank' as const
+          method: 'email' as const
         },
         {
           title: 'USDT Wallet',
           caption: 'Transfer to any wallet on Tron, Ethereum, or Solana.',
-          method: 'card' as const
+          method: 'wallet' as const
         },
         {
           title: 'BRICS Account',
           caption: 'Send to another BRICS or GoBankless user.',
-          method: 'crypto' as const
+          method: 'brics' as const
         }
       ]
     : [
