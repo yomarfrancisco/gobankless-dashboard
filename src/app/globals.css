@@ -1,3 +1,8 @@
+:root {
+  --top-safe: 176px;
+  --bottom-safe: 132px;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -48,7 +53,23 @@ body {
   min-height: 100dvh;
   position: relative;
   background: #fff;
-  overflow: hidden;
+  overflow: visible;
+}
+
+/* Overlay: Glass bars fixed on top */
+.overlay-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.overlay-glass .icons,
+.overlay-glass .icon-group,
+.overlay-glass .nav-container,
+.overlay-glass .dollar-sign-contained,
+.overlay-glass .nav-item {
+  pointer-events: auto;
 }
 
 /* Page Title with Broken Glass */
@@ -60,7 +81,8 @@ body {
   left: 0;
   height: 160px;
   z-index: 10;
-  overflow: hidden;
+  overflow: visible;
+  background: transparent !important;
 }
 
 .glass-shard-small {
@@ -83,6 +105,7 @@ body {
   height: 65px;
   object-fit: cover;
   z-index: 2;
+  background: transparent !important;
 }
 
 .spraypaint-effect {
@@ -98,6 +121,7 @@ body {
 
 .icons {
   position: absolute;
+  background: transparent !important;
   width: 100%;
   top: 0;
   right: 0;
@@ -122,18 +146,37 @@ body {
   object-fit: cover;
 }
 
+/* Scrollable content area */
+.scroll-content {
+  position: relative;
+  height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  background: transparent;
+  z-index: 1;
+}
+
+.scroll-content::before {
+  content: "";
+  display: block;
+  height: var(--top-safe, 176px);
+}
+
+.scroll-content::after {
+  content: "";
+  display: block;
+  height: var(--bottom-safe, 132px);
+}
+
 /* Content Area */
 .content {
-  position: absolute;
   width: 100%;
-  top: 160px;
-  right: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0 16px;
-  z-index: 1;
+  position: relative;
 }
 
 .card-switch {
@@ -357,7 +400,12 @@ body {
   align-items: center;
   gap: 16px;
   margin-top: 24px;
-  z-index: 2;
+  z-index: 1;
+}
+
+.profile-actions {
+  position: relative;
+  z-index: 1;
 }
 
 .btn {
@@ -425,6 +473,7 @@ body {
   height: 150px;
   z-index: 5;
   pointer-events: none;
+  background: transparent !important;
 }
 
 .bottom-menu-container {
@@ -434,6 +483,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  background: transparent !important;
 }
 
 .bottom-glass-wrapper {
@@ -445,6 +495,7 @@ body {
   bottom: 0;
   z-index: 0;
   pointer-events: none;
+  background: transparent !important;
 }
 
 .bottom-glass-texture {
