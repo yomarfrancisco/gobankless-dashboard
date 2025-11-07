@@ -23,7 +23,7 @@ interface CardData {
 const cardsData: CardData[] = [
   {
     type: 'pepe',
-    image: '/assets/card-pepe.jpg',
+    image: '/assets/cards/card-pepe.jpg',
     alt: 'PEPE Card',
     width: 398,
     height: 238,
@@ -37,7 +37,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'savings',
-    image: '/assets/card-savings.jpg',
+    image: '/assets/cards/card-savings.jpg',
     alt: 'Savings Card',
     width: 342,
     height: 213,
@@ -47,7 +47,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'yield',
-    image: '/assets/card-yield.jpg',
+    image: '/assets/cards/card-yield.jpg',
     alt: 'Yield Card',
     width: 310,
     height: 193,

@@ -49,12 +49,12 @@ export default function ProfilePage() {
               {/* Meta row */}
               <div className="profile-meta">
                 <div className="meta-item">
-                  <Image src="/assets/location-pin.svg" alt="" width={12} height={12} />
+                  <Image src="/assets/profile/location-pin.svg" alt="" width={12} height={12} />
                   <span>South Africa</span>
                 </div>
                 <div className="meta-dot" />
                 <div className="meta-item">
-                  <Image src="/assets/calendar_month.svg" alt="" width={12} height={12} />
+                  <Image src="/assets/profile/calendar_month.svg" alt="" width={12} height={12} />
                   <span>Joined Feb 2024</span>
                 </div>
               </div>
@@ -66,7 +66,7 @@ export default function ProfilePage() {
                 <div className="stat">
                   <div className="stat-top">
                     <span className="stat-value">4.8</span>
-                    <Image src="/assets/star.svg" alt="" width={12} height={12} />
+                    <Image src="/assets/profile/star.svg" alt="" width={12} height={12} />
                   </div>
                   <div className="stat-sub">(11.5K)</div>
                 </div>
@@ -91,11 +91,11 @@ export default function ProfilePage() {
 
             {/* Social row */}
             <div className="profile-social">
-              <Image src="/assets/email_outlined.svg" alt="Email" width={20} height={20} />
-              <Image src="/assets/dot.svg" alt="" width={3} height={3} />
-              <Image src="/assets/instagram.svg" alt="Instagram" width={20} height={20} />
-              <Image src="/assets/dot.svg" alt="" width={3} height={3} />
-              <Image src="/assets/linkedin.svg" alt="LinkedIn" width={20} height={20} />
+              <Image src="/assets/profile/email_outlined.svg" alt="Email" width={20} height={20} />
+              <Image src="/assets/profile/dot.svg" alt="" width={3} height={3} />
+              <Image src="/assets/profile/instagram.svg" alt="Instagram" width={20} height={20} />
+              <Image src="/assets/profile/dot.svg" alt="" width={3} height={3} />
+              <Image src="/assets/profile/linkedin.svg" alt="LinkedIn" width={20} height={20} />
             </div>
 
             {/* Buttons */}

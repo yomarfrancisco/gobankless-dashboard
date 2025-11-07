@@ -27,12 +27,12 @@ export default function ProfileDark() {
             </div>
             <div className={styles.profileDarkFrameParent}>
               <div className={styles.ico24MapPlacesPoiParent}>
-                <Image src="/assets/location.svg" alt="" width={12} height={12} />
+                <Image src="/assets/profile/location.svg" alt="" width={12} height={12} />
                 <div className={styles.prgmailcom2}>South Africa</div>
               </div>
               <div className={styles.frameInner}>•</div>
               <div className={styles.ico24MapPlacesPoiParent}>
-                <Image src="/assets/calendar.svg" alt="" width={12} height={12} />
+                <Image src="/assets/profile/calendar.svg" alt="" width={12} height={12} />
                 <div className={styles.prgmailcom2}>Joined Feb 2024</div>
               </div>
             </div>
@@ -47,7 +47,7 @@ export default function ProfileDark() {
             <div className={styles.statUnit}>
               <div className={styles.ratingNumber}>
                 <div className={styles.text}>4.8</div>
-                <Image src="/assets/star.svg" alt="" width={12} height={12} />
+                <Image src="/assets/profile/star.svg" alt="" width={12} height={12} />
               </div>
               <div className={styles.k}>(11.5K)</div>
             </div>
@@ -75,11 +75,11 @@ export default function ProfileDark() {
 
       {/* Social row */}
       <div className={styles.socialMedia}>
-        <Image src="/assets/mail.svg" alt="Email" width={20} height={20} />
+        <Image src="/assets/profile/mail.svg" alt="Email" width={20} height={20} />
         <span className={styles.ico24OtherCircle} />
-        <Image src="/assets/instagram.svg" alt="Instagram" width={20} height={20} />
+        <Image src="/assets/profile/instagram.svg" alt="Instagram" width={20} height={20} />
         <span className={styles.ico24OtherCircle} />
-        <Image src="/assets/linkedin.svg" alt="LinkedIn" width={20} height={20} />
+        <Image src="/assets/profile/linkedin.svg" alt="LinkedIn" width={20} height={20} />
       </div>
 
       {/* Buttons */}

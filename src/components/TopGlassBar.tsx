@@ -6,7 +6,7 @@ export default function TopGlassBar() {
   return (
     <div className="page-title-gobankless">
       <Image
-        src="/assets/glass-top-1.png"
+        src="/assets/core/glass-top-1.png"
         alt=""
         className="glass-shard-small"
         width={729}
@@ -17,7 +17,7 @@ export default function TopGlassBar() {
       {/* NOTE: spraypaint layer kept commented until asset exists */}
       {/*
       <Image
-        src="/assets/spraypaint-2.png"
+        src="/assets/core/spraypaint-2.png"
         alt=""
         className="spraypaint-effect"
         width={300}
@@ -27,7 +27,7 @@ export default function TopGlassBar() {
       />
       */}
       <Image
-        src="/assets/gobankless-logo.png"
+        src="/assets/core/gobankless-logo.png"
         alt="GoBankless"
         className="gobankless-logo"
         width={220}
@@ -37,8 +37,8 @@ export default function TopGlassBar() {
       />
       <div className="icons">
         <div className="icon-group">
-          <Image src="/assets/scan.svg" alt="Scan" className="icon" width={24} height={24} />
-          <Image src="/assets/export.svg" alt="Share" className="icon" width={24} height={24} />
+          <Image src="/assets/core/scan.svg" alt="Scan" className="icon" width={24} height={24} />
+          <Image src="/assets/core/export.svg" alt="Share" className="icon" width={24} height={24} />
         </div>
       </div>
     </div>
