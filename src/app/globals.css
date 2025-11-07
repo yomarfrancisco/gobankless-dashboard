@@ -1,3 +1,5 @@
+@import '../styles/card-amounts.css';
+
 :root {
   --top-safe: 176px;
   --bottom-safe: 132px;

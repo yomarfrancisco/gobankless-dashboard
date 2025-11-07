@@ -4,6 +4,14 @@ import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
 import type { StaticImageData } from 'next/image'
 import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
+import CardAmounts from './CardAmounts'
+
+// Temporary FX rate (will be wired to real API later)
+const FX_USD_ZAR_DEFAULT = 18.1
+
+function computeZAR(usdt: number, fx: number = FX_USD_ZAR_DEFAULT) {
+  return usdt * fx
+}
 
 type CardType = 'pepe' | 'savings' | 'yield'
 
@@ -13,9 +21,8 @@ interface CardData {
   alt: string
   width: number
   height: number
-  balance: string
-  balanceDecimal: string
-  usdt: string
+  usdt: number // canonical base in USDT
+  fxUsdZar?: number // optional override
   yieldBadge?: {
     percentage: string
     text: string
@@ -29,9 +36,7 @@ const cardsData: CardData[] = [
     alt: 'Savings Card',
     width: 342,
     height: 213,
-    balance: '5,678',
-    balanceDecimal: '.90',
-    usdt: 'USDT',
+    usdt: 250, // demo value
   },
   {
     type: 'pepe',
@@ -39,9 +44,7 @@ const cardsData: CardData[] = [
     alt: 'PEPE Card',
     width: 398,
     height: 238,
-    balance: 'R1,812',
-    balanceDecimal: '.88',
-    usdt: '100 USDT',
+    usdt: 100, // canonical value from original design
     yieldBadge: {
       percentage: '138%',
       text: 'annual yield',
@@ -53,9 +56,7 @@ const cardsData: CardData[] = [
     alt: 'Yield Card',
     width: 310,
     height: 193,
-    balance: '9,012',
-    balanceDecimal: '.34',
-    usdt: 'USDT',
+    usdt: 100, // demo value (consistent with Pepe for now)
     yieldBadge: {
       percentage: '4.2%',
       text: 'APY',
@@ -201,21 +202,17 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
                 unoptimized
               />
             )}
-            <div className="card-content-overlay">
-              <div className="card-balance-section">
-                <div className="card-balance-amount">
-                  {card.balance}
-                  <span className="card-balance-amount-decimal">{card.balanceDecimal}</span>
-                </div>
-                <div className="card-balance-usdt">{card.usdt}</div>
+            <CardAmounts
+              zar={computeZAR(card.usdt, card.fxUsdZar)}
+              usdt={card.usdt}
+              className={`card-amounts--${card.type}`}
+            />
+            {card.yieldBadge && (
+              <div className="card-yield-badge">
+                <span className="card-yield-percentage">{card.yieldBadge.percentage}</span>
+                <span className="card-yield-text">{card.yieldBadge.text}</span>
               </div>
-              {card.yieldBadge && (
-                <div className="card-yield-badge">
-                  <span className="card-yield-percentage">{card.yieldBadge.percentage}</span>
-                  <span className="card-yield-text">{card.yieldBadge.text}</span>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         )
       })}
