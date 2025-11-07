@@ -13,7 +13,7 @@ interface CardData {
   height: number
   balance: string
   balanceDecimal: string
-  usdc: string
+  usdt: string
   yieldBadge?: {
     percentage: string
     text: string
@@ -29,7 +29,7 @@ const cardsData: CardData[] = [
     height: 238,
     balance: 'R1,812',
     balanceDecimal: '.88',
-    usdc: '100 USDC',
+    usdt: '100 USDT',
     yieldBadge: {
       percentage: '138%',
       text: 'annual yield',
@@ -43,7 +43,7 @@ const cardsData: CardData[] = [
     height: 213,
     balance: '5,678',
     balanceDecimal: '.90',
-    usdc: 'USDC',
+    usdt: 'USDT',
   },
   {
     type: 'yield',
@@ -53,7 +53,7 @@ const cardsData: CardData[] = [
     height: 193,
     balance: '9,012',
     balanceDecimal: '.34',
-    usdc: 'USDC',
+    usdt: 'USDT',
     yieldBadge: {
       percentage: '4.2%',
       text: 'APY',
@@ -192,7 +192,7 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
                   {card.balance}
                   <span className="card-balance-amount-decimal">{card.balanceDecimal}</span>
                 </div>
-                <div className="card-balance-usdc">{card.usdc}</div>
+                <div className="card-balance-usdt">{card.usdt}</div>
               </div>
               {card.yieldBadge && (
                 <div className="card-yield-badge">
