@@ -1,12 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import CardStack from '@/components/CardStack'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
+import DepositSheet from '@/components/DepositSheet'
+import WithdrawSheet from '@/components/WithdrawSheet'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('pepe')
+  const [open, setOpen] = useState<null | 'deposit' | 'withdraw'>(null)
+  const openDeposit = useCallback(() => setOpen('deposit'), [])
+  const openWithdraw = useCallback(() => setOpen('withdraw'), [])
+  const closeSheet = useCallback(() => setOpen(null), [])
 
   return (
     <div className="app-shell">
@@ -15,7 +21,7 @@ export default function Home() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/" />
+            <BottomGlassBar currentPath="/" onDollarClick={openDeposit} />
           </div>
 
           {/* Scrollable content */}
@@ -42,14 +48,14 @@ export default function Home() {
 
               {/* Action Buttons */}
               <div className="action-buttons">
-                <button className="btn btn-deposit">
+                <button className="btn btn-deposit" onClick={openDeposit} onTouchStart={openDeposit}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M7 17L17 7" />
                     <path d="M7 7h10v10" />
                   </svg>
                   Deposit
                 </button>
-                <button className="btn btn-withdraw">
+                <button className="btn btn-withdraw" onClick={openWithdraw} onTouchStart={openWithdraw}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M17 7L7 17" />
                     <path d="M17 17H7V7" />
@@ -61,6 +67,10 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Sheets */}
+      <DepositSheet open={open === 'deposit'} onClose={closeSheet} />
+      <WithdrawSheet open={open === 'withdraw'} onClose={closeSheet} />
     </div>
   )
 }

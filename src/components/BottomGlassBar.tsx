@@ -42,6 +42,7 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
               className="dollar-sign-contained"
               aria-label="Direct payment"
               onClick={onDollarClick}
+              onTouchStart={onDollarClick}
               type="button"
             >
               <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={44} height={44} unoptimized />

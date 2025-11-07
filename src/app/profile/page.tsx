@@ -1,10 +1,17 @@
 'use client'
 
+import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
+import DepositSheet from '@/components/DepositSheet'
+import WithdrawSheet from '@/components/WithdrawSheet'
 
 export default function ProfilePage() {
+  const [open, setOpen] = useState<null | 'deposit' | 'withdraw'>(null)
+  const openDeposit = useCallback(() => setOpen('deposit'), [])
+  const openWithdraw = useCallback(() => setOpen('withdraw'), [])
+  const closeSheet = useCallback(() => setOpen(null), [])
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -12,7 +19,7 @@ export default function ProfilePage() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/profile" />
+            <BottomGlassBar currentPath="/profile" onDollarClick={openDeposit} />
           </div>
 
           {/* Scrollable content */}
@@ -98,6 +105,10 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Sheets */}
+      <DepositSheet open={open === 'deposit'} onClose={closeSheet} />
+      <WithdrawSheet open={open === 'withdraw'} onClose={closeSheet} />
     </div>
   )
 }
