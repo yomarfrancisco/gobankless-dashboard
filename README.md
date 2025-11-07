@@ -17,6 +17,11 @@ A minimal, mobile-only Next.js application showcasing the GoBankless cash-card i
 3. **Open your browser:**
    Navigate to [http://localhost:5173](http://localhost:5173)
 
+## Routes
+
+- `/` - Home (wallet with card stack)
+- `/profile` - Profile (glass bars only for now)
+
 ## Project Structure
 
 ```
@@ -24,8 +29,13 @@ GoBankless/
 ├── public/
 │   └── assets/          # Image and SVG assets (see Asset Management below)
 ├── src/
+│   ├── components/
+│   │   ├── TopGlassBar.tsx    # Top glass bar component
+│   │   ├── BottomGlassBar.tsx # Bottom glass bar component
+│   │   └── CardStack.tsx      # Card stack component
 │   └── app/
 │       ├── api/         # API routes
+│       ├── profile/     # Profile page
 │       ├── globals.css  # Global styles
 │       ├── layout.tsx   # Root layout
 │       └── page.tsx     # Main dashboard page

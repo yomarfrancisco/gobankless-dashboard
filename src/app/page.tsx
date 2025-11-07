@@ -1,8 +1,9 @@
 'use client'
 
-import Image from 'next/image'
 import { useState } from 'react'
 import CardStack from '@/components/CardStack'
+import TopGlassBar from '@/components/TopGlassBar'
+import BottomGlassBar from '@/components/BottomGlassBar'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('pepe')
@@ -11,55 +12,7 @@ export default function Home() {
     <div className="app-shell">
       <div className="mobile-frame">
         <div className="dashboard-container">
-          {/* Page Title with Broken Glass */}
-          <div className="page-title-gobankless">
-            <Image
-              src="/assets/glass-top-1.png"
-              alt=""
-              className="glass-shard-small"
-              width={729}
-              height={713}
-              priority
-              unoptimized
-            />
-            {/* Note: spraypaint-2.png is missing, uncomment when available */}
-            {/* <Image
-              src="/assets/spraypaint-2.png"
-              alt=""
-              className="spraypaint-effect"
-              width={300}
-              height={120}
-              priority
-              unoptimized
-            /> */}
-            <Image
-              src="/assets/gobankless-logo.png"
-              alt="GoBankless"
-              className="gobankless-logo"
-              width={220}
-              height={65}
-              priority
-              unoptimized
-            />
-            <div className="icons">
-              <div className="icon-group">
-                <Image
-                  src="/assets/scan.svg"
-                  alt="Scan"
-                  className="icon"
-                  width={24}
-                  height={24}
-                />
-                <Image
-                  src="/assets/export.svg"
-                  alt="Share"
-                  className="icon"
-                  width={24}
-                  height={24}
-                />
-              </div>
-            </div>
-          </div>
+          <TopGlassBar />
 
           {/* Content Area */}
           <div className="content">
@@ -101,53 +54,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Bottom Menu with Glass Texture */}
-          <div className="bottom-menu">
-            <div className="bottom-menu-container">
-              <div className="bottom-glass-wrapper">
-                <Image
-                  src="/assets/glass-bottom-1.png"
-                  alt=""
-                  className="bottom-glass-texture"
-                  width={700}
-                  height={600}
-                  unoptimized
-                />
-              </div>
-              <div className="nav-container">
-                <div className="nav-item">
-                  <Image
-                    src="/assets/home.svg"
-                    alt="Home"
-                    className="nav-icon"
-                    width={28}
-                    height={28}
-                  />
-                </div>
-                <div className="dollar-sign-container">
-                  <div className="dollar-sign-contained">
-                    <Image
-                      src="/assets/dollar-sign.png"
-                      alt="Direct Payment"
-                      width={44}
-                      height={44}
-                      unoptimized
-                    />
-                  </div>
-                  <div className="nav-label">Direct payment</div>
-                </div>
-                <div className="nav-item">
-                  <Image
-                    src="/assets/user-outlined.svg"
-                    alt="Profile"
-                    className="nav-icon"
-                    width={28}
-                    height={28}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <BottomGlassBar />
         </div>
       </div>
     </div>
