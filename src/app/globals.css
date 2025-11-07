@@ -310,6 +310,32 @@ body {
   display: block;
 }
 
+.card-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  will-change: transform;
+  contain: paint;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Yield card: force Next.js Image wrapper + img to fill canvas */
+.card .card-canvas > span {
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit;
+}
+
+.card .card-canvas img {
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+}
+
 /* Card Text Overlays */
 .card-content-overlay {
   position: absolute;
