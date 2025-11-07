@@ -23,7 +23,7 @@ export default function ProfileDark() {
           </div>
           <div className={styles.prgmailcomParent}>
             <div className={styles.profileDarkPrgmailcom}>
-              A skilled entrepreneur experienced in manufacturing and construction across Africa. Let's do business, DMs are open.
+              A skilled entrepreneur experienced in manufacturing and construction across Africa. Let&rsquo;s do business, DMs are open.
             </div>
             <div className={styles.profileDarkFrameParent}>
               <div className={styles.ico24MapPlacesPoiParent}>
