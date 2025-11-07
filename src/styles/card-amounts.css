@@ -84,7 +84,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 8px 10px; /* reduced horizontal padding since "APY" is shorter */
   border-radius: 12px;
   background: rgba(34, 139, 34, 0.9);
   backdrop-filter: blur(10px);
@@ -92,13 +92,11 @@
   z-index: 10;
 }
 
-.card-yield-badge::before {
-  content: '';
+.card-yield-icon {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
-  background: #90ee90;
-  display: inline-block;
+  flex-shrink: 0;
+  display: block;
 }
 
 .card-yield-percentage {
