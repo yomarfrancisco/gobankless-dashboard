@@ -1,10 +1,10 @@
 .card-amounts {
   position: absolute;
-  left: 24px; /* match Pepe overlay position */
-  top: 24px;
-  color: #fff;
+  left: 16px; /* match original Pepe overlay position */
+  top: 48px; /* match original Pepe overlay position */
+  color: #f5f5f5; /* match original Pepe color */
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  font-family: var(--font-ui, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-family: 'Inter', -apple-system, sans-serif; /* match original Pepe font */
   line-height: 1;
   pointer-events: none; /* text overlay not clickable */
   z-index: 10; /* ensure amounts sit above card image */
@@ -19,37 +19,39 @@
 }
 
 .card-amounts__symbol {
-  font-size: clamp(18px, 3.2vw, 24px);
-  font-weight: 300;
-  opacity: 0.9;
+  font-size: 52px; /* match main amount size for visual consistency */
+  font-weight: 400; /* match original Pepe weight */
+  opacity: 1;
   margin-right: 2px;
 }
 
 .card-amounts__whole {
-  font-size: clamp(40px, 9vw, 56px); /* same as Pepe big number */
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 52px; /* match original Pepe card-balance-amount */
+  font-weight: 400; /* match original Pepe weight */
+  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
 }
 
 .card-amounts__dot {
-  font-size: clamp(40px, 9vw, 56px);
-  font-weight: 600;
+  font-size: 52px; /* match main amount size */
+  font-weight: 400; /* match original Pepe weight */
   margin-left: 1px;
 }
 
 .card-amounts__cents {
-  font-size: clamp(18px, 3.2vw, 24px); /* smaller cents */
-  font-weight: 500;
-  opacity: 0.9;
-  transform: translateY(2px);
+  font-size: 36px; /* match original Pepe card-balance-amount-decimal */
+  font-weight: 400; /* match original Pepe weight */
+  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
+  opacity: 1;
+  transform: none; /* remove translateY to match original */
 }
 
 /* Second line: USDT */
 .card-amounts__usdt {
-  margin-top: 12px;
-  font-size: clamp(16px, 3.6vw, 22px);
-  font-weight: 400;
-  opacity: 0.9;
+  margin-top: 4px; /* match original gap from card-balance-section */
+  font-size: 20px; /* match original Pepe card-balance-usdt */
+  font-weight: 400; /* match original Pepe weight */
+  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
+  opacity: 0.8; /* match original Pepe opacity */
 }
 
 /* Prevent layout shift during card stack transitions */
@@ -60,18 +62,18 @@
 
 /* Per-card position overrides (if needed) */
 .card-amounts--pepe {
-  left: 24px;
-  top: 24px;
+  left: 16px;
+  top: 48px;
 }
 
 .card-amounts--yield {
-  left: 24px;
-  top: 24px;
+  left: 16px;
+  top: 48px;
 }
 
 .card-amounts--savings {
-  left: 24px;
-  top: 24px;
+  left: 16px;
+  top: 48px;
 }
 
 /* Yield badge positioning (moved from old overlay) */
