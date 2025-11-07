@@ -1,0 +1,119 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import ActionSheet from './ActionSheet'
+import AmountKeypad from './AmountKeypad'
+import { formatZAR, formatUSDT } from '@/lib/money'
+import '@/styles/amount-sheet.css'
+
+type AmountSheetProps = {
+  open: boolean
+  onClose: () => void
+  mode: 'deposit' | 'withdraw' | 'send' // for header text (e.g., "Buy", "Withdraw")
+  balanceZAR?: number // show at top small "R200.00 balance"
+  fxRateZARperUSDT?: number // default 18.10 if undefined
+  ctaLabel?: string // default "Transfer USDT"
+  onSubmit: (payload: {
+    amountZAR: number
+    amountUSDT: number
+    mode: 'deposit' | 'withdraw' | 'send'
+  }) => void
+}
+
+export default function AmountSheet({
+  open,
+  onClose,
+  mode,
+  balanceZAR = 200,
+  fxRateZARperUSDT = 18.1,
+  ctaLabel = 'Transfer USDT',
+  onSubmit,
+}: AmountSheetProps) {
+  const [amount, setAmount] = useState('0')
+
+  // Reset amount when sheet opens
+  useEffect(() => {
+    if (open) {
+      setAmount('0')
+    }
+  }, [open])
+
+  const amountZAR = parseFloat(amount) || 0
+  const amountUSDT = amountZAR / fxRateZARperUSDT
+
+  const handleNumberChange = (next: string) => {
+    // Enforce max 2 decimal places
+    if (next.includes('.')) {
+      const [whole, decimal] = next.split('.')
+      if (decimal && decimal.length > 2) {
+        return
+      }
+    }
+    // Prevent multiple dots
+    if ((next.match(/\./g) || []).length > 1) {
+      return
+    }
+    // Prevent leading zeros except "0."
+    if (next.length > 1 && next[0] === '0' && next[1] !== '.') {
+      return
+    }
+    setAmount(next)
+  }
+
+  const handleBackspace = () => {
+    if (amount.length <= 1) {
+      setAmount('0')
+    } else {
+      setAmount(amount.slice(0, -1))
+    }
+  }
+
+  const handleDot = () => {
+    if (!amount.includes('.')) {
+      setAmount(amount + '.')
+    }
+  }
+
+  const handleSubmit = () => {
+    onSubmit({
+      amountZAR: amountZAR,
+      amountUSDT: amountUSDT,
+      mode,
+    })
+  }
+
+  const modeLabel = mode === 'deposit' ? 'Buy' : mode === 'withdraw' ? 'Withdraw' : 'Send'
+
+  // Format amount for display (remove leading zeros except "0.")
+  const displayAmount = amount === '0' ? '0' : amount.replace(/^0+(?=\d)/, '')
+
+  return (
+    <ActionSheet open={open} onClose={onClose} title=" ">
+      <div className="amount-sheet amount-sheet-wrapper">
+        <div className="amount-sheet__header">
+          <div className="amount-sheet__balance">
+            {formatZAR(balanceZAR)} <span className="amount-sheet__balance-label">balance</span>
+          </div>
+          <button className="amount-sheet__close" onClick={onClose} aria-label="Close" type="button">
+            <Image src="/assets/clear.svg" alt="" width={18} height={18} />
+          </button>
+        </div>
+        <div className="amount-sheet__title">{modeLabel}</div>
+        <div className="amount-sheet__amount-display">
+          <div className="amount-sheet__zar">{formatZAR(amountZAR)}</div>
+          <div className="amount-sheet__usdt-chip">{formatUSDT(amountUSDT)}</div>
+        </div>
+        <AmountKeypad
+          value={displayAmount}
+          onChange={handleNumberChange}
+          onBackspace={handleBackspace}
+          onDot={handleDot}
+          onSubmit={handleSubmit}
+          ctaLabel={ctaLabel}
+        />
+      </div>
+    </ActionSheet>
+  )
+}
+

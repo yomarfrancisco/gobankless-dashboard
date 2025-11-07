@@ -6,12 +6,19 @@ import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
+import AmountSheet from '@/components/AmountSheet'
 
 export default function ProfilePage() {
-  const [open, setOpen] = useState<null | 'deposit' | 'withdraw'>(null)
-  const openDeposit = useCallback(() => setOpen('deposit'), [])
-  const openWithdraw = useCallback(() => setOpen('withdraw'), [])
-  const closeSheet = useCallback(() => setOpen(null), [])
+  const [openDeposit, setOpenDeposit] = useState(false)
+  const [openWithdraw, setOpenWithdraw] = useState(false)
+  const [openAmount, setOpenAmount] = useState(false)
+  const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
+
+  const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
+  const openWithdrawSheet = useCallback(() => setOpenWithdraw(true), [])
+  const closeDeposit = useCallback(() => setOpenDeposit(false), [])
+  const closeWithdraw = useCallback(() => setOpenWithdraw(false), [])
+  const closeAmount = useCallback(() => setOpenAmount(false), [])
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -19,7 +26,7 @@ export default function ProfilePage() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/profile" onDollarClick={openDeposit} />
+            <BottomGlassBar currentPath="/profile" onDollarClick={openDepositSheet} />
           </div>
 
           {/* Scrollable content */}
@@ -107,8 +114,36 @@ export default function ProfilePage() {
       </div>
 
       {/* Sheets */}
-      <DepositSheet open={open === 'deposit'} onClose={closeSheet} />
-      <WithdrawSheet open={open === 'withdraw'} onClose={closeSheet} />
+      <DepositSheet
+        open={openDeposit}
+        onClose={closeDeposit}
+        onSelect={(method) => {
+          setOpenDeposit(false)
+          setAmountMode('deposit')
+          setTimeout(() => setOpenAmount(true), 220)
+        }}
+      />
+      <WithdrawSheet
+        open={openWithdraw}
+        onClose={closeWithdraw}
+        onSelect={(method) => {
+          setOpenWithdraw(false)
+          setAmountMode('withdraw')
+          setTimeout(() => setOpenAmount(true), 220)
+        }}
+      />
+      <AmountSheet
+        open={openAmount}
+        onClose={closeAmount}
+        mode={amountMode}
+        balanceZAR={200}
+        fxRateZARperUSDT={18.1}
+        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : 'Continue'}
+        onSubmit={({ amountZAR, amountUSDT }) => {
+          setOpenAmount(false)
+          console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
+        }}
+      />
     </div>
   )
 }

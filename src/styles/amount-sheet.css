@@ -1,0 +1,185 @@
+/* Amount Sheet - taller variant */
+.amount-sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Header with balance and close */
+.amount-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px 0 24px;
+  position: relative;
+}
+
+.amount-sheet__balance {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  text-align: center;
+  flex: 1;
+}
+
+.amount-sheet__balance-label {
+  color: #999;
+  font-weight: 300;
+}
+
+.amount-sheet__close {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  width: 32px;
+  height: 32px;
+  border-radius: 27px;
+  background: #E9E9EB;
+  display: grid;
+  place-items: center;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: background 150ms ease;
+}
+
+.amount-sheet__close:hover {
+  background: #D1D1D6;
+}
+
+.amount-sheet__close:active {
+  background: #C7C7CC;
+}
+
+/* Title below balance */
+.amount-sheet__title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin-top: 8px;
+  padding: 0 24px;
+}
+
+/* Amount display section */
+.amount-sheet__amount-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 24px 32px 24px;
+}
+
+.amount-sheet__zar {
+  font-size: 48px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.amount-sheet__usdt-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #666;
+}
+
+/* Keypad container */
+.amount-keypad {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px 24px 24px;
+  min-height: 0;
+}
+
+.amount-keypad__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  flex: 1;
+  align-content: start;
+  padding-top: 16px;
+}
+
+.amount-keypad__key {
+  aspect-ratio: 1;
+  border: 0;
+  background: transparent;
+  font-size: 24px;
+  font-weight: 400;
+  color: #1a1a1a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms ease;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.amount-keypad__key:hover {
+  background: #f5f5f5;
+}
+
+.amount-keypad__key:active {
+  background: #e9e9eb;
+}
+
+/* Footer with fee note and CTA */
+.amount-keypad__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.amount-keypad__fee-note {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 300;
+  color: #999;
+}
+
+.amount-keypad__cta {
+  width: 100%;
+  padding: 16px 24px;
+  background: #f5f5f5;
+  border: 0;
+  border-radius: 42px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1a1a1a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 150ms ease;
+}
+
+.amount-keypad__cta:hover {
+  background: #e9e9eb;
+}
+
+.amount-keypad__cta:active {
+  background: #d1d1d6;
+}
+
+.amount-keypad__cta-arrow {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Override ActionSheet height for amount sheet */
+.as-root:has(.amount-sheet-wrapper) .as-sheet {
+  max-height: 92vh !important;
+  min-height: 80vh !important;
+}
+
