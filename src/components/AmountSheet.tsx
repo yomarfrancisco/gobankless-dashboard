@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import ActionSheet from './ActionSheet'
 import AmountKeypad from './AmountKeypad'
-import { formatZAR, formatUSDT } from '@/lib/money'
+import { formatZAR, formatZARWithDot, formatUSDT } from '@/lib/money'
 import '@/styles/amount-sheet.css'
 
 type AmountSheetProps = {
@@ -90,24 +90,28 @@ export default function AmountSheet({
   return (
     <ActionSheet open={open} onClose={onClose} title="">
       <div className="amount-sheet amount-sheet-wrapper">
-        <div className="amount-sheet__header">
-          <div className="amount-sheet__balance">
-            {formatZAR(balanceZAR)} <span className="amount-sheet__balance-label">balance</span>
+        <div className="amount-sheet__top">
+          <div className="amount-sheet__header">
+            <div className="amount-sheet__balance">
+              {formatZAR(balanceZAR)} <span className="amount-sheet__balance-label">balance</span>
+            </div>
+          </div>
+          <div className="amount-sheet__title">{modeLabel}</div>
+          <div className="amount-sheet__amount-display">
+            <div className="amount-sheet__zar">{formatZARWithDot(amountZAR)}</div>
+            <div className="amount-sheet__usdt-chip">{formatUSDT(amountUSDT)}</div>
           </div>
         </div>
-        <div className="amount-sheet__title">{modeLabel}</div>
-        <div className="amount-sheet__amount-display">
-          <div className="amount-sheet__zar">{formatZAR(amountZAR)}</div>
-          <div className="amount-sheet__usdt-chip">{formatUSDT(amountUSDT)}</div>
+        <div className="amount-sheet__grid-wrap">
+          <AmountKeypad
+            value={displayAmount}
+            onChange={handleNumberChange}
+            onBackspace={handleBackspace}
+            onDot={handleDot}
+            onSubmit={handleSubmit}
+            ctaLabel={ctaLabel}
+          />
         </div>
-        <AmountKeypad
-          value={displayAmount}
-          onChange={handleNumberChange}
-          onBackspace={handleBackspace}
-          onDot={handleDot}
-          onSubmit={handleSubmit}
-          ctaLabel={ctaLabel}
-        />
       </div>
     </ActionSheet>
   )
