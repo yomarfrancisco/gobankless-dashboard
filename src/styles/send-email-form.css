@@ -1,0 +1,137 @@
+.send-email-page {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.send-email-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  z-index: 100;
+  padding-top: env(safe-area-inset-top);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.send-email-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 27px;
+  background: #E9E9EB;
+  display: grid;
+  place-items: center;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: background 150ms ease;
+  flex-shrink: 0;
+}
+
+.send-email-close:hover {
+  background: #D1D1D6;
+}
+
+.send-email-close:active {
+  background: #C7C7CC;
+}
+
+.send-email-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0A0A0A;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.send-email-pay {
+  height: 36px;
+  padding: 0 20px;
+  background: #000;
+  color: #fff;
+  border: 0;
+  border-radius: 42px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+  flex-shrink: 0;
+}
+
+.send-email-pay:hover:not(:disabled) {
+  background: #333;
+}
+
+.send-email-pay:active:not(:disabled) {
+  background: #111;
+}
+
+.send-email-pay:disabled {
+  background: #E5E5EA;
+  color: #9A9AA0;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.send-email-body {
+  flex: 1;
+  padding-top: calc(56px + env(safe-area-inset-top));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.send-email-field-row {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  gap: 8px;
+}
+
+.send-email-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0A0A0A;
+  margin: 0;
+}
+
+.send-email-input {
+  border: 0;
+  border-bottom: 1px solid #000;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 300;
+  color: #0A0A0A;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  width: 100%;
+}
+
+.send-email-input-for {
+  border-bottom-color: rgba(0, 0, 0, 0.3);
+}
+
+.send-email-input::placeholder {
+  color: #999;
+  opacity: 0.6;
+}
+
+.send-email-input:focus {
+  border-bottom-color: #000;
+}
+
+.send-email-input-for:focus {
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+}
+

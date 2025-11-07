@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import ActionSheet from './ActionSheet'
 import AmountKeypad from './AmountKeypad'
 import FitAmount from './FitAmount'
@@ -32,6 +33,7 @@ export default function AmountSheet({
   onSubmit,
   onAmountSubmit,
 }: AmountSheetProps) {
+  const router = useRouter()
   const [amount, setAmount] = useState('0')
 
   // Reset amount when sheet opens
@@ -78,7 +80,11 @@ export default function AmountSheet({
   }
 
   const handleSubmit = () => {
-    if (onAmountSubmit && mode === 'send') {
+    if (mode === 'send' && amountZAR > 0) {
+      // Navigate to full-page send email form
+      router.push(`/send/email?amount=${encodeURIComponent(amountZAR.toFixed(2))}`)
+      onClose()
+    } else if (onAmountSubmit && mode === 'send') {
       onAmountSubmit(amountZAR)
     } else if (onSubmit) {
       onSubmit({
