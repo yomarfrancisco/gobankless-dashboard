@@ -3,7 +3,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function BottomGlassBar() {
+interface BottomGlassBarProps {
+  currentPath?: string
+}
+
+export default function BottomGlassBar({ currentPath = '/' }: BottomGlassBarProps) {
+  const isHome = currentPath === '/'
+  const isProfile = currentPath === '/profile'
+
   return (
     <div className="bottom-menu">
       <div className="bottom-menu-container">
@@ -20,7 +27,13 @@ export default function BottomGlassBar() {
         <div className="nav-container">
           <div className="nav-item">
             <Link href="/" aria-label="Home">
-              <Image src="/assets/home.svg" alt="Home" className="nav-icon" width={28} height={28} />
+              <Image 
+                src="/assets/home.svg" 
+                alt="Home" 
+                className={`nav-icon ${isHome ? 'nav-icon-active' : 'nav-icon-dim'}`} 
+                width={28} 
+                height={28} 
+              />
             </Link>
           </div>
           <div className="dollar-sign-container">
@@ -31,7 +44,13 @@ export default function BottomGlassBar() {
           </div>
           <div className="nav-item">
             <Link href="/profile" aria-label="Profile">
-              <Image src="/assets/user-outlined.svg" alt="Profile" className="nav-icon" width={28} height={28} />
+              <Image 
+                src="/assets/user-outlined.svg" 
+                alt="Profile" 
+                className={`nav-icon ${isProfile ? 'nav-icon-active' : 'nav-icon-dim'}`} 
+                width={28} 
+                height={28} 
+              />
             </Link>
           </div>
         </div>

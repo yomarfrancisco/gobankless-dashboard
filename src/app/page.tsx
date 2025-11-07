@@ -54,7 +54,7 @@ export default function Home() {
             </div>
           </div>
 
-          <BottomGlassBar />
+          <BottomGlassBar currentPath="/" />
         </div>
       </div>
     </div>
