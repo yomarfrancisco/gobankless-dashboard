@@ -5,9 +5,12 @@ import Image from 'next/image'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
+import WithdrawSheet from '@/components/WithdrawSheet'
 
 export default function ProfilePage() {
-  const [depositOpen, setDepositOpen] = useState(false)
+  const [openDeposit, setOpenDeposit] = useState(false)
+  const [openWithdraw, setOpenWithdraw] = useState(false)
+  const [openDollarFab, setOpenDollarFab] = useState(false)
 
   return (
     <div className="app-shell">
@@ -95,11 +98,18 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <BottomGlassBar currentPath="/profile" onDollarClick={() => setDepositOpen(true)} />
+          <BottomGlassBar currentPath="/profile" onDollarClick={() => setOpenDollarFab(true)} />
         </div>
       </div>
 
-      <DepositSheet isOpen={depositOpen} onClose={() => setDepositOpen(false)} />
+      <DepositSheet
+        open={openDollarFab || openDeposit}
+        onClose={() => {
+          setOpenDollarFab(false)
+          setOpenDeposit(false)
+        }}
+      />
+      <WithdrawSheet open={openWithdraw} onClose={() => setOpenWithdraw(false)} />
     </div>
   )
 }

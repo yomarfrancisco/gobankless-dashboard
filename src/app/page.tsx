@@ -5,10 +5,13 @@ import CardStack from '@/components/CardStack'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
+import WithdrawSheet from '@/components/WithdrawSheet'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('pepe')
-  const [depositOpen, setDepositOpen] = useState(false)
+  const [openDeposit, setOpenDeposit] = useState(false)
+  const [openWithdraw, setOpenWithdraw] = useState(false)
+  const [openDollarFab, setOpenDollarFab] = useState(false)
 
   return (
     <div className="app-shell">
@@ -39,14 +42,14 @@ export default function Home() {
 
             {/* Action Buttons */}
             <div className="action-buttons">
-              <button className="btn btn-deposit">
+              <button className="btn btn-deposit" onClick={() => setOpenDeposit(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M7 17L17 7" />
                   <path d="M7 7h10v10" />
                 </svg>
                 Deposit
               </button>
-              <button className="btn btn-withdraw">
+              <button className="btn btn-withdraw" onClick={() => setOpenWithdraw(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17 7L7 17" />
                   <path d="M17 17H7V7" />
@@ -56,11 +59,18 @@ export default function Home() {
             </div>
           </div>
 
-          <BottomGlassBar currentPath="/" onDollarClick={() => setDepositOpen(true)} />
+          <BottomGlassBar currentPath="/" onDollarClick={() => setOpenDollarFab(true)} />
         </div>
       </div>
 
-      <DepositSheet isOpen={depositOpen} onClose={() => setDepositOpen(false)} />
+      <DepositSheet
+        open={openDollarFab || openDeposit}
+        onClose={() => {
+          setOpenDollarFab(false)
+          setOpenDeposit(false)
+        }}
+      />
+      <WithdrawSheet open={openWithdraw} onClose={() => setOpenWithdraw(false)} />
     </div>
   )
 }
