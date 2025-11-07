@@ -7,14 +7,18 @@ import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
+import DirectPaymentSheet from '@/components/DirectPaymentSheet'
 
 export default function ProfilePage() {
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
+  const [openDirectPayment, setOpenDirectPayment] = useState(false)
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
+  const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
+  const closeDirectPayment = useCallback(() => setOpenDirectPayment(false), [])
   const openWithdrawSheet = useCallback(() => setOpenWithdraw(true), [])
   const closeDeposit = useCallback(() => setOpenDeposit(false), [])
   const closeWithdraw = useCallback(() => setOpenWithdraw(false), [])
@@ -26,7 +30,7 @@ export default function ProfilePage() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/profile" onDollarClick={openDepositSheet} />
+            <BottomGlassBar currentPath="/profile" onDollarClick={openDirectPaymentSheet} />
           </div>
 
           {/* Scrollable content */}
@@ -114,6 +118,14 @@ export default function ProfilePage() {
       </div>
 
       {/* Sheets */}
+      <DirectPaymentSheet
+        open={openDirectPayment}
+        onClose={closeDirectPayment}
+        onSelect={(method) => {
+          setOpenDirectPayment(false)
+          console.log('Direct payment method selected', method)
+        }}
+      />
       <DepositSheet
         open={openDeposit}
         onClose={closeDeposit}
