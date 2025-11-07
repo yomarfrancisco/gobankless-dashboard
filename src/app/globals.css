@@ -312,23 +312,31 @@ body {
 
 .card-canvas {
   position: relative;
-  width: 100%;
   aspect-ratio: 86 / 54;
+  width: 100%;
   overflow: hidden;
   border-radius: inherit;
+  line-height: 0;
 }
 
-/* Next.js Image wrapper span + img should fill and inherit radius */
+/* Next.js Image wrapper span defaults to inline-block; force block */
 .card-canvas > span {
+  display: block;
+  vertical-align: top;
+  line-height: 0;
+  height: 100% !important;
+  width: 100% !important;
   position: absolute !important;
   inset: 0 !important;
   border-radius: inherit;
 }
 
+/* The actual <img> element */
 .card-canvas img {
+  display: block;
+  object-fit: cover;
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
   border-radius: inherit !important;
 }
 

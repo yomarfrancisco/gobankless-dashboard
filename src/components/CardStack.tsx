@@ -4,8 +4,6 @@ import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
 import type { StaticImageData } from 'next/image'
 import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
-// Temporarily using old yield card for A/B test
-import oldYieldCard from '../../public/assets/cards/card-yield.jpg'
 
 type CardType = 'pepe' | 'savings' | 'yield'
 
@@ -51,7 +49,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'yield',
-    image: oldYieldCard, // A/B test: temporarily using old yield card
+    image: gobCardImage,
     alt: 'Yield Card',
     width: 310,
     height: 193,
@@ -187,11 +185,11 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
               <div className="card-canvas card-yield-rounded">
                 <Image
                   src={card.image}
-                  alt=""
+                  alt="GoB yield card"
                   fill
                   sizes="(max-width: 768px) 88vw, 420px"
-                  priority={false}
-                  style={{ objectFit: 'cover' }}
+                  priority
+                  style={{ objectFit: 'cover', borderRadius: 'inherit' }}
                 />
               </div>
             ) : (
