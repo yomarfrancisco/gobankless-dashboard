@@ -3,16 +3,22 @@
 import Image from 'next/image'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
+import { usePullToRefresh } from '@/hooks/usePullToRefresh'
 
 export default function ProfilePage() {
+  usePullToRefresh('profile-scroll')
+
   return (
     <div className="app-shell">
       <div className="mobile-frame">
         <div className="dashboard-container">
           <TopGlassBar />
 
-          {/* Content Area */}
-          <div className="content" style={{ background: '#fff' }}>
+          {/* Scrollable content */}
+          <main className="page-scroll" id="profile-scroll">
+            <div className="top-spacer" />
+
+            <div className="content" style={{ background: '#fff' }}>
             {/* Avatar + name + handle */}
             <div className="profile-header">
               <Image
@@ -85,11 +91,14 @@ export default function ProfilePage() {
             </div>
 
             {/* Buttons */}
-            <div className="profile-actions">
+            <div className="profile-actions profile-cta-row">
               <button className="btn profile-edit">Edit profile</button>
               <button className="btn profile-inbox">Inbox</button>
             </div>
-          </div>
+            </div>
+
+            <div className="bottom-spacer" />
+          </main>
 
           <BottomGlassBar currentPath="/profile" />
         </div>

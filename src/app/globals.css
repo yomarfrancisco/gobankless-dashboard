@@ -1,3 +1,8 @@
+:root {
+  --top-glass-height: 160px;
+  --bottom-glass-safe: 150px;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -122,18 +127,37 @@ body {
   object-fit: cover;
 }
 
+/* Scrollable content area between fixed glasses */
+.page-scroll {
+  position: absolute;
+  top: var(--top-glass-height);
+  left: 0;
+  right: 0;
+  bottom: var(--bottom-glass-safe);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  z-index: 1;
+  background: transparent;
+}
+
+/* Spacers prevent overlap with glass and enable pull-to-refresh affordance */
+.page-scroll .top-spacer {
+  height: 12px;
+}
+
+.page-scroll .bottom-spacer {
+  height: calc(var(--bottom-glass-safe) + 24px);
+}
+
 /* Content Area */
 .content {
-  position: absolute;
   width: 100%;
-  top: 160px;
-  right: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0 16px;
-  z-index: 1;
+  position: relative;
 }
 
 .card-switch {
@@ -360,6 +384,13 @@ body {
   z-index: 2;
 }
 
+.btn,
+.action-buttons,
+.profile-cta-row {
+  position: relative;
+  z-index: 2;
+}
+
 .btn {
   width: calc(100% - 64px);
   max-width: 334px;
@@ -425,6 +456,13 @@ body {
   height: 150px;
   z-index: 5;
   pointer-events: none;
+}
+
+.bottom-menu .nav-container,
+.bottom-menu .dollar-sign-contained,
+.bottom-menu .nav-item,
+.icons .icon-group {
+  pointer-events: auto;
 }
 
 .bottom-menu-container {
