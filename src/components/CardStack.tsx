@@ -2,13 +2,14 @@
 
 import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
-import gobCard from '@/public/assets/cards/card-GOB3.jpg'
+import type { StaticImageData } from 'next/image'
+import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
 
 type CardType = 'pepe' | 'savings' | 'yield'
 
 interface CardData {
   type: CardType
-  image: string
+  image: string | StaticImageData
   alt: string
   width: number
   height: number
@@ -48,7 +49,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'yield',
-    image: gobCard,
+    image: gobCardImage,
     alt: 'Yield Card',
     width: 310,
     height: 193,
