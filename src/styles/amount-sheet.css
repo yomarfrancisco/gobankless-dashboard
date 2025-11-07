@@ -6,20 +6,15 @@
   min-height: 0;
 }
 
-/* Top section: balance, mode, big amount, USDT chip */
-.amount-sheet__top {
-  padding-top: 12px;
-  padding-bottom: 8px; /* tighten */
-  flex-shrink: 0;
-}
-
-/* Header with balance (close button is in ActionSheet header) */
+/* Header section: balance and title */
 .amount-sheet__header {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 24px;
+  padding: 12px 24px 8px 24px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .amount-sheet__balance {
@@ -68,6 +63,7 @@
   text-align: center;
   font-weight: 700;
   color: #111;
+  white-space: nowrap;
 }
 
 .amount-sheet__usdt-chip {
@@ -79,17 +75,6 @@
   font-size: 16px;
   font-weight: 400;
   color: #666;
-}
-
-/* Grid wrapper - takes remaining space */
-.amount-sheet__grid-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
-  /* Reserve space for sticky CTA height + safe area + small gap */
-  padding-bottom: calc(var(--cta-h, 88px) + env(safe-area-inset-bottom) + 16px);
 }
 
 /* Keypad container */
@@ -104,7 +89,7 @@
 .amount-keypad__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  row-gap: 11px; /* ~30% tighter from 16px */
+  row-gap: 20px; /* keep tight spacing */
   column-gap: 16px; /* keep column gap as-is */
   justify-items: center;
   flex: 1;
@@ -185,9 +170,5 @@
   line-height: 1;
 }
 
-/* Override ActionSheet height for amount sheet */
-.as-root:has(.amount-sheet-wrapper) .as-sheet {
-  max-height: 92vh !important;
-  min-height: 80vh !important;
-}
+/* Override ActionSheet height for amount sheet - now handled by .as-sheet.amount */
 

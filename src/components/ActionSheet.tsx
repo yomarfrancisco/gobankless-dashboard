@@ -10,9 +10,10 @@ type Props = {
   title: string
   onClose: () => void
   children: React.ReactNode
+  className?: string
 }
 
-export default function ActionSheet({ open, title, onClose, children }: Props) {
+export default function ActionSheet({ open, title, onClose, children, className }: Props) {
   const sheetRef = useRef<HTMLDivElement>(null)
 
   // lock background scroll while open
@@ -43,7 +44,7 @@ export default function ActionSheet({ open, title, onClose, children }: Props) {
   return ReactDOM.createPortal(
     <div className="as-root" aria-modal="true" role="dialog">
       <button className="as-overlay" aria-label="Close" onClick={onClose} />
-      <div className="as-sheet" ref={sheetRef}>
+      <div className={`as-sheet ${className || ''}`} ref={sheetRef}>
         <div className="as-header">
           <h3 className="as-title">{title}</h3>
           <button className="as-close" onClick={onClose} aria-label="Close">

@@ -89,15 +89,15 @@ export default function AmountSheet({
   const displayAmount = amount === '0' ? '0' : amount.replace(/^0+(?=\d)/, '')
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="">
+    <ActionSheet open={open} onClose={onClose} title="" className="amount">
       <div className="amount-sheet amount-sheet-wrapper">
-        <div className="amount-sheet__top">
-          <div className="amount-sheet__header">
-            <div className="amount-sheet__balance">
-              {formatZAR(balanceZAR)} <span className="amount-sheet__balance-label">balance</span>
-            </div>
+        <div className="amount-sheet__header" style={{ height: 'var(--hdr-h, 118px)' }}>
+          <div className="amount-sheet__balance">
+            {formatZAR(balanceZAR)} <span className="amount-sheet__balance-label">balance</span>
           </div>
           <div className="amount-sheet__title">{modeLabel}</div>
+        </div>
+        <div className="amount-body">
           <div className="amount-sheet__amount-display">
             <FitAmount
               text={formatZARWithDot(amountZAR)}
@@ -107,8 +107,6 @@ export default function AmountSheet({
             />
             <div className="amount-sheet__usdt-chip">{formatUSDT(amountUSDT)}</div>
           </div>
-        </div>
-        <div className="amount-sheet__grid-wrap">
           <AmountKeypad
             value={displayAmount}
             onChange={handleNumberChange}
@@ -116,7 +114,14 @@ export default function AmountSheet({
             onDot={handleDot}
             onSubmit={handleSubmit}
             ctaLabel={ctaLabel}
+            hideCTA
           />
+        </div>
+        <div className="amount-cta" style={{ ['--cta-h' as any]: '88px' }}>
+          <button className="amount-keypad__cta" onClick={handleSubmit} type="button">
+            {ctaLabel}
+            <span className="amount-keypad__cta-arrow">→</span>
+          </button>
         </div>
       </div>
     </ActionSheet>
