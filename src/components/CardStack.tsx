@@ -47,7 +47,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'yield',
-    image: '/assets/cards/card-GOB.png',
+    image: '/assets/cards/card-GOB3.jpg',
     alt: 'Yield Card',
     width: 310,
     height: 193,
