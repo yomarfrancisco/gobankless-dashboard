@@ -313,27 +313,31 @@ body {
 .card-canvas {
   position: relative;
   width: 100%;
-  height: 100%;
-  border-radius: inherit;
+  aspect-ratio: 86 / 54;
   overflow: hidden;
-  will-change: transform;
-  contain: paint;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
+  border-radius: inherit;
 }
 
-/* Yield card: force Next.js Image wrapper + img to fill canvas */
-.card .card-canvas > span {
+/* Next.js Image wrapper span + img should fill and inherit radius */
+.card-canvas > span {
   position: absolute !important;
   inset: 0 !important;
   border-radius: inherit;
 }
 
-.card .card-canvas img {
-  object-fit: cover !important;
+.card-canvas img {
   width: 100% !important;
   height: 100% !important;
+  object-fit: cover !important;
   border-radius: inherit !important;
+}
+
+/* Ensure yield card renders properly */
+.card-yield-rounded,
+.card-canvas,
+.card-canvas img {
+  opacity: 1 !important;
+  z-index: auto;
 }
 
 /* Card Text Overlays */
