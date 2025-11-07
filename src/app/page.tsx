@@ -8,7 +8,7 @@ import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 
 export default function Home() {
-  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('pepe')
+  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
   const [open, setOpen] = useState<null | 'deposit' | 'withdraw'>(null)
   const openDeposit = useCallback(() => setOpen('deposit'), [])
   const openWithdraw = useCallback(() => setOpen('withdraw'), [])
