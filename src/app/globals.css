@@ -566,13 +566,12 @@ body {
 
 /* PROFILE */
 .profile-header {
-  margin-top: 0;
+  margin-top: -32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   padding: 0 16px;
-  transform: translateY(-20%);
   position: relative;
 }
 
@@ -582,6 +581,7 @@ body {
   border-radius: 32px;
   object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 4px;
 }
 
 .profile-name {
@@ -631,7 +631,7 @@ body {
 }
 
 .profile-stats-card {
-  margin: 20px auto 0;
+  margin: 16px auto 0;
   width: 382px;
   border-radius: 32px;
   background: rgba(127, 127, 127, 0.1);
@@ -717,7 +717,7 @@ body {
 }
 
 .profile-social {
-  margin: 8px auto 0;
+  margin: 12px auto 0;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -726,7 +726,7 @@ body {
 
 .profile-actions {
   width: 382px;
-  margin: 16px auto 0;
+  margin: 12px auto 0;
   display: flex;
   gap: 8px;
 }
