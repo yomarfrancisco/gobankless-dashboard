@@ -4,9 +4,11 @@ import { useState } from 'react'
 import CardStack from '@/components/CardStack'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
+import DepositSheet from '@/components/DepositSheet'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('pepe')
+  const [depositOpen, setDepositOpen] = useState(false)
 
   return (
     <div className="app-shell">
@@ -54,9 +56,11 @@ export default function Home() {
             </div>
           </div>
 
-          <BottomGlassBar currentPath="/" />
+          <BottomGlassBar currentPath="/" onDollarClick={() => setDepositOpen(true)} />
         </div>
       </div>
+
+      <DepositSheet isOpen={depositOpen} onClose={() => setDepositOpen(false)} />
     </div>
   )
 }

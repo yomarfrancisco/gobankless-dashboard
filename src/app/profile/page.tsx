@@ -1,10 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
+import DepositSheet from '@/components/DepositSheet'
 
 export default function ProfilePage() {
+  const [depositOpen, setDepositOpen] = useState(false)
+
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -91,9 +95,11 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <BottomGlassBar currentPath="/profile" />
+          <BottomGlassBar currentPath="/profile" onDollarClick={() => setDepositOpen(true)} />
         </div>
       </div>
+
+      <DepositSheet isOpen={depositOpen} onClose={() => setDepositOpen(false)} />
     </div>
   )
 }

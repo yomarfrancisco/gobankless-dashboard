@@ -5,9 +5,10 @@ import Link from 'next/link'
 
 interface BottomGlassBarProps {
   currentPath?: string
+  onDollarClick?: () => void
 }
 
-export default function BottomGlassBar({ currentPath = '/' }: BottomGlassBarProps) {
+export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile'
 
@@ -37,9 +38,14 @@ export default function BottomGlassBar({ currentPath = '/' }: BottomGlassBarProp
             </Link>
           </div>
           <div className="dollar-sign-container">
-            <div className="dollar-sign-contained" aria-label="Direct payment">
+            <button
+              className="dollar-sign-contained"
+              aria-label="Direct payment"
+              onClick={onDollarClick}
+              type="button"
+            >
               <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={44} height={44} unoptimized />
-            </div>
+            </button>
             <div className="nav-label">Direct payment</div>
           </div>
           <div className="nav-item">
