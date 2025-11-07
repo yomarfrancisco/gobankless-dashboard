@@ -51,24 +51,31 @@ export default function SendDetailsSheet({ open, onClose, amountZAR, onPay }: Se
           </button>
         </div>
         <div className="send-details-fields">
-          <label className="send-details-label">To</label>
-          <input
-            className="send-details-input"
-            placeholder="email or phone"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            inputMode="email"
-            autoComplete="email"
-            type="text"
-          />
-          <label className="send-details-label">For</label>
-          <input
-            className="send-details-input"
-            placeholder="add a note or reference"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            type="text"
-          />
+          <label className="send-details-row">
+            <span className="send-details-label">To</span>
+            <input
+              className="send-details-input"
+              placeholder="email or phone"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              inputMode="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              type="text"
+            />
+            <div className="send-details-underline" />
+          </label>
+          <label className="send-details-row">
+            <span className="send-details-label">For</span>
+            <input
+              className="send-details-input"
+              placeholder="add a note or reference"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              type="text"
+            />
+            <div className="send-details-underline" />
+          </label>
         </div>
       </div>
     </ActionSheet>
