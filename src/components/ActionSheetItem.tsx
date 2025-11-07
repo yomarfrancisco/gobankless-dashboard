@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import '@/styles/action-sheet.css'
+import styles from './ActionSheetItem.module.css'
 
 type Props = {
   iconSrc: string
@@ -22,7 +23,7 @@ export default function ActionSheetItem({ iconSrc, title, caption, onClick }: Pr
           {caption && <div className="asi-caption">{caption}</div>}
         </div>
       </div>
-      <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+      <Image src="/assets/next_ui.svg" alt="" width={24} height={24} className={styles.chevron} />
     </button>
   )
 }

@@ -44,11 +44,10 @@ export default function ActionSheet({ open, title, onClose, children }: Props) {
     <div className="as-root" aria-modal="true" role="dialog">
       <button className="as-overlay" aria-label="Close" onClick={onClose} />
       <div className="as-sheet" ref={sheetRef}>
-        <div className="as-grabber" />
         <div className="as-header">
           <h3 className="as-title">{title}</h3>
           <button className="as-close" onClick={onClose} aria-label="Close">
-            <Image src="/assets/clear.svg" alt="" width={24} height={24} />
+            <Image src="/assets/clear.svg" alt="" width={18} height={18} />
           </button>
         </div>
         <div className="as-body">{children}</div>
