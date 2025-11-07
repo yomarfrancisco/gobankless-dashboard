@@ -2,6 +2,7 @@
   --top-safe: 176px;
   --bottom-safe: 132px;
   --sheet-max-h: 520px;
+  --sheet-header-offset: 64px;
 }
 
 * {

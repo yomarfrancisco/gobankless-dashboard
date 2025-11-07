@@ -50,7 +50,7 @@
 
 .as-header {
   position: relative;
-  padding: 16px 24px;
+  padding: var(--sheet-header-offset, 64px) 24px 0 24px;
   flex-shrink: 0;
 }
 
