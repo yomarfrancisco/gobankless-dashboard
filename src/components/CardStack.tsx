@@ -209,7 +209,6 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
             />
             {card.yieldBadge && (
               <div className="card-yield-badge">
-                <Image src="/assets/play.svg" alt="" width={8} height={8} className="card-yield-icon" />
                 <span className="card-yield-percentage">{card.yieldBadge.percentage}</span>
                 <span className="card-yield-text">{card.yieldBadge.text}</span>
               </div>

@@ -92,11 +92,13 @@
   z-index: 10;
 }
 
-.card-yield-icon {
+.card-yield-badge::before {
+  content: '';
   width: 8px;
   height: 8px;
-  flex-shrink: 0;
-  display: block;
+  border-radius: 50%;
+  background: #90ee90;
+  display: inline-block;
 }
 
 .card-yield-percentage {
