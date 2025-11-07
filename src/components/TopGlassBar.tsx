@@ -14,8 +14,6 @@ export default function TopGlassBar() {
         priority
         unoptimized
       />
-      {/* NOTE: spraypaint layer kept commented until asset exists */}
-      {/*
       <Image
         src="/assets/core/spraypaint-2.png"
         alt=""
@@ -25,7 +23,6 @@ export default function TopGlassBar() {
         priority
         unoptimized
       />
-      */}
       <Image
         src="/assets/core/gobankless-logo.png"
         alt="GoBankless"

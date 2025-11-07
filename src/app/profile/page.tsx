@@ -16,7 +16,7 @@ export default function ProfilePage() {
             {/* Curved dark panel with a clipped skyline backdrop */}
             <div className="profile-hero">
               <Image
-                src="/assets/profile/sandton.jpg"
+                src="/assets/profile/sandton.png"
                 alt=""
                 className="profile-hero-bg"
                 width={900}
@@ -30,7 +30,7 @@ export default function ProfilePage() {
             {/* Avatar + name + handle */}
             <div className="profile-header">
               <Image
-                src="/assets/profile/headshot.jpg"
+                src="/assets/profile/headshot.png"
                 alt="Profile"
                 className="profile-avatar"
                 width={104}
