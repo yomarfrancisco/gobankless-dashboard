@@ -179,13 +179,27 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
               zIndex: isTop ? 3 : position === 1 ? 2 : 1, // Ensure z-index is correct
             }}
           >
-            <Image
-              src={card.image}
-              alt={card.alt}
-              width={card.width}
-              height={card.height}
-              unoptimized
-            />
+            {card.type === 'yield' ? (
+              <div className="card-canvas">
+                <Image
+                  src={card.image}
+                  alt={card.alt}
+                  fill
+                  sizes="(max-width: 768px) 88vw, 420px"
+                  style={{ objectFit: 'cover', borderRadius: 'inherit' }}
+                  priority={false}
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <Image
+                src={card.image}
+                alt={card.alt}
+                width={card.width}
+                height={card.height}
+                unoptimized
+              />
+            )}
             <div className="card-content-overlay">
               <div className="card-balance-section">
                 <div className="card-balance-amount">
