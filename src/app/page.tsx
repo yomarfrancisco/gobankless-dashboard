@@ -7,7 +7,6 @@ import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
-import DirectPaymentSheet from '@/components/DirectPaymentSheet'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
@@ -80,9 +79,10 @@ export default function Home() {
       </div>
 
       {/* Sheets */}
-      <DirectPaymentSheet
+      <DepositSheet
         open={openDirectPayment}
         onClose={closeDirectPayment}
+        variant="direct-payment"
         onSelect={(method) => {
           setOpenDirectPayment(false)
           console.log('Direct payment method selected', method)
@@ -91,6 +91,7 @@ export default function Home() {
       <DepositSheet
         open={openDeposit}
         onClose={closeDeposit}
+        variant="deposit"
         onSelect={(method) => {
           setOpenDeposit(false)
           setAmountMode('deposit')

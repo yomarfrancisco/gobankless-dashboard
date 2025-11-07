@@ -7,7 +7,6 @@ import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
-import DirectPaymentSheet from '@/components/DirectPaymentSheet'
 
 export default function ProfilePage() {
   const [openDeposit, setOpenDeposit] = useState(false)
@@ -118,9 +117,10 @@ export default function ProfilePage() {
       </div>
 
       {/* Sheets */}
-      <DirectPaymentSheet
+      <DepositSheet
         open={openDirectPayment}
         onClose={closeDirectPayment}
+        variant="direct-payment"
         onSelect={(method) => {
           setOpenDirectPayment(false)
           console.log('Direct payment method selected', method)
@@ -129,6 +129,7 @@ export default function ProfilePage() {
       <DepositSheet
         open={openDeposit}
         onClose={closeDeposit}
+        variant="deposit"
         onSelect={(method) => {
           setOpenDeposit(false)
           setAmountMode('deposit')
