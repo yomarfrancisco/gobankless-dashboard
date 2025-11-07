@@ -2,6 +2,7 @@
 
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
+import ProfileDark from '@/components/ProfileDark'
 
 export default function ProfilePage() {
   return (
@@ -10,7 +11,10 @@ export default function ProfilePage() {
         <div className="dashboard-container">
           <TopGlassBar />
 
-          {/* No content yet — glass bars only */}
+          {/* Content Area */}
+          <div className="content">
+            <ProfileDark />
+          </div>
 
           <BottomGlassBar />
         </div>
