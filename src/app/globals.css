@@ -60,7 +60,7 @@ body {
   left: 0;
   height: 160px;
   z-index: 10;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .glass-shard-small {
