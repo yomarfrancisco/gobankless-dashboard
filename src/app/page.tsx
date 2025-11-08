@@ -88,15 +88,15 @@ export default function Home() {
               <div className="card-switch">
                 <div className="frame-parent">
                   <div className="wallet-header">
-                    <h1 className="wallet-title">Stablecoin wallet</h1>
+                    <h1 className="wallet-title">Crises-adaptive wallet</h1>
                     <div className="help-icon">?</div>
                   </div>
                   <p className="wallet-subtitle">
                     {topCardType === 'pepe' 
-                      ? 'PEPE stablecoin' 
+                      ? 'PEPE exposure' 
                       : topCardType === 'savings' 
-                      ? 'BRICS Stablecoin' 
-                      : 'ETH stablecoin'}
+                      ? 'Cash banked' 
+                      : 'ETH exposure'}
                   </p>
                 </div>
 
