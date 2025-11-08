@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import ActionSheet from './ActionSheet'
 import Image from 'next/image'
 import USDTWarningNote from './USDTWarningNote'
@@ -28,12 +28,40 @@ export default function SendDetailsSheet({
   const [note, setNote] = useState('')
   const toRef = useRef<HTMLInputElement>(null)
 
-  const canPay = amountZAR > 0 && to.trim().length > 0
+  const isHandleFlow = sendMethod === 'brics'
+
+  // Initialize handle with "@" when sheet opens for handle flow
+  useEffect(() => {
+    if (open && isHandleFlow && !to.startsWith('@')) {
+      setTo('@')
+    } else if (open && !isHandleFlow) {
+      setTo('')
+    }
+  }, [open, isHandleFlow])
+
+  const canPay = amountZAR > 0 && to.trim().length > (isHandleFlow ? 1 : 0) // "@" counts as 1 char minimum for handle
 
   const formattedAmount = amountZAR.toLocaleString('en-ZA', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })
+
+  const handleToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value
+    
+    if (isHandleFlow) {
+      // Always enforce a single @ prefix for handle flow
+      if (!value.startsWith('@')) {
+        // Remove any existing @ symbols and add one at the start
+        value = '@' + value.replace(/^@+/g, '')
+      }
+      // Ensure only one @ at the start, remove any @ symbols after the first character
+      const afterAt = value.slice(1).replace(/@/g, '')
+      value = '@' + afterAt
+    }
+    
+    setTo(value)
+  }
 
   const handlePay = () => {
     if (canPay && onPay) {
@@ -85,7 +113,7 @@ export default function SendDetailsSheet({
                   : 'email or phone'
               }
               value={to}
-              onChange={(e) => setTo(e.target.value)}
+              onChange={handleToChange}
               inputMode={sendMethod === 'wallet' ? 'text' : 'email'}
               autoCapitalize="none"
               autoCorrect="off"

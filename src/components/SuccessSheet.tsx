@@ -8,8 +8,9 @@ type SuccessSheetProps = {
   open: boolean
   onClose: () => void
   amountZAR: string // formatted via formatZAR()
-  recipient: string // email or phone
+  recipient?: string // email or phone (optional for deposit)
   autoDownloadReceipt?: boolean // default true
+  kind?: 'send' | 'deposit' // default 'send'
 }
 
 export default function SuccessSheet({
@@ -18,6 +19,7 @@ export default function SuccessSheet({
   amountZAR,
   recipient,
   autoDownloadReceipt = true,
+  kind = 'send',
 }: SuccessSheetProps) {
   useEffect(() => {
     if (!open || !autoDownloadReceipt) return
@@ -45,10 +47,21 @@ export default function SuccessSheet({
             width={56}
             height={56}
           />
-          <p id="success-title" className="success-headline" aria-live="polite">
-            You sent {amountZAR} to
-          </p>
-          <p className="success-target">{recipient}</p>
+          {kind === 'deposit' ? (
+            <>
+              <p id="success-title" className="success-headline" aria-live="polite">
+                Deposit successful
+              </p>
+              <p className="success-target">You deposited {amountZAR}.</p>
+            </>
+          ) : (
+            <>
+              <p id="success-title" className="success-headline" aria-live="polite">
+                You sent {amountZAR} to
+              </p>
+              <p className="success-target">{recipient}</p>
+            </>
+          )}
         </div>
         <div className="success-spacer" />
         <p className="success-receipt">Proof of payment will be emailed to you</p>
