@@ -33,7 +33,7 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
           method: 'wallet' as const
         },
         {
-          title: 'BRICS Account',
+          title: 'Member Handle',
           caption: 'Send to another BRICS or GoBankless user.',
           method: 'brics' as const
         }
