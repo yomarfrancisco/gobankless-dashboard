@@ -36,33 +36,25 @@ export default function SuccessSheet({
 
   return (
     <ActionSheet open={open} onClose={onClose} title="" className="send-success">
-      <div className="success-wrap" role="dialog" aria-labelledby="success-title">
-        <div className="success-top">
-          <svg
-            className="success-tick"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M8 12l3 3 5-5" />
-          </svg>
-          <h2 id="success-title" className="success-title" aria-live="polite">
+      <div className="success-sheet" role="dialog" aria-labelledby="success-title">
+        <div className="success-header">
+          <img
+            src="/assets/checkmark_circle.svg"
+            alt="success"
+            className="success-icon"
+            width={56}
+            height={56}
+          />
+          <p id="success-title" className="success-headline" aria-live="polite">
             You sent {amountZAR} to
-            <br />
-            <span className="success-recipient">{recipient}</span>
-          </h2>
+          </p>
+          <p className="success-target">{recipient}</p>
         </div>
-        <div className="success-bottom">
-          <p className="success-note">Proof of payment will be emailed to you</p>
-          <button className="success-btn" onClick={onClose}>
-            Got it
-          </button>
-        </div>
+        <div className="success-spacer" />
+        <p className="success-receipt">Proof of payment will be emailed to you</p>
+        <button className="success-btn" onClick={onClose}>
+          Got it
+        </button>
       </div>
     </ActionSheet>
   )

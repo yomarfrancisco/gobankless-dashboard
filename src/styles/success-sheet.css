@@ -1,76 +1,65 @@
-.success-wrap {
-  height: 100%;
+.success-sheet {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 20px;
-}
-
-/* Top block: tick + title */
-.success-top {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 8px;
-  gap: 24px;
-}
-
-/* SVG tick */
-.success-tick {
-  width: 64px;
-  height: 64px;
-  color: #0a0a0a;
-  stroke-width: 1.8;
-}
-
-/* Title text */
-.success-title {
-  margin: 0;
   text-align: center;
-  font-size: clamp(20px, 4.8vw, 28px);
-  line-height: 1.35;
-  font-weight: 400;
+  min-height: 72vh; /* pushes footer block lower */
+  padding: 28px 24px max(20px, env(safe-area-inset-bottom));
+}
+
+.success-header {
+  margin-top: 6px;
+}
+
+.success-icon {
+  width: 56px;
+  height: 56px;
+  margin: 6px auto 22px; /* air above headline */
+}
+
+.success-headline {
+  margin: 0 0 4px;
+  font-size: 20px; /* down ~1–2pt */
+  line-height: 1.3;
+  letter-spacing: -0.01em;
   color: #0a0a0a;
-  letter-spacing: -0.02em;
+  font-weight: 400;
 }
 
-.success-recipient {
+.success-target {
+  margin: 0 0 8px;
+  font-size: 22px; /* slightly smaller than before */
+  line-height: 1.25;
   font-weight: 700;
+  color: #0a0a0a;
 }
 
-/* Bottom block: note + button */
-.success-bottom {
-  margin-top: auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+.success-spacer {
+  flex: 1; /* pushes the footer down */
 }
 
-.success-note {
-  margin: 0;
+.success-receipt {
+  margin: 0 0 14px;
   font-size: 16px;
   line-height: 22px;
-  color: rgba(0, 0, 0, 0.6);
-  text-align: center;
+  color: rgba(0, 0, 0, 0.45); /* lighter like ref */
 }
 
-/* "Got it" button */
 .success-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 56px;
-  min-width: 240px;
-  padding: 0 32px;
-  border-radius: 9999px;
+  min-width: 220px;
+  width: 80%;
+  max-width: 320px;
+  height: 52px; /* smaller button */
+  border-radius: 28px;
   background: #000;
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  padding: 0 28px;
+  margin-bottom: max(16px, env(safe-area-inset-bottom));
   border: 0;
   cursor: pointer;
   transition: background 150ms ease;
