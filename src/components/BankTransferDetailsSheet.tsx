@@ -11,7 +11,7 @@ type BankTransferDetailsSheetProps = {
 }
 
 const DETAILS = {
-  recipient: 'MULTI - INVESTIMENTOS, LDA',
+  recipient: 'MULTI - INVESTIMENTOS',
   accountNumber: '2009  8312  8100  01',
   accountType: 'Current / Cheque',
   bank: 'BCI',
