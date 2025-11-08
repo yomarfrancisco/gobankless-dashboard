@@ -141,13 +141,15 @@ All timings are configurable via environment variables:
 - `NEXT_PUBLIC_RANDOM_FLIP_MAX_MS` - Maximum interval between flip bursts (default: 60000ms / 60s)
 - `NEXT_PUBLIC_RANDOM_FLIP_MIN_COUNT` - Minimum flips per burst (default: 1)
 - `NEXT_PUBLIC_RANDOM_FLIP_MAX_COUNT` - Maximum flips per burst (default: 3)
+- `NEXT_PUBLIC_RANDOM_FLIP_BURST_STEP_MS` - Per-flip delay inside a burst (default: 350ms, must be >= CSS transition ~300ms)
 
 ### Behavior
 
 - No flips for the first 10s after mount (configurable via `QUIET_MS`)
 - After quiet period, random flip bursts occur:
   - Interval between bursts: random between `MIN_MS` and `MAX_MS`
-  - Each burst does 1-3 flips (random), spaced ~350ms apart
+  - Each burst does 1-3 flips (random), spaced `BURST_STEP_MS` apart (default 350ms)
+  - Bursts never overlap (guarded by `bursting` state)
 - Flips pause when tab is hidden; resume when visible
 - Manual/hover flip behavior is preserved
 

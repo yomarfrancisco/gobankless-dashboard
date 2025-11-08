@@ -75,22 +75,7 @@ export default function Home() {
   }, [amountMode])
 
   // Random card flips (experimental, feature-flagged)
-  const randomFlipsEnabled = process.env.NEXT_PUBLIC_ENABLE_RANDOM_CARD_FLIPS === '1'
-  const randomFlipQuietMs = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_QUIET_MS ?? 10000)
-  const randomFlipMinMs = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MIN_MS ?? 1000)
-  const randomFlipMaxMs = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MAX_MS ?? 60000)
-  const randomFlipMinCount = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MIN_COUNT ?? 1)
-  const randomFlipMaxCount = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MAX_COUNT ?? 3)
-
-  useRandomCardFlips({
-    enabled: randomFlipsEnabled,
-    quietMs: randomFlipQuietMs,
-    minMs: randomFlipMinMs,
-    maxMs: randomFlipMaxMs,
-    minFlips: randomFlipMinCount,
-    maxFlips: randomFlipMaxCount,
-    flip: () => cardStackRef.current?.cycleNext(),
-  })
+  useRandomCardFlips(cardStackRef)
 
   return (
     <div className="app-shell">

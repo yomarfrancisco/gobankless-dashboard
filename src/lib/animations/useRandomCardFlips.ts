@@ -1,99 +1,79 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
+import type React from 'react'
+import type { CardStackHandle } from '@/components/CardStack'
 
-type Opts = {
-  quietMs: number
-  minMs: number
-  maxMs: number
-  minFlips: number
-  maxFlips: number
-  enabled: boolean
-  flip: () => void // calls controller.cycleNext()
-}
+const ENABLED = process.env.NEXT_PUBLIC_ENABLE_RANDOM_CARD_FLIPS === '1'
+const QUIET_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_QUIET_MS ?? 10000)
+const MIN_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MIN_MS ?? 1000)
+const MAX_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MAX_MS ?? 60000)
+const MIN_COUNT = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MIN_COUNT ?? 1)
+const MAX_COUNT = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MAX_COUNT ?? 3)
+// Per-flip delay inside a burst (>= CSS animation ~300ms)
+const BURST_STEP_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_BURST_STEP_MS ?? 350)
 
-function randInt(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-
-export function useRandomCardFlips(opts: Opts) {
-  const timers = useRef<number[]>([])
-
+export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>) {
   useEffect(() => {
-    if (!opts.enabled) return
+    if (!ENABLED || !ref?.current) return
 
-    const clearAll = () => {
-      timers.current.forEach((t) => window.clearTimeout(t))
-      timers.current = []
+    let aborted = false
+    let bursting = false
+
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+    const rnd = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
+
+    const handleVisibility = () => {
+      // pause/resume by toggling the aborted flag softly
+      if (document.hidden) {
+        aborted = true
+      } else {
+        aborted = false
+      }
     }
 
-    const scheduleBurst = () => {
-      const delay = randInt(opts.minMs, opts.maxMs)
+    document.addEventListener('visibilitychange', handleVisibility)
 
-      const t = window.setTimeout(() => {
-        // number of flips in this burst
-        const flips = randInt(opts.minFlips, opts.maxFlips)
+    const run = async () => {
+      // initial quiet period
+      await sleep(QUIET_MS)
+
+      while (ref.current) {
+        // if hidden, idle-loop until visible again
+        while (document.hidden) {
+          await sleep(250)
+        }
+
+        // wait a random interval between bursts
+        const wait = rnd(MIN_MS, MAX_MS)
+        await sleep(wait)
+
+        if (!ref.current) break
+
+        if (bursting) continue // never overlap bursts
+
+        bursting = true
+
+        const flips = rnd(MIN_COUNT, MAX_COUNT)
 
         for (let i = 0; i < flips; i++) {
-          const tt = window.setTimeout(() => {
-            // only flip if visible
-            if (document.visibilityState === 'visible') {
-              opts.flip()
-            }
-          }, i * 350) // space > transition (300ms)
+          // safety: ensure ref still valid and page visible
+          if (!ref.current || document.hidden) break
 
-          timers.current.push(tt)
+          ref.current.cycleNext()
+
+          await sleep(BURST_STEP_MS) // allow CSS transition to finish
         }
 
-        // schedule next burst
-        scheduleBurst()
-      }, delay)
-
-      timers.current.push(t)
-    }
-
-    // initial quiet period
-    const start = () => {
-      const t0 = window.setTimeout(() => {
-        if (document.visibilityState === 'visible') {
-          scheduleBurst()
-        } else {
-          // wait until visible, then start
-          const onVisible = () => {
-            if (document.visibilityState === 'visible') {
-              document.removeEventListener('visibilitychange', onVisible)
-              scheduleBurst()
-            }
-          }
-
-          document.addEventListener('visibilitychange', onVisible)
-        }
-      }, opts.quietMs)
-
-      timers.current.push(t0)
-    }
-
-    start()
-
-    // pause/resume behavior:
-    const onHide = () => {
-      if (document.visibilityState !== 'visible') {
-        clearAll() // stop timers while hidden
+        bursting = false
       }
     }
 
-    const onShow = () => {
-      if (document.visibilityState === 'visible') {
-        scheduleBurst() // resume with a fresh schedule
-      }
-    }
-
-    document.addEventListener('visibilitychange', onHide)
-    document.addEventListener('visibilitychange', onShow)
+    run()
 
     return () => {
-      clearAll()
-      document.removeEventListener('visibilitychange', onHide)
-      document.removeEventListener('visibilitychange', onShow)
+      aborted = true
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
-  }, [opts.enabled, opts.quietMs, opts.minMs, opts.maxMs, opts.minFlips, opts.maxFlips, opts.flip])
+  }, [ref])
 }
 
