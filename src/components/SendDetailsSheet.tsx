@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import ActionSheet from './ActionSheet'
 import Image from 'next/image'
 import '@/styles/send-details-sheet.css'
@@ -27,28 +27,40 @@ export default function SendDetailsSheet({
   const toRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Focus after the open transition completes (iOS needs this)
+  // Ensure containerRef is present immediately after mount
+  useLayoutEffect(() => {
+    // This ensures DOM is ready when we need it
+  }, [open])
+
+  // Focus after the open animation completes (iOS needs this)
   useEffect(() => {
     if (!open || !autoFocusOnMount) return
 
     const el = containerRef.current
     if (!el) return
 
+    let done = false
+
     const focusNow = () => {
-      // Double RAF + small timeout is the most reliable on iOS Safari
+      if (done) return
+      done = true
+
+      // iOS: double RAF then tiny delay is most reliable AFTER animation
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setTimeout(() => {
             const input = toRef.current
             if (input) {
+              console.log('Focusing input:', input)
               input.focus({ preventScroll: true })
-              // Place caret at end to force visible cursor
+              // Put caret at end to show visible cursor
               const len = input.value.length
               try {
                 input.setSelectionRange(len, len)
               } catch {
                 // Ignore if setSelectionRange fails
               }
+              console.log('Focused:', document.activeElement === input)
             }
             onAfterAutoFocus?.()
           }, 40)
@@ -56,40 +68,51 @@ export default function SendDetailsSheet({
       })
     }
 
-    // Try after the CSS transition ends (best), else fallback timer
-    let fired = false
-    const onEnd = () => {
-      if (fired) return
-      fired = true
-      focusNow()
+    // Listen for CSS *animation* end (we use keyframes, not transitions)
+    const onAnimEnd = (e: Event) => {
+      const animEvent = e as AnimationEvent
+      // Only listen to the slideUp animation on the sheet
+      if (animEvent.animationName === 'slideUp') {
+        console.log('animationend fired for slideUp')
+        focusNow()
+      }
     }
 
     // Find the parent .as-sheet element that has the animation
-    // Use a small delay to ensure the element is in the DOM
     const findSheetAndListen = () => {
       const sheetElement = el.closest('.as-sheet')
       if (sheetElement) {
-        sheetElement.addEventListener('transitionend', onEnd, { once: true })
+        console.log('Found sheet element, adding animationend listener')
+        sheetElement.addEventListener('animationend', onAnimEnd, { once: true })
         return sheetElement
       }
+      console.log('Sheet element not found yet')
       return null
     }
 
     const sheetElement = findSheetAndListen()
     // Retry if not found immediately (portal might not be ready)
     if (!sheetElement) {
-      setTimeout(findSheetAndListen, 10)
+      setTimeout(() => {
+        const retryElement = findSheetAndListen()
+        if (!retryElement) {
+          console.log('Sheet element still not found, using fallback')
+        }
+      }, 10)
     }
 
-    // Fallback if no transition event fires
-    const t = setTimeout(onEnd, 300)
+    // Fallback after animation duration + buffer (300ms animation + 60ms buffer)
+    const fallback = setTimeout(() => {
+      console.log('Fallback timer fired')
+      focusNow()
+    }, 360)
 
     return () => {
       const sheet = el.closest('.as-sheet')
       if (sheet) {
-        sheet.removeEventListener('transitionend', onEnd)
+        sheet.removeEventListener('animationend', onAnimEnd)
       }
-      clearTimeout(t)
+      clearTimeout(fallback)
     }
   }, [open, autoFocusOnMount, onAfterAutoFocus])
 
