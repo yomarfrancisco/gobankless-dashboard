@@ -27,12 +27,7 @@ export default function SendDetailsSheet({
   const toRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Ensure containerRef is present immediately after mount
-  useLayoutEffect(() => {
-    // This ensures DOM is ready when we need it
-  }, [open])
-
-  // Focus after the open animation completes (iOS needs this)
+  // Hand off focus from shim to real input after animation completes
   useEffect(() => {
     if (!open || !autoFocusOnMount) return
 
@@ -41,40 +36,32 @@ export default function SendDetailsSheet({
 
     let done = false
 
-    const focusNow = () => {
+    const handoff = () => {
       if (done) return
       done = true
 
-      // iOS: double RAF then tiny delay is most reliable AFTER animation
+      // Allow paint after animation then move focus
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setTimeout(() => {
-            const input = toRef.current
-            if (input) {
-              console.log('Focusing input:', input)
-              input.focus({ preventScroll: true })
-              // Put caret at end to show visible cursor
-              const len = input.value.length
-              try {
-                input.setSelectionRange(len, len)
-              } catch {
-                // Ignore if setSelectionRange fails
-              }
-              console.log('Focused:', document.activeElement === input)
+            toRef.current?.focus({ preventScroll: true })
+            try {
+              const len = toRef.current?.value.length ?? 0
+              toRef.current?.setSelectionRange(len, len)
+            } catch {
+              // Ignore if setSelectionRange fails
             }
             onAfterAutoFocus?.()
-          }, 40)
+          }, 30)
         })
       })
     }
 
-    // Listen for CSS *animation* end (we use keyframes, not transitions)
     const onAnimEnd = (e: Event) => {
       const animEvent = e as AnimationEvent
       // Only listen to the slideUp animation on the sheet
       if (animEvent.animationName === 'slideUp') {
-        console.log('animationend fired for slideUp')
-        focusNow()
+        handoff()
       }
     }
 
@@ -82,11 +69,9 @@ export default function SendDetailsSheet({
     const findSheetAndListen = () => {
       const sheetElement = el.closest('.as-sheet')
       if (sheetElement) {
-        console.log('Found sheet element, adding animationend listener')
         sheetElement.addEventListener('animationend', onAnimEnd, { once: true })
         return sheetElement
       }
-      console.log('Sheet element not found yet')
       return null
     }
 
@@ -94,18 +79,12 @@ export default function SendDetailsSheet({
     // Retry if not found immediately (portal might not be ready)
     if (!sheetElement) {
       setTimeout(() => {
-        const retryElement = findSheetAndListen()
-        if (!retryElement) {
-          console.log('Sheet element still not found, using fallback')
-        }
+        findSheetAndListen()
       }, 10)
     }
 
-    // Fallback after animation duration + buffer (300ms animation + 60ms buffer)
-    const fallback = setTimeout(() => {
-      console.log('Fallback timer fired')
-      focusNow()
-    }, 360)
+    // Fallback after animation duration + buffer (300ms animation + 80ms buffer)
+    const fallback = setTimeout(handoff, 380)
 
     return () => {
       const sheet = el.closest('.as-sheet')

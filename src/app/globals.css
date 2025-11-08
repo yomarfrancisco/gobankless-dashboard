@@ -862,3 +862,17 @@ body {
   background: #ff1a42;
 }
 
+/* iOS keyboard shim - hidden input to preserve user gesture context */
+.ios-keyboard-shim {
+  position: fixed;
+  /* must be in the viewport and not display:none/visibility:hidden */
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0.01;
+  border: 0;
+  padding: 0;
+  z-index: -1; /* still focusable */
+}
+

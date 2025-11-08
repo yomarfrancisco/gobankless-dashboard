@@ -41,7 +41,18 @@ export default function Home() {
     if (amountMode === 'send') {
       setSendAmountZAR(amountZAR)
       setOpenAmount(false)
-      // Same user gesture that opens the sheet also arms autofocus
+      
+      // iOS: Focus shim synchronously during the same tap to preserve user gesture context
+      const isIOS = typeof navigator !== 'undefined' &&
+        (/iP(ad|hone|od)/.test(navigator.platform) ||
+          (navigator.userAgent.includes('Mac') && 'ontouchend' in document))
+      
+      if (isIOS) {
+        const shim = document.getElementById('ios-keyboard-shim') as HTMLInputElement | null
+        shim?.focus()
+      }
+      
+      // Arm autofocus and open sheet
       setShouldAutoFocusSend(true)
       setTimeout(() => setOpenSendDetails(true), 220)
     }
