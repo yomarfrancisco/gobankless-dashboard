@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import ActionSheet from './ActionSheet'
 import Image from 'next/image'
+import USDTWarningNote from './USDTWarningNote'
 import '@/styles/send-details-sheet.css'
 
 type SendDetailsSheetProps = {
@@ -75,6 +76,7 @@ export default function SendDetailsSheet({
               type="text"
             />
             <div className="send-details-underline" />
+            {sendMethod === 'wallet' && <USDTWarningNote />}
           </label>
           <label className="send-details-row">
             <span className="send-details-label">For</span>
