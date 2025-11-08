@@ -8,6 +8,7 @@ import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
+import SendToWalletSheet from '@/components/sheets/SendToWalletSheet'
 import SuccessSheet from '@/components/SuccessSheet'
 
 export default function Home() {
@@ -17,10 +18,12 @@ export default function Home() {
   const [openAmount, setOpenAmount] = useState(false)
   const [openDirectPayment, setOpenDirectPayment] = useState(false)
   const [openSendDetails, setOpenSendDetails] = useState(false)
+  const [openSendToWallet, setOpenSendToWallet] = useState(false)
   const [openSendSuccess, setOpenSendSuccess] = useState(false)
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
   const [sendAmountZAR, setSendAmountZAR] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
+  const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -30,6 +33,7 @@ export default function Home() {
   const closeWithdraw = useCallback(() => setOpenWithdraw(false), [])
   const closeAmount = useCallback(() => setOpenAmount(false), [])
   const closeSendDetails = useCallback(() => setOpenSendDetails(false), [])
+  const closeSendToWallet = useCallback(() => setOpenSendToWallet(false), [])
   const closeSendSuccess = useCallback(() => {
     setOpenSendSuccess(false)
     setSendRecipient('')
@@ -39,6 +43,7 @@ export default function Home() {
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
     if (method === 'email' || method === 'wallet' || method === 'brics') {
       setAmountMode('send')
+      setSendMethod(method)
       setOpenDirectPayment(false)
       setTimeout(() => setOpenAmount(true), 220)
     }
@@ -49,9 +54,14 @@ export default function Home() {
       setSendAmountZAR(amountZAR)
       setOpenAmount(false)
       
-      setTimeout(() => setOpenSendDetails(true), 220)
+      // Route to appropriate sheet based on method
+      if (sendMethod === 'wallet') {
+        setTimeout(() => setOpenSendToWallet(true), 220)
+      } else {
+        setTimeout(() => setOpenSendDetails(true), 220)
+      }
     }
-  }, [amountMode])
+  }, [amountMode, sendMethod])
 
   return (
     <div className="app-shell">
@@ -154,6 +164,18 @@ export default function Home() {
           console.log('PAY', payload)
           setSendRecipient(payload.to)
           setOpenSendDetails(false)
+          setTimeout(() => setOpenSendSuccess(true), 220)
+        }}
+      />
+      <SendToWalletSheet
+        open={openSendToWallet}
+        onClose={closeSendToWallet}
+        amountZAR={sendAmountZAR}
+        onConfirm={(address) => {
+          console.log('WALLET PAY', { address, amountZAR: sendAmountZAR })
+          // Pass raw address (no shortening)
+          setSendRecipient(address)
+          setOpenSendToWallet(false)
           setTimeout(() => setOpenSendSuccess(true), 220)
         }}
       />

@@ -1,0 +1,315 @@
+/* Hide ActionSheet's default header */
+.sheet :global(.as-header) {
+  display: none;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sheet-header-offset, 64px) 24px 24px;
+  min-height: 0;
+  max-height: calc(92vh - var(--sheet-header-offset, 64px));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.title {
+  font: 300 22px/1.2 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: -0.22px;
+  margin: 0;
+  color: #0a0a0a;
+  text-align: left;
+  flex: 1;
+}
+
+.close {
+  width: 32px;
+  height: 32px;
+  border-radius: 27px;
+  background: #e9e9eb;
+  display: grid;
+  place-items: center;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: background 150ms ease;
+  flex-shrink: 0;
+  color: #0a0a0a;
+}
+
+.close:hover {
+  background: #d1d1d6;
+}
+
+.close:active {
+  background: #c7c7cc;
+}
+
+.subtitle {
+  margin-top: 4px;
+  opacity: 0.5;
+  text-align: center;
+  font-size: 14px;
+  color: #0a0a0a;
+  margin-bottom: 24px;
+}
+
+.card {
+  margin: 24px 16px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.fieldLabel {
+  font-weight: 300;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #0a0a0a;
+}
+
+.fieldWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d1d1d6;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fff;
+}
+
+.fieldInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font: inherit;
+  font-size: 16px;
+  color: #0a0a0a;
+  background: transparent;
+  padding: 4px 8px;
+}
+
+.fieldInput::placeholder {
+  color: #999;
+  opacity: 0.6;
+}
+
+.pasteBtn {
+  height: 40px;
+  min-width: 80px;
+  border-radius: 8px;
+  background: #e5e5ea;
+  border: 0;
+  color: #0a0a0a;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+  padding: 0 16px;
+}
+
+.pasteBtn:hover {
+  background: #d1d1d6;
+}
+
+.pasteBtn:active {
+  background: #c7c7cc;
+}
+
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 20px;
+  margin-top: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.infoIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.infoText {
+  flex: 1;
+}
+
+.cta {
+  width: 272px;
+  height: 56px;
+  border-radius: 56px;
+  margin: 32px auto 0;
+  background: #000;
+  color: #fff;
+  border: 0;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, opacity 150ms ease;
+  padding: 0 28px;
+}
+
+.cta:hover:not(:disabled) {
+  background: #333;
+}
+
+.cta:active:not(:disabled) {
+  background: #111;
+}
+
+.cta:disabled {
+  background: #e9e9eb;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.instructions {
+  margin-top: 48px;
+  padding-bottom: 32px;
+}
+
+.instructionsTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0a0a0a;
+  margin: 0 0 24px;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.step:last-of-type {
+  margin-bottom: 0;
+}
+
+.stepNumber {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.stepContent {
+  flex: 1;
+}
+
+.stepText {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0a0a0a;
+  margin: 0 0 12px;
+}
+
+.walletLogos {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.walletLogo {
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.placeholderImage {
+  margin-top: 8px;
+}
+
+.instructionImage {
+  border-radius: 12px;
+  object-fit: cover;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+}
+
+.miniInputMock {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.miniInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d1d6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0a0a0a;
+  background: #fff;
+  font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+}
+
+.miniPasteBtn {
+  height: 36px;
+  min-width: 60px;
+  border-radius: 8px;
+  background: #e5e5ea;
+  border: 0;
+  color: #0a0a0a;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.miniCtaMock {
+  margin-top: 12px;
+}
+
+.miniSendBtn {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 40px;
+  background: #000;
+  color: #fff;
+  border: 0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tipPanel {
+  margin-top: 32px;
+  padding: 16px;
+  background: rgba(0, 200, 0, 0.08);
+  border-radius: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.tipIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tipText {
+  flex: 1;
+  font-size: 14px;
+  line-height: 20px;
+  color: #0a0a0a;
+  margin: 0;
+}
+
