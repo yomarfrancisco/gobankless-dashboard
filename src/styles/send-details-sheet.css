@@ -54,6 +54,14 @@
   flex: 1;
 }
 
+.send-details-subtitle {
+  font: 400 16px/1.2 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: -0.23px;
+  margin: 4px 0 0;
+  color: #0a0a0a;
+  text-align: center;
+}
+
 .send-details-pay {
   padding: 8px 16px;
   background: #000;

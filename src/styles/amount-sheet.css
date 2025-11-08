@@ -166,10 +166,23 @@
 }
 
 .amount-keypad__cta:disabled {
-  background: #E9E9EB;
-  color: #999;
+  background: #E5E5EA !important;
+  color: #FFFFFF !important;
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 1 !important;
+}
+
+.amount-keypad__cta:not([disabled]):not([aria-disabled="true"]) {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+.amount-keypad__cta:not([disabled]):not([aria-disabled="true"]) .amount-keypad__cta-arrow {
+  color: #FFFFFF !important;
+}
+
+.amount-keypad__cta:disabled .amount-keypad__cta-arrow {
+  color: #FFFFFF !important;
 }
 
 .amount-keypad__cta-arrow {

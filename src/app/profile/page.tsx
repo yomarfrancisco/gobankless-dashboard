@@ -9,6 +9,7 @@ import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
+import { formatUSDT } from '@/lib/money'
 
 export default function ProfilePage() {
   const [openDeposit, setOpenDeposit] = useState(false)
@@ -19,6 +20,7 @@ export default function ProfilePage() {
   const [openSendSuccess, setOpenSendSuccess] = useState(false)
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
   const [sendAmountZAR, setSendAmountZAR] = useState(0)
+  const [sendAmountUSDT, setSendAmountUSDT] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
 
@@ -34,6 +36,7 @@ export default function ProfilePage() {
     setOpenSendSuccess(false)
     setSendRecipient('')
     setSendAmountZAR(0)
+    setSendAmountUSDT(0)
   }, [])
 
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
@@ -48,6 +51,9 @@ export default function ProfilePage() {
   const handleAmountSubmit = useCallback((amountZAR: number) => {
     if (amountMode === 'send') {
       setSendAmountZAR(amountZAR)
+      // Calculate USDT amount (using same rate as AmountSheet: 18.1)
+      const fxRateZARperUSDT = 18.1
+      setSendAmountUSDT(amountZAR / fxRateZARperUSDT)
       setOpenAmount(false)
       
       setTimeout(() => setOpenSendDetails(true), 220)
@@ -190,6 +196,7 @@ export default function ProfilePage() {
         open={openSendDetails}
         onClose={closeSendDetails}
         amountZAR={sendAmountZAR}
+        amountUSDT={sendAmountUSDT}
         sendMethod={sendMethod}
         onPay={(payload) => {
           console.log('PAY', payload)
@@ -201,7 +208,7 @@ export default function ProfilePage() {
       <SuccessSheet
         open={openSendSuccess}
         onClose={closeSendSuccess}
-        amountZAR={`R ${sendAmountZAR.toLocaleString('en-ZA', {
+        amountZAR={sendMethod === 'wallet' ? formatUSDT(sendAmountUSDT) : `R ${sendAmountZAR.toLocaleString('en-ZA', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`}

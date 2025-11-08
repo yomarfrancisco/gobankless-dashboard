@@ -4,12 +4,14 @@ import { useState, useRef } from 'react'
 import ActionSheet from './ActionSheet'
 import Image from 'next/image'
 import USDTWarningNote from './USDTWarningNote'
+import { formatUSDT } from '@/lib/money'
 import '@/styles/send-details-sheet.css'
 
 type SendDetailsSheetProps = {
   open: boolean
   onClose: () => void
   amountZAR: number // from AmountSheet
+  amountUSDT?: number // from AmountSheet
   sendMethod?: 'email' | 'wallet' | 'brics' | null
   onPay?: (payload: { to: string; note?: string; amountZAR: number }) => void
 }
@@ -18,6 +20,7 @@ export default function SendDetailsSheet({
   open, 
   onClose, 
   amountZAR,
+  amountUSDT,
   sendMethod,
   onPay
 }: SendDetailsSheetProps) {
@@ -49,7 +52,16 @@ export default function SendDetailsSheet({
           <button className="send-details-close" onClick={onClose} aria-label="Close">
             <Image src="/assets/clear.svg" alt="" width={18} height={18} />
           </button>
-          <h3 className="send-details-title">{`Send R${formattedAmount}`}</h3>
+          {sendMethod === 'wallet' ? (
+            <div>
+              <h3 className="send-details-title">Send</h3>
+              {amountUSDT !== undefined && (
+                <p className="send-details-subtitle">{formatUSDT(amountUSDT)}</p>
+              )}
+            </div>
+          ) : (
+            <h3 className="send-details-title">{`Send R${formattedAmount}`}</h3>
+          )}
           <button
             className="send-details-pay"
             disabled={!canPay}
@@ -78,18 +90,20 @@ export default function SendDetailsSheet({
             <div className="send-details-underline" />
             {sendMethod === 'wallet' && <USDTWarningNote />}
           </label>
-          <label className="send-details-row">
-            <span className="send-details-label">For</span>
-            <input
-              className="send-details-input"
-              placeholder="add a note or reference"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              inputMode="text"
-              type="text"
-            />
-            <div className="send-details-underline" />
-          </label>
+          {sendMethod !== 'wallet' && (
+            <label className="send-details-row">
+              <span className="send-details-label">For</span>
+              <input
+                className="send-details-input"
+                placeholder="add a note or reference"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                inputMode="text"
+                type="text"
+              />
+              <div className="send-details-underline" />
+            </label>
+          )}
         </div>
       </div>
     </ActionSheet>
