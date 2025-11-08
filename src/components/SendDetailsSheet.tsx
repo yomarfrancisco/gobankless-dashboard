@@ -77,7 +77,13 @@ export default function SendDetailsSheet({
             <input
               ref={toRef}
               className="send-details-input"
-              placeholder={sendMethod === 'wallet' ? 'USDT address' : 'email or phone'}
+              placeholder={
+                sendMethod === 'wallet' 
+                  ? 'USDT address' 
+                  : sendMethod === 'brics' 
+                  ? '@handle' 
+                  : 'email or phone'
+              }
               value={to}
               onChange={(e) => setTo(e.target.value)}
               inputMode={sendMethod === 'wallet' ? 'text' : 'email'}
