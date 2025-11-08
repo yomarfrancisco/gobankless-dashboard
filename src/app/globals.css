@@ -1,5 +1,6 @@
 @import '../styles/card-amounts.css';
 @import '../styles/success-sheet.css';
+@import '../styles/payment-sheet.css';
 
 :root {
   --top-safe: 176px;

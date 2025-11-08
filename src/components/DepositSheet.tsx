@@ -1,5 +1,6 @@
 'use client'
 
+import { MailPlus, CircleDollarSign, Contact } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 
@@ -25,17 +26,20 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
         {
           title: 'Email or Phone',
           caption: 'Send a link to pay via email or phone.',
-          method: 'email' as const
+          method: 'email' as const,
+          icon: <MailPlus size={22} strokeWidth={2} />
         },
         {
           title: 'USDT Wallet',
           caption: 'Transfer to any wallet on Tron, Ethereum, or Solana.',
-          method: 'wallet' as const
+          method: 'wallet' as const,
+          icon: <CircleDollarSign size={22} strokeWidth={2} />
         },
         {
           title: 'Member Handle',
           caption: 'Send to another BRICS or GoBankless user.',
-          method: 'brics' as const
+          method: 'brics' as const,
+          icon: <Contact size={22} strokeWidth={2} />
         }
       ]
     : [
@@ -58,15 +62,19 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
 
   return (
     <ActionSheet open={open} onClose={onClose} title={title}>
-      {options.map((option) => (
-        <ActionSheetItem
-          key={option.method}
-          iconSrc="/assets/up right.svg"
-          title={option.title}
-          caption={option.caption}
-          onClick={() => handleSelect(option.method)}
-        />
-      ))}
+      {options.map((option) => {
+        const hasIcon = variant === 'direct-payment' && 'icon' in option
+        return (
+          <ActionSheetItem
+            key={option.method}
+            iconSrc={variant === 'direct-payment' ? undefined : '/assets/up right.svg'}
+            icon={hasIcon ? option.icon : undefined}
+            title={option.title}
+            caption={option.caption}
+            onClick={() => handleSelect(option.method)}
+          />
+        )
+      })}
     </ActionSheet>
   )
 }

@@ -1,22 +1,24 @@
 'use client'
 
 import Image from 'next/image'
+import { ReactNode } from 'react'
 import '@/styles/action-sheet.css'
 import styles from './ActionSheetItem.module.css'
 
 type Props = {
-  iconSrc: string
+  iconSrc?: string
+  icon?: ReactNode
   title: string
   caption?: string
   onClick?: () => void
 }
 
-export default function ActionSheetItem({ iconSrc, title, caption, onClick }: Props) {
+export default function ActionSheetItem({ iconSrc, icon, title, caption, onClick }: Props) {
   return (
     <button className="asi" onClick={onClick}>
       <div className="asi-left">
         <div className="asi-icon">
-          <Image src={iconSrc} alt="" width={24} height={24} />
+          {icon ? icon : iconSrc && <Image src={iconSrc} alt="" width={24} height={24} />}
         </div>
         <div className="asi-texts">
           <div className="asi-title">{title}</div>
