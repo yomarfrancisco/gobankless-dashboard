@@ -1,0 +1,80 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 76dvh; /* clear separation */
+  padding: 24px 20px 28px;
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; /* tight icon↔headline gap */
+  margin-top: 12px;
+}
+
+.tick {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.headline {
+  font-size: 22px; /* readable but not huge */
+  line-height: 1.4;
+  font-weight: 400;
+  color: #0a0a0a;
+  margin: 0;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 56px; /* big visual break before footer */
+}
+
+.proof {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(10, 10, 10, 0.6);
+  margin: 0;
+}
+
+.cta {
+  width: 176px; /* smaller than current */
+  height: 56px;
+  border: none;
+  border-radius: 9999px;
+  background: #000;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.cta:hover {
+  background: #333;
+}
+
+.cta:active {
+  background: #111;
+}
+
+@media (max-width: 390px) {
+  .wrap {
+    padding: 20px 16px 24px;
+  }
+  .headline {
+    font-size: 20px;
+  }
+}
+

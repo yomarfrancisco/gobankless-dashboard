@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import Image from 'next/image'
 import ActionSheet from './ActionSheet'
+import styles from './SendSuccessSheet.module.css'
 import '@/styles/send-success-sheet.css'
 
 type SendSuccessSheetProps = {
@@ -37,23 +37,25 @@ export default function SendSuccessSheet({
 
   return (
     <ActionSheet open={open} onClose={onClose} title="" className="send-success">
-      <div className="sx-wrap" role="dialog" aria-labelledby="sx-title">
-        <Image
-          src="/assets/checkmark_circle_outlined.png"
-          alt=""
-          width={64}
-          height={64}
-          priority
-        />
-        <h2 id="sx-title" className="sx-title" aria-live="polite">
-          You sent {amountZAR} to
-          <br />
-          <strong>{recipient}</strong>
-        </h2>
-        <p className="sx-sub">Proof of payment will be emailed to you</p>
-        <button className="sx-btn" onClick={onClose}>
-          Got it
-        </button>
+      <div className={styles.wrap} role="dialog" aria-labelledby="sx-title">
+        <div className={styles.header}>
+          <img
+            src="/assets/checkmark_circle_outlined.png"
+            alt=""
+            className={styles.tick}
+          />
+          <h2 id="sx-title" className={styles.headline} aria-live="polite">
+            You sent {amountZAR} to
+            <br />
+            <span className={styles.bold}>{recipient}</span>
+          </h2>
+        </div>
+        <div className={styles.footer}>
+          <p className={styles.proof}>Proof of payment will be emailed to you</p>
+          <button className={styles.cta} onClick={onClose}>
+            Got it
+          </button>
+        </div>
       </div>
     </ActionSheet>
   )
