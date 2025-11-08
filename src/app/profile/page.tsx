@@ -8,7 +8,7 @@ import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
-import SendSuccessSheet from '@/components/SendSuccessSheet'
+import SuccessSheet from '@/components/SuccessSheet'
 
 export default function ProfilePage() {
   const [openDeposit, setOpenDeposit] = useState(false)
@@ -195,7 +195,7 @@ export default function ProfilePage() {
           setTimeout(() => setOpenSendSuccess(true), 220)
         }}
       />
-      <SendSuccessSheet
+      <SuccessSheet
         open={openSendSuccess}
         onClose={closeSendSuccess}
         amountZAR={`R ${sendAmountZAR.toLocaleString('en-ZA', {

@@ -8,7 +8,7 @@ import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
-import SendSuccessSheet from '@/components/SendSuccessSheet'
+import SuccessSheet from '@/components/SuccessSheet'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
@@ -157,7 +157,7 @@ export default function Home() {
           setTimeout(() => setOpenSendSuccess(true), 220)
         }}
       />
-      <SendSuccessSheet
+      <SuccessSheet
         open={openSendSuccess}
         onClose={closeSendSuccess}
         amountZAR={`R ${sendAmountZAR.toLocaleString('en-ZA', {

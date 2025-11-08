@@ -3,10 +3,10 @@
   display: none;
 }
 
-/* Set height for success sheet to match Amount sheet (92vh) */
+/* Set height for success sheet (82vh) */
 .as-sheet.send-success {
-  height: 92vh;
-  max-height: 92vh;
-  min-height: 92vh;
+  height: 82vh;
+  max-height: 82vh;
+  min-height: 82vh;
 }
 

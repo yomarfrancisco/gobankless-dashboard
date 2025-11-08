@@ -1,0 +1,86 @@
+.success-wrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px;
+}
+
+/* Top block: tick + title */
+.success-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+  gap: 24px;
+}
+
+/* SVG tick */
+.success-tick {
+  width: 64px;
+  height: 64px;
+  color: #0a0a0a;
+  stroke-width: 1.8;
+}
+
+/* Title text */
+.success-title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(20px, 4.8vw, 28px);
+  line-height: 1.35;
+  font-weight: 400;
+  color: #0a0a0a;
+  letter-spacing: -0.02em;
+}
+
+.success-recipient {
+  font-weight: 700;
+}
+
+/* Bottom block: note + button */
+.success-bottom {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.success-note {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+/* "Got it" button */
+.success-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  min-width: 240px;
+  padding: 0 32px;
+  border-radius: 9999px;
+  background: #000;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  border: 0;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.success-btn:hover {
+  background: #333;
+}
+
+.success-btn:active {
+  background: #111;
+}
+
