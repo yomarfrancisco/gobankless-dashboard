@@ -1,5 +1,6 @@
 'use client'
 
+import { Landmark, Wallet } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 
@@ -19,19 +20,13 @@ export default function WithdrawSheet({ open, onClose, onSelect }: Props) {
   return (
     <ActionSheet open={open} onClose={onClose} title="Withdraw method">
       <ActionSheetItem
-        iconSrc="/assets/down-left.svg"
+        icon={<Landmark size={22} strokeWidth={2} />}
         title="Bank account"
         caption="Send ZAR to your linked bank account."
         onClick={() => handleSelect('bank')}
       />
       <ActionSheetItem
-        iconSrc="/assets/down-left.svg"
-        title="Debit/Credit reversal"
-        caption="Refund to your linked card if supported."
-        onClick={() => handleSelect('card')}
-      />
-      <ActionSheetItem
-        iconSrc="/assets/down-left.svg"
+        icon={<Wallet size={22} strokeWidth={2} />}
         title="External crypto wallet"
         caption="Send USDT to an external wallet."
         onClick={() => handleSelect('crypto')}

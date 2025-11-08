@@ -1,6 +1,6 @@
 'use client'
 
-import { MailPlus, Globe, AtSign } from 'lucide-react'
+import { MailPlus, Globe, AtSign, Landmark, CreditCard, Wallet } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 
@@ -46,28 +46,31 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
         {
           title: 'Direct bank transfer',
           caption: 'Link your bank account. Deposits reflect in 2–3 days.',
-          method: 'bank' as const
+          method: 'bank' as const,
+          icon: <Landmark size={22} strokeWidth={2} />
         },
         {
           title: 'Debit or Credit',
           caption: 'Link your card for instant deposits.',
-          method: 'card' as const
+          method: 'card' as const,
+          icon: <CreditCard size={22} strokeWidth={2} />
         },
         {
           title: 'Crypto wallet',
           caption: 'Receive USDT directly from an external wallet.',
-          method: 'crypto' as const
+          method: 'crypto' as const,
+          icon: <Wallet size={22} strokeWidth={2} />
         }
       ]
 
   return (
     <ActionSheet open={open} onClose={onClose} title={title}>
       {options.map((option) => {
-        const hasIcon = variant === 'direct-payment' && 'icon' in option
+        const hasIcon = 'icon' in option && option.icon
         return (
           <ActionSheetItem
             key={option.method}
-            iconSrc={variant === 'direct-payment' ? undefined : '/assets/up right.svg'}
+            iconSrc={hasIcon ? undefined : '/assets/up right.svg'}
             icon={hasIcon ? option.icon : undefined}
             title={option.title}
             caption={option.caption}
