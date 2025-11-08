@@ -5,6 +5,8 @@ import { useState, useRef, useEffect } from 'react'
 import type { StaticImageData } from 'next/image'
 import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
 import CardAmounts from './CardAmounts'
+import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
+import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
 
 // Temporary FX rate (will be wired to real API later)
 const FX_USD_ZAR_DEFAULT = 18.1
@@ -143,33 +145,44 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
       // During animation, temporarily reassign classes so middle/back animate smoothly
       if (position === 0) {
         // Top card: keep pos-top but add cycling-out
-        positionClass = 'pos-top'
+        positionClass = CARD_FLIP_CLASSES.posTop
       } else if (position === 1) {
         // Middle card: temporarily becomes pos-top (will animate to top position)
-        positionClass = 'pos-top'
+        positionClass = CARD_FLIP_CLASSES.posTop
       } else if (position === 2) {
         // Back card: temporarily becomes pos-mid (will animate to middle position)
-        positionClass = 'pos-mid'
+        positionClass = CARD_FLIP_CLASSES.posMid
       }
     } else {
       // Normal state: map position to class
       if (position === 0) {
-        positionClass = 'pos-top'
+        positionClass = CARD_FLIP_CLASSES.posTop
       } else if (position === 1) {
-        positionClass = 'pos-mid'
+        positionClass = CARD_FLIP_CLASSES.posMid
       } else {
-        positionClass = 'pos-back'
+        positionClass = CARD_FLIP_CLASSES.posBack
       }
     }
 
-    return `card ${positionClass} ${isCyclingOut ? 'cycling-out' : ''} ${!isTop ? 'no-hover' : ''}`
+    return `${CARD_FLIP_CLASSES.card} ${positionClass} ${isCyclingOut ? CARD_FLIP_CLASSES.cyclingOut : ''} ${!isTop ? CARD_FLIP_CLASSES.noHover : ''}`
   }
 
+  // Debug logging when flag is enabled
+  useEffect(() => {
+    if (DEV_CARD_FLIP_DEBUG) {
+      console.debug('[CardFlip]', 'CardStack', 'mounted')
+    }
+  }, [])
+
   return (
-    <div className="stack">
+    <div className={CARD_FLIP_CLASSES.stack}>
       {cardsData.map((card, index) => {
         const position = order.indexOf(index)
         const isTop = position === 0
+
+        if (DEV_CARD_FLIP_DEBUG && isTop) {
+          console.debug('[CardFlip]', `CardStack-${index}`, 'top card rendered')
+        }
 
         return (
           <div

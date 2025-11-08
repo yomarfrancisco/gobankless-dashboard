@@ -239,73 +239,8 @@ body {
   opacity: 0.5;
 }
 
-/* Card Stack */
-.stack {
-  position: relative;
-  width: 100%;
-  max-width: 398px;
-  height: 286px;
-  margin: 16px auto;
-}
-
-.card {
-  position: absolute;
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 8px 28px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  transition: transform 300ms ease, opacity 300ms ease, box-shadow 300ms ease, width 300ms ease, height 300ms ease, left 300ms ease, top 300ms ease;
-  will-change: transform, left, top, width, height;
-}
-
-.card.no-hover {
-  pointer-events: none;
-}
-
-.card:hover:not(.no-hover) {
-  transform: translateY(-4px);
-}
-
-/* Position classes */
-.pos-top {
-  z-index: 3;
-  left: 0;
-  top: 0;
-  width: 100%;
-  max-width: 398px;
-  height: 238px;
-}
-
-.pos-mid {
-  z-index: 2;
-  left: 16px;
-  top: 50px;
-  width: calc(100% - 32px);
-  max-width: 366px;
-  height: 213px;
-}
-
-.pos-back {
-  z-index: 1;
-  left: 32px;
-  top: 100px;
-  width: calc(100% - 64px);
-  max-width: 334px;
-  height: 193px;
-}
-
-/* Cycling animation */
-.card.cycling-out {
-  transform: translateY(-120%);
-  opacity: 0;
-}
-
-/* Accessibility: respect prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  .card {
-    transition: none;
-  }
-}
+/* Card Stack - Animation styles moved to src/styles/card-flip.css */
+@import '../styles/card-flip.css';
 
 .card img {
   width: 100%;
