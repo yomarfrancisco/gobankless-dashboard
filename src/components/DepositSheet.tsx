@@ -1,6 +1,6 @@
 'use client'
 
-import { MailPlus, CircleDollarSign, Contact } from 'lucide-react'
+import { MailPlus, Globe, AtSign } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 
@@ -30,16 +30,16 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
           icon: <MailPlus size={22} strokeWidth={2} />
         },
         {
-          title: 'USDT Wallet',
+          title: 'External USDT Wallet',
           caption: 'Transfer to any wallet on Tron, Ethereum, or Solana.',
           method: 'wallet' as const,
-          icon: <CircleDollarSign size={22} strokeWidth={2} />
+          icon: <Globe size={22} strokeWidth={2} />
         },
         {
-          title: 'Member Handle',
+          title: 'GoBankless Handle',
           caption: 'Send to another BRICS or GoBankless user.',
           method: 'brics' as const,
-          icon: <Contact size={22} strokeWidth={2} />
+          icon: <AtSign size={22} strokeWidth={2} />
         }
       ]
     : [
