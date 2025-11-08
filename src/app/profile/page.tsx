@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const [openAmount, setOpenAmount] = useState(false)
   const [openDirectPayment, setOpenDirectPayment] = useState(false)
   const [openSendDetails, setOpenSendDetails] = useState(false)
+  const [shouldAutoFocusSend, setShouldAutoFocusSend] = useState(false)
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
   const [sendAmountZAR, setSendAmountZAR] = useState(0)
 
@@ -39,6 +40,8 @@ export default function ProfilePage() {
     if (amountMode === 'send') {
       setSendAmountZAR(amountZAR)
       setOpenAmount(false)
+      // Same user gesture that opens the sheet also arms autofocus
+      setShouldAutoFocusSend(true)
       setTimeout(() => setOpenSendDetails(true), 220)
     }
   }, [amountMode])
@@ -179,6 +182,8 @@ export default function ProfilePage() {
         open={openSendDetails}
         onClose={closeSendDetails}
         amountZAR={sendAmountZAR}
+        autoFocusOnMount={shouldAutoFocusSend}
+        onAfterAutoFocus={() => setShouldAutoFocusSend(false)}
         onPay={(payload) => {
           console.log('PAY', payload)
           setOpenSendDetails(false)

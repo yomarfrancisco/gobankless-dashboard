@@ -10,25 +10,88 @@ type SendDetailsSheetProps = {
   onClose: () => void
   amountZAR: number // from AmountSheet
   onPay?: (payload: { to: string; note?: string; amountZAR: number }) => void
+  autoFocusOnMount?: boolean
+  onAfterAutoFocus?: () => void
 }
 
-export default function SendDetailsSheet({ open, onClose, amountZAR, onPay }: SendDetailsSheetProps) {
+export default function SendDetailsSheet({ 
+  open, 
+  onClose, 
+  amountZAR, 
+  onPay,
+  autoFocusOnMount = false,
+  onAfterAutoFocus
+}: SendDetailsSheetProps) {
   const [to, setTo] = useState('')
   const [note, setNote] = useState('')
   const toRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  // iOS: focus after open animation to reliably show keyboard
+  // Focus after the open transition completes (iOS needs this)
   useEffect(() => {
-    if (!open) return
+    if (!open || !autoFocusOnMount) return
 
-    const id = window.requestAnimationFrame(() => {
-      setTimeout(() => {
-        toRef.current?.focus({ preventScroll: true })
-      }, 150)
-    })
+    const el = containerRef.current
+    if (!el) return
 
-    return () => cancelAnimationFrame(id)
-  }, [open])
+    const focusNow = () => {
+      // Double RAF + small timeout is the most reliable on iOS Safari
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            const input = toRef.current
+            if (input) {
+              input.focus({ preventScroll: true })
+              // Place caret at end to force visible cursor
+              const len = input.value.length
+              try {
+                input.setSelectionRange(len, len)
+              } catch {
+                // Ignore if setSelectionRange fails
+              }
+            }
+            onAfterAutoFocus?.()
+          }, 40)
+        })
+      })
+    }
+
+    // Try after the CSS transition ends (best), else fallback timer
+    let fired = false
+    const onEnd = () => {
+      if (fired) return
+      fired = true
+      focusNow()
+    }
+
+    // Find the parent .as-sheet element that has the animation
+    // Use a small delay to ensure the element is in the DOM
+    const findSheetAndListen = () => {
+      const sheetElement = el.closest('.as-sheet')
+      if (sheetElement) {
+        sheetElement.addEventListener('transitionend', onEnd, { once: true })
+        return sheetElement
+      }
+      return null
+    }
+
+    const sheetElement = findSheetAndListen()
+    // Retry if not found immediately (portal might not be ready)
+    if (!sheetElement) {
+      setTimeout(findSheetAndListen, 10)
+    }
+
+    // Fallback if no transition event fires
+    const t = setTimeout(onEnd, 300)
+
+    return () => {
+      const sheet = el.closest('.as-sheet')
+      if (sheet) {
+        sheet.removeEventListener('transitionend', onEnd)
+      }
+      clearTimeout(t)
+    }
+  }, [open, autoFocusOnMount, onAfterAutoFocus])
 
   const canPay = amountZAR > 0 && to.trim().length > 0
 
@@ -49,7 +112,7 @@ export default function SendDetailsSheet({ open, onClose, amountZAR, onPay }: Se
 
   return (
     <ActionSheet open={open} onClose={onClose} title="" className="send-details">
-      <div className="send-details-sheet">
+      <div className="send-details-sheet" ref={containerRef}>
         <div className="send-details-header">
           <button className="send-details-close" onClick={onClose} aria-label="Close">
             <Image src="/assets/clear.svg" alt="" width={18} height={18} />
