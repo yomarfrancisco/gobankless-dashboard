@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
   const [sendAmountZAR, setSendAmountZAR] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
+  const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -38,6 +39,7 @@ export default function ProfilePage() {
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
     if (method === 'email' || method === 'wallet' || method === 'brics') {
       setAmountMode('send')
+      setSendMethod(method)
       setOpenDirectPayment(false)
       setTimeout(() => setOpenAmount(true), 220)
     }
@@ -188,6 +190,7 @@ export default function ProfilePage() {
         open={openSendDetails}
         onClose={closeSendDetails}
         amountZAR={sendAmountZAR}
+        sendMethod={sendMethod}
         onPay={(payload) => {
           console.log('PAY', payload)
           setSendRecipient(payload.to)

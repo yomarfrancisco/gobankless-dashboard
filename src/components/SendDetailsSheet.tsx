@@ -9,13 +9,15 @@ type SendDetailsSheetProps = {
   open: boolean
   onClose: () => void
   amountZAR: number // from AmountSheet
+  sendMethod?: 'email' | 'wallet' | 'brics' | null
   onPay?: (payload: { to: string; note?: string; amountZAR: number }) => void
 }
 
 export default function SendDetailsSheet({ 
   open, 
   onClose, 
-  amountZAR, 
+  amountZAR,
+  sendMethod,
   onPay
 }: SendDetailsSheetProps) {
   const [to, setTo] = useState('')
@@ -62,13 +64,13 @@ export default function SendDetailsSheet({
             <input
               ref={toRef}
               className="send-details-input"
-              placeholder="email or phone"
+              placeholder={sendMethod === 'wallet' ? 'USDT address' : 'email or phone'}
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              inputMode="email"
+              inputMode={sendMethod === 'wallet' ? 'text' : 'email'}
               autoCapitalize="none"
               autoCorrect="off"
-              autoComplete="email"
+              autoComplete={sendMethod === 'wallet' ? 'off' : 'email'}
               enterKeyHint="next"
               type="text"
             />
