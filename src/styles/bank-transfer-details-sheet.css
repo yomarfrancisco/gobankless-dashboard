@@ -53,14 +53,14 @@
 }
 
 .bank-transfer-label {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 20px;
   color: rgba(0, 0, 0, 0.65);
   font-weight: 400;
 }
 
 .bank-transfer-value {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 20px;
   color: #0a0a0a;
   font-weight: 600;
@@ -103,7 +103,7 @@
 .bank-transfer-footer {
   margin-top: 16px;
   margin-bottom: 0;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.6);
   font-weight: 400;
