@@ -8,6 +8,7 @@ import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
+import SendSuccessSheet from '@/components/SendSuccessSheet'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
@@ -16,9 +17,10 @@ export default function Home() {
   const [openAmount, setOpenAmount] = useState(false)
   const [openDirectPayment, setOpenDirectPayment] = useState(false)
   const [openSendDetails, setOpenSendDetails] = useState(false)
-  const [shouldAutoFocusSend, setShouldAutoFocusSend] = useState(false)
+  const [openSendSuccess, setOpenSendSuccess] = useState(false)
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
   const [sendAmountZAR, setSendAmountZAR] = useState(0)
+  const [sendRecipient, setSendRecipient] = useState('')
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -28,6 +30,11 @@ export default function Home() {
   const closeWithdraw = useCallback(() => setOpenWithdraw(false), [])
   const closeAmount = useCallback(() => setOpenAmount(false), [])
   const closeSendDetails = useCallback(() => setOpenSendDetails(false), [])
+  const closeSendSuccess = useCallback(() => {
+    setOpenSendSuccess(false)
+    setSendRecipient('')
+    setSendAmountZAR(0)
+  }, [])
 
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
     if (method === 'email' || method === 'wallet' || method === 'brics') {
@@ -42,18 +49,6 @@ export default function Home() {
       setSendAmountZAR(amountZAR)
       setOpenAmount(false)
       
-      // iOS: Focus shim synchronously during the same tap to preserve user gesture context
-      const isIOS = typeof navigator !== 'undefined' &&
-        (/iP(ad|hone|od)/.test(navigator.platform) ||
-          (navigator.userAgent.includes('Mac') && 'ontouchend' in document))
-      
-      if (isIOS) {
-        const shim = document.getElementById('ios-keyboard-shim') as HTMLInputElement | null
-        shim?.focus()
-      }
-      
-      // Arm autofocus and open sheet
-      setShouldAutoFocusSend(true)
       setTimeout(() => setOpenSendDetails(true), 220)
     }
   }, [amountMode])
@@ -155,12 +150,21 @@ export default function Home() {
         open={openSendDetails}
         onClose={closeSendDetails}
         amountZAR={sendAmountZAR}
-        autoFocusOnMount={shouldAutoFocusSend}
-        onAfterAutoFocus={() => setShouldAutoFocusSend(false)}
         onPay={(payload) => {
           console.log('PAY', payload)
+          setSendRecipient(payload.to)
           setOpenSendDetails(false)
+          setTimeout(() => setOpenSendSuccess(true), 220)
         }}
+      />
+      <SendSuccessSheet
+        open={openSendSuccess}
+        onClose={closeSendSuccess}
+        amountZAR={`R ${sendAmountZAR.toLocaleString('en-ZA', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`}
+        recipient={sendRecipient}
       />
     </div>
   )
