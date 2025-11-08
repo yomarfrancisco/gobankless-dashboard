@@ -18,9 +18,11 @@ export default function Home() {
   const [openDirectPayment, setOpenDirectPayment] = useState(false)
   const [openSendDetails, setOpenSendDetails] = useState(false)
   const [openSendSuccess, setOpenSendSuccess] = useState(false)
-  const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send'>('deposit')
+  const [openDepositSuccess, setOpenDepositSuccess] = useState(false)
+  const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send' | 'depositCard'>('deposit')
   const [sendAmountZAR, setSendAmountZAR] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
+  const [depositAmountZAR, setDepositAmountZAR] = useState(0)
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -34,6 +36,10 @@ export default function Home() {
     setOpenSendSuccess(false)
     setSendRecipient('')
     setSendAmountZAR(0)
+  }, [])
+  const closeDepositSuccess = useCallback(() => {
+    setOpenDepositSuccess(false)
+    setDepositAmountZAR(0)
   }, [])
 
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
@@ -120,7 +126,11 @@ export default function Home() {
         variant="deposit"
         onSelect={(method) => {
           setOpenDeposit(false)
-          setAmountMode('deposit')
+          if (method === 'card') {
+            setAmountMode('depositCard')
+          } else {
+            setAmountMode('deposit')
+          }
           setTimeout(() => setOpenAmount(true), 220)
         }}
       />
@@ -139,8 +149,12 @@ export default function Home() {
         mode={amountMode}
         balanceZAR={200}
         fxRateZARperUSDT={18.1}
-        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
-        onSubmit={amountMode !== 'send' ? ({ amountZAR, amountUSDT }) => {
+        ctaLabel={amountMode === 'depositCard' ? 'Deposit' : amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
+        onSubmit={amountMode === 'depositCard' ? ({ amountZAR }) => {
+          setDepositAmountZAR(amountZAR)
+          setOpenAmount(false)
+          setTimeout(() => setOpenDepositSuccess(true), 220)
+        } : amountMode !== 'send' ? ({ amountZAR, amountUSDT }) => {
           setOpenAmount(false)
           console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
         } : undefined}
@@ -165,6 +179,16 @@ export default function Home() {
           maximumFractionDigits: 2,
         })}`}
         recipient={sendRecipient}
+        kind="send"
+      />
+      <SuccessSheet
+        open={openDepositSuccess}
+        onClose={closeDepositSuccess}
+        amountZAR={`R ${depositAmountZAR.toLocaleString('en-ZA', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`}
+        kind="deposit"
       />
     </div>
   )

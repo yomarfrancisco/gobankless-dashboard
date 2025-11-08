@@ -10,14 +10,14 @@ import '@/styles/amount-sheet.css'
 type AmountSheetProps = {
   open: boolean
   onClose: () => void
-  mode: 'deposit' | 'withdraw' | 'send' // for header text (e.g., "Buy", "Withdraw")
+  mode: 'deposit' | 'withdraw' | 'send' | 'depositCard' // for header text (e.g., "Buy", "Withdraw")
   balanceZAR?: number // show at top small "R200.00 balance"
   fxRateZARperUSDT?: number // default 18.10 if undefined
   ctaLabel?: string // default "Transfer USDT"
   onSubmit?: (payload: {
     amountZAR: number
-    amountUSDT: number
-    mode: 'deposit' | 'withdraw' | 'send'
+    amountUSDT?: number
+    mode?: 'deposit' | 'withdraw' | 'send' | 'depositCard'
   }) => void
   onAmountSubmit?: (amountZAR: number) => void // simpler callback for send flow
 }
@@ -89,8 +89,8 @@ export default function AmountSheet({
     }
   }
 
-  const modeLabel = mode === 'deposit' ? 'Buy' : mode === 'withdraw' ? 'Withdraw' : 'Send'
-  const defaultCtaLabel = mode === 'send' ? 'Send' : 'Transfer USDT'
+  const modeLabel = mode === 'deposit' || mode === 'depositCard' ? 'Buy' : mode === 'withdraw' ? 'Withdraw' : 'Send'
+  const defaultCtaLabel = mode === 'depositCard' ? 'Deposit' : mode === 'send' ? 'Send' : 'Transfer USDT'
   const finalCtaLabel = ctaLabel || defaultCtaLabel
   const isPositive = amountZAR > 0
 
