@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import type { StaticImageData } from 'next/image'
 import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
 import CardAmounts from './CardAmounts'
@@ -70,7 +70,11 @@ interface CardStackProps {
   onTopCardChange?: (cardType: 'pepe' | 'savings' | 'yield') => void
 }
 
-export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
+export type CardStackHandle = {
+  cycleNext: () => void
+}
+
+const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack({ onTopCardChange }, ref) {
   const [order, setOrder] = useState<number[]>([0, 1, 2]) // [top, middle, bottom]
   const [isAnimating, setIsAnimating] = useState(false)
   const [phase, setPhase] = useState<'idle' | 'animating'>('idle')
@@ -107,6 +111,15 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
       setIsAnimating(false)
     }, 300)
   }
+
+  // Expose cycleNext for external control (e.g., random flips)
+  const cycleNext = () => {
+    cycle()
+  }
+
+  useImperativeHandle(ref, () => ({
+    cycleNext,
+  }))
 
   const handleCardClick = (index: number) => {
     // Only respond if this card is the top card (order[0])
@@ -231,5 +244,7 @@ export default function CardStack({ onTopCardChange }: CardStackProps = {}) {
       })}
     </div>
   )
-}
+})
+
+export default CardStack
 

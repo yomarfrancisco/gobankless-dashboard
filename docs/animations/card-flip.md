@@ -122,3 +122,45 @@ The animation respects `prefers-reduced-motion`:
 5. After 300ms, order array rotates: `[a, b, c] → [b, c, a]`
 6. Old top card reappears at back position with `.pos-back` class
 
+## Random Flips (Experimental)
+
+An experimental, opt-in automation feature that randomly flips the CardStack at variable intervals.
+
+### Feature Flag
+
+Controlled by `NEXT_PUBLIC_ENABLE_RANDOM_CARD_FLIPS` environment variable:
+- Set to `'1'` to enable random flips
+- Default: disabled (no change to current behavior)
+
+### Configuration
+
+All timings are configurable via environment variables:
+
+- `NEXT_PUBLIC_RANDOM_FLIP_QUIET_MS` - Initial quiet period before first flip (default: 10000ms / 10s)
+- `NEXT_PUBLIC_RANDOM_FLIP_MIN_MS` - Minimum interval between flip bursts (default: 1000ms / 1s)
+- `NEXT_PUBLIC_RANDOM_FLIP_MAX_MS` - Maximum interval between flip bursts (default: 60000ms / 60s)
+- `NEXT_PUBLIC_RANDOM_FLIP_MIN_COUNT` - Minimum flips per burst (default: 1)
+- `NEXT_PUBLIC_RANDOM_FLIP_MAX_COUNT` - Maximum flips per burst (default: 3)
+
+### Behavior
+
+- No flips for the first 10s after mount (configurable via `QUIET_MS`)
+- After quiet period, random flip bursts occur:
+  - Interval between bursts: random between `MIN_MS` and `MAX_MS`
+  - Each burst does 1-3 flips (random), spaced ~350ms apart
+- Flips pause when tab is hidden; resume when visible
+- Manual/hover flip behavior is preserved
+
+### Implementation
+
+- Hook: `src/lib/animations/useRandomCardFlips.ts`
+- Wired in: `src/app/page.tsx`
+- Uses `CardStackHandle.cycleNext()` to trigger flips
+
+### Removal
+
+To remove random flips:
+1. Delete the `useRandomCardFlips` import and call from `src/app/page.tsx`
+2. Optionally remove `src/lib/animations/useRandomCardFlips.ts`
+3. The `CardStackHandle` ref can remain for future automation needs
+
