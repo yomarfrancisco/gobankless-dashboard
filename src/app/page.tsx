@@ -9,6 +9,7 @@ import WithdrawSheet from '@/components/WithdrawSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
+import BankTransferDetailsSheet from '@/components/BankTransferDetailsSheet'
 import { formatUSDT } from '@/lib/money'
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
   const [openSendDetails, setOpenSendDetails] = useState(false)
   const [openSendSuccess, setOpenSendSuccess] = useState(false)
   const [openDepositSuccess, setOpenDepositSuccess] = useState(false)
+  const [openBankTransferDetails, setOpenBankTransferDetails] = useState(false)
   const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send' | 'depositCard'>('deposit')
   const [sendAmountZAR, setSendAmountZAR] = useState(0)
   const [sendAmountUSDT, setSendAmountUSDT] = useState(0)
@@ -44,6 +46,9 @@ export default function Home() {
   const closeDepositSuccess = useCallback(() => {
     setOpenDepositSuccess(false)
     setDepositAmountZAR(0)
+  }, [])
+  const closeBankTransferDetails = useCallback(() => {
+    setOpenBankTransferDetails(false)
   }, [])
 
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
@@ -134,12 +139,15 @@ export default function Home() {
         variant="deposit"
         onSelect={(method) => {
           setOpenDeposit(false)
-          if (method === 'card') {
+          if (method === 'bank') {
+            setTimeout(() => setOpenBankTransferDetails(true), 220)
+          } else if (method === 'card') {
             setAmountMode('depositCard')
+            setTimeout(() => setOpenAmount(true), 220)
           } else {
             setAmountMode('deposit')
+            setTimeout(() => setOpenAmount(true), 220)
           }
-          setTimeout(() => setOpenAmount(true), 220)
         }}
       />
       <WithdrawSheet
@@ -200,6 +208,10 @@ export default function Home() {
         })}`}
         recipient=""
         kind="deposit"
+      />
+      <BankTransferDetailsSheet
+        open={openBankTransferDetails}
+        onClose={closeBankTransferDetails}
       />
     </div>
   )
