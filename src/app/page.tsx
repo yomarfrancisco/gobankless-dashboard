@@ -6,6 +6,7 @@ import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
+import TransactionSheet from '@/components/TransactionSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
@@ -16,6 +17,7 @@ import { useRandomCardFlips } from '@/lib/animations/useRandomCardFlips'
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
   const cardStackRef = useRef<CardStackHandle>(null)
+  const [openTransaction, setOpenTransaction] = useState(false)
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -31,6 +33,8 @@ export default function Home() {
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
   const [depositAmountZAR, setDepositAmountZAR] = useState(0)
 
+  const openTransactionSheet = useCallback(() => setOpenTransaction(true), [])
+  const closeTransaction = useCallback(() => setOpenTransaction(false), [])
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
   const closeDirectPayment = useCallback(() => setOpenDirectPayment(false), [])
@@ -84,7 +88,7 @@ export default function Home() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/" onDollarClick={openDirectPaymentSheet} />
+            <BottomGlassBar currentPath="/" onDollarClick={openTransactionSheet} />
           </div>
 
           {/* Scrollable content */}
@@ -109,29 +113,26 @@ export default function Home() {
                 <CardStack ref={cardStackRef} onTopCardChange={setTopCardType} />
               </div>
 
-              {/* Action Buttons */}
-              <div className="action-buttons">
-                <button className="btn btn-deposit" onClick={openDepositSheet} onTouchStart={openDepositSheet}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M7 17L17 7" />
-                    <path d="M7 7h10v10" />
-                  </svg>
-                  Deposit
-                </button>
-                <button className="btn btn-withdraw" onClick={openWithdrawSheet} onTouchStart={openWithdrawSheet}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17 7L7 17" />
-                    <path d="M17 17H7V7" />
-                  </svg>
-                  Withdraw
-                </button>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Sheets */}
+      <TransactionSheet
+        open={openTransaction}
+        onClose={closeTransaction}
+        onSelect={(action) => {
+          setOpenTransaction(false)
+          if (action === 'deposit') {
+            setTimeout(() => setOpenDeposit(true), 220)
+          } else if (action === 'withdraw') {
+            setTimeout(() => setOpenWithdraw(true), 220)
+          } else if (action === 'payment') {
+            setTimeout(() => setOpenDirectPayment(true), 220)
+          }
+        }}
+      />
       <DepositSheet
         open={openDirectPayment}
         onClose={closeDirectPayment}
