@@ -1,6 +1,6 @@
 'use client'
 
-import { HandCoins } from 'lucide-react'
+import { HandCoins, BanknoteArrowUp, BanknoteArrowDown } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 
@@ -20,18 +20,21 @@ export default function TransactionSheet({ open, onClose, onSelect }: Props) {
   return (
     <ActionSheet open={open} onClose={onClose} title="Transact">
       <ActionSheetItem
-        iconSrc="/assets/up right.svg"
+        icon={<BanknoteArrowUp size={22} strokeWidth={2} />}
         title="Deposit"
+        caption="Add funds instantly via card or bank transfer"
         onClick={() => handleSelect('deposit')}
       />
       <ActionSheetItem
-        iconSrc="/assets/down-left.svg"
+        icon={<BanknoteArrowDown size={22} strokeWidth={2} />}
         title="Withdraw"
+        caption="Move funds back to your bank account or external wallet"
         onClick={() => handleSelect('withdraw')}
       />
       <ActionSheetItem
         icon={<HandCoins size={22} strokeWidth={2} />}
         title="Payment"
+        caption="Pay anyone via email, handle, or wallet"
         onClick={() => handleSelect('payment')}
       />
     </ActionSheet>
