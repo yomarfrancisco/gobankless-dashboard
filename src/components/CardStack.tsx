@@ -15,6 +15,20 @@ function computeZAR(usdt: number, fx: number = FX_USD_ZAR_DEFAULT) {
   return usdt * fx
 }
 
+// Card allocation and risk configuration
+const ALLOCATIONS = { cash: 0.90, pepe: 0.07, eth: 0.03 } as const
+const FUNDS_ZAR = 6103
+const RISK = { cash: 10, pepe: 65, eth: 35 }
+
+// Format ZAR using en-ZA locale
+function formatZAR(amount: number): string {
+  return new Intl.NumberFormat('en-ZA', {
+    style: 'currency',
+    currency: 'ZAR',
+    maximumFractionDigits: 2,
+  }).format(amount)
+}
+
 type CardType = 'pepe' | 'savings' | 'yield'
 
 interface CardData {
@@ -25,10 +39,6 @@ interface CardData {
   height: number
   usdt: number // canonical base in USDT
   fxUsdZar?: number // optional override
-  yieldBadge?: {
-    percentage: string
-    text: string
-  }
 }
 
 const cardsData: CardData[] = [
@@ -38,7 +48,7 @@ const cardsData: CardData[] = [
     alt: 'Savings Card',
     width: 342,
     height: 213,
-    usdt: 250, // demo value
+    usdt: (FUNDS_ZAR * ALLOCATIONS.cash) / FX_USD_ZAR_DEFAULT, // Calculate from allocation
   },
   {
     type: 'pepe',
@@ -46,11 +56,7 @@ const cardsData: CardData[] = [
     alt: 'PEPE Card',
     width: 398,
     height: 238,
-    usdt: 100, // canonical value from original design
-    yieldBadge: {
-      percentage: '138%',
-      text: 'APY',
-    },
+    usdt: (FUNDS_ZAR * ALLOCATIONS.pepe) / FX_USD_ZAR_DEFAULT, // Calculate from allocation
   },
   {
     type: 'yield',
@@ -58,13 +64,30 @@ const cardsData: CardData[] = [
     alt: 'Yield Card',
     width: 310,
     height: 193,
-    usdt: 100, // demo value (consistent with Pepe for now)
-    yieldBadge: {
-      percentage: '4.2%',
-      text: 'APY',
-    },
+    usdt: (FUNDS_ZAR * ALLOCATIONS.eth) / FX_USD_ZAR_DEFAULT, // Calculate from allocation
   },
 ]
+
+// Card labels mapping
+const CARD_LABELS: Record<CardType, string> = {
+  savings: 'CASH CARD',
+  pepe: 'PEPE CARD',
+  yield: 'ETH CARD',
+}
+
+// Allocation percentages mapping
+const ALLOCATION_PERCENTAGES: Record<CardType, number> = {
+  savings: ALLOCATIONS.cash * 100,
+  pepe: ALLOCATIONS.pepe * 100,
+  yield: ALLOCATIONS.eth * 100,
+}
+
+// Risk scores mapping
+const RISK_SCORES: Record<CardType, number> = {
+  savings: RISK.cash,
+  pepe: RISK.pepe,
+  yield: RISK.eth,
+}
 
 interface CardStackProps {
   onTopCardChange?: (cardType: 'pepe' | 'savings' | 'yield') => void
@@ -229,16 +252,31 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
               />
             )}
             <CardAmounts
-              zar={computeZAR(card.usdt, card.fxUsdZar)}
+              zar={FUNDS_ZAR * (ALLOCATION_PERCENTAGES[card.type] / 100)}
               usdt={card.usdt}
               className={`card-amounts--${card.type}`}
             />
-            {card.yieldBadge && (
-              <div className={`card-yield-badge ${card.type === 'yield' ? 'card-yield-badge--gob' : ''}`}>
-                <span className="card-yield-percentage">{card.yieldBadge.percentage}</span>
-                <span className="card-yield-text">{card.yieldBadge.text}</span>
+            
+            {/* Top-right card label */}
+            <div className="card-label">{CARD_LABELS[card.type]}</div>
+            
+            {/* Bottom-left allocation pill */}
+            <div className="card-allocation-pill">
+              <span className="card-allocation-pill__text">
+                {Math.round(ALLOCATION_PERCENTAGES[card.type])}%
+              </span>
+            </div>
+            
+            {/* Bottom-right risk bar */}
+            <div className="card-risk-group">
+              <span className="card-risk-label">Risk</span>
+              <div className="card-risk-bar-container">
+                <div
+                  className="card-risk-bar-fill"
+                  style={{ width: `${RISK_SCORES[card.type]}%` }}
+                />
               </div>
-            )}
+            </div>
           </div>
         )
       })}
