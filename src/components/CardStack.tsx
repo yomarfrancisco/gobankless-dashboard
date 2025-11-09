@@ -15,10 +15,19 @@ function computeZAR(usdt: number, fx: number = FX_USD_ZAR_DEFAULT) {
   return usdt * fx
 }
 
-// Card allocation and risk configuration
+// Card allocation and health configuration
 const ALLOCATIONS = { cash: 0.90, pepe: 0.07, eth: 0.03 } as const
 const FUNDS_ZAR = 6103
-const RISK = { cash: 10, pepe: 65, eth: 35 }
+
+// Health levels: 'good' | 'moderate' | 'fragile'
+type HealthLevel = 'good' | 'moderate' | 'fragile'
+
+// Health configuration per card type
+const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> = {
+  savings: { level: 'good', percent: 100 },
+  pepe: { level: 'fragile', percent: 25 },
+  yield: { level: 'moderate', percent: 60 },
+}
 
 // Format ZAR using en-ZA locale
 function formatZAR(amount: number): string {
@@ -82,12 +91,6 @@ const ALLOCATION_PERCENTAGES: Record<CardType, number> = {
   yield: ALLOCATIONS.eth * 100,
 }
 
-// Risk scores mapping
-const RISK_SCORES: Record<CardType, number> = {
-  savings: RISK.cash,
-  pepe: RISK.pepe,
-  yield: RISK.eth,
-}
 
 interface CardStackProps {
   onTopCardChange?: (cardType: 'pepe' | 'savings' | 'yield') => void
@@ -126,13 +129,13 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     // This triggers the animation for middle/back cards to move up
     // The cycling-out class on top card makes it slide up and fade
 
-    // After 300ms, finalize the rotation
+    // After 900ms, finalize the rotation (3× slower animation)
     setTimeout(() => {
       // Phase B: Rotate order [a, b, c] → [b, c, a]
       setOrder((prevOrder) => [prevOrder[1], prevOrder[2], prevOrder[0]])
       setPhase('idle')
       setIsAnimating(false)
-    }, 300)
+    }, 900)
   }
 
   // Expose cycleNext for external control (e.g., random flips)
@@ -267,13 +270,13 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
               </span>
             </div>
             
-            {/* Bottom-right risk bar */}
-            <div className="card-risk-group">
-              <span className="card-risk-label">Risk</span>
-              <div className="card-risk-bar-container">
+            {/* Bottom-right health bar */}
+            <div className="card-health-group">
+              <span className="card-health-label">Health</span>
+              <div className="card-health-bar-container">
                 <div
-                  className="card-risk-bar-fill"
-                  style={{ width: `${RISK_SCORES[card.type]}%` }}
+                  className={`card-health-bar-fill card-health-bar-fill--${HEALTH_CONFIG[card.type].level}`}
+                  style={{ width: `${HEALTH_CONFIG[card.type].percent}%` }}
                 />
               </div>
             </div>

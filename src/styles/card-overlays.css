@@ -40,38 +40,52 @@
   letter-spacing: -0.09px;
 }
 
-/* Bottom-right risk bar group */
-.card-risk-group {
+/* Bottom-right health bar group */
+.card-health-group {
   position: absolute;
   right: 16px;
   bottom: 18px;
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
   pointer-events: none;
   z-index: 3;
 }
 
-.card-risk-label {
+.card-health-label {
   font-size: 12px;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.7);
   letter-spacing: -0.09px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-.card-risk-bar-container {
+.card-health-bar-container {
   width: 80px;
   height: 4px;
-  border-radius: 2px;
+  border-radius: 9999px;
   background: rgba(255, 255, 255, 0.25);
   overflow: hidden;
   position: relative;
 }
 
-.card-risk-bar-fill {
+.card-health-bar-fill {
   height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(to right, #FF4D4D 0%, #FFA800 50%, #2ECC71 100%);
+  border-radius: 9999px;
   transition: width 300ms ease;
+}
+
+/* Health level colors (monotone) */
+.card-health-bar-fill--good {
+  background: #22C55E;
+}
+
+.card-health-bar-fill--moderate {
+  background: #F59E0B;
+}
+
+.card-health-bar-fill--fragile {
+  background: #EF4444;
 }
 

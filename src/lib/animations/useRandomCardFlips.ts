@@ -1,3 +1,16 @@
+/**
+ * Random Card Flips Hook
+ * 
+ * Animation timing (3× slower):
+ * - CSS transition: 900ms ease (transform, opacity, box-shadow, width, height, left, top)
+ * - In-burst spacing: 1050ms between flips (default, env override: NEXT_PUBLIC_RANDOM_FLIP_BURST_STEP_MS)
+ * 
+ * Quiet period and inter-burst intervals:
+ * - Quiet period: 10s (env: NEXT_PUBLIC_RANDOM_FLIP_QUIET_MS)
+ * - Inter-burst interval: random 1-60s (env: NEXT_PUBLIC_RANDOM_FLIP_MIN_MS / MAX_MS)
+ * - Burst size: 1-3 flips (env: NEXT_PUBLIC_RANDOM_FLIP_MIN_COUNT / MAX_COUNT)
+ */
+
 import { useEffect } from 'react'
 import type React from 'react'
 import type { CardStackHandle } from '@/components/CardStack'
@@ -8,8 +21,9 @@ const MIN_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MIN_MS ?? 1000)
 const MAX_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MAX_MS ?? 60000)
 const MIN_COUNT = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MIN_COUNT ?? 1)
 const MAX_COUNT = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MAX_COUNT ?? 3)
-// Per-flip delay inside a burst (>= CSS animation ~300ms)
-const BURST_STEP_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_BURST_STEP_MS ?? 350)
+// Per-flip delay inside a burst (>= CSS animation ~900ms, 3× slower)
+// Updated: 350ms → 1050ms to match 3× slower card flip animation
+const BURST_STEP_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_BURST_STEP_MS ?? 1050)
 
 export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>) {
   useEffect(() => {

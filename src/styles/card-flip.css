@@ -1,8 +1,12 @@
 /**
- * Card Flip-Up Animation
+ * Card Flip-Up Animation (3× slower)
  * 
  * This centralizes the existing card flip-up animation used in CardStack.
  * Adjust here to change or disable globally.
+ * 
+ * Animation timing:
+ * - Transition duration: 900ms ease (3× slower than original 300ms)
+ * - Properties: transform, opacity, box-shadow, width, height, left, top
  * 
  * To disable: Set transition to 'none' on .card class below.
  */
@@ -23,7 +27,7 @@
   overflow: hidden;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 8px 28px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: transform 300ms ease, opacity 300ms ease, box-shadow 300ms ease, width 300ms ease, height 300ms ease, left 300ms ease, top 300ms ease;
+  transition: transform 900ms ease, opacity 900ms ease, box-shadow 900ms ease, width 900ms ease, height 900ms ease, left 900ms ease, top 900ms ease;
   will-change: transform, left, top, width, height;
 }
 
