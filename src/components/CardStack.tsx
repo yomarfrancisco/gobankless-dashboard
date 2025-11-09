@@ -129,13 +129,13 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     // This triggers the animation for middle/back cards to move up
     // The cycling-out class on top card makes it slide up and fade
 
-    // After 900ms, finalize the rotation (3× slower animation)
+    // After 300ms, finalize the rotation
     setTimeout(() => {
       // Phase B: Rotate order [a, b, c] → [b, c, a]
       setOrder((prevOrder) => [prevOrder[1], prevOrder[2], prevOrder[0]])
       setPhase('idle')
       setIsAnimating(false)
-    }, 900)
+    }, 300)
   }
 
   // Expose cycleNext for external control (e.g., random flips)
