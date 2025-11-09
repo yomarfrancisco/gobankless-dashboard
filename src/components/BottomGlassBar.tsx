@@ -45,7 +45,7 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
               onTouchStart={onDollarClick}
               type="button"
             >
-              <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={44} height={44} unoptimized />
+              <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={57} height={57} unoptimized />
             </button>
             <div className="nav-label">Direct payment</div>
           </div>

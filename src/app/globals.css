@@ -541,7 +541,7 @@ body {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #fff;
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -564,8 +564,8 @@ body {
 }
 
 .dollar-sign-contained img {
-  width: 44px;
-  height: 44px;
+  width: 57px;
+  height: 57px;
   object-fit: contain;
 }
 
