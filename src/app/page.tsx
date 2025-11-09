@@ -93,15 +93,15 @@ export default function Home() {
               <div className="card-switch">
                 <div className="frame-parent">
                   <div className="wallet-header">
-                    <h1 className="wallet-title">R6 103 available</h1>
+                    <h1 className="wallet-title">Autonomous wallet</h1>
                     <div className="help-icon">?</div>
                   </div>
                   <p className="wallet-subtitle">
                     {topCardType === 'pepe' 
-                      ? 'PEPE account' 
+                      ? 'R6 103 available' 
                       : topCardType === 'savings' 
-                      ? 'Cash account' 
-                      : 'ETH account'}
+                      ? 'R6 103 available' 
+                      : 'R6 103 available'}
                   </p>
                 </div>
 
