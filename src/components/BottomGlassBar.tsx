@@ -10,7 +10,7 @@ interface BottomGlassBarProps {
 
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const isHome = currentPath === '/'
-  const isProfile = currentPath === '/profile'
+  const isProfile = currentPath === '/profile' || currentPath === '/transactions'
 
   return (
     <div className="bottom-menu">

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
@@ -12,6 +13,7 @@ import SuccessSheet from '@/components/SuccessSheet'
 import { formatUSDT } from '@/lib/money'
 
 export default function ProfilePage() {
+  const router = useRouter()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -85,6 +87,13 @@ export default function ProfilePage() {
                 <h1 className="profile-name">Samuel Akoyo</h1>
                 <div className="profile-handle">$samakoyo</div>
 
+                {/* Autonomous mode indicator */}
+                <div className="autonomy-pill" aria-label="Autonomous mode level">
+                  <span className="autonomy-label">Autonomous mode</span>
+                  <span className="autonomy-value" aria-live="polite">100%</span>
+                  {/* TODO: Add state/hook for autonomous mode toggle and level */}
+                </div>
+
                 {/* Bio */}
                 <p className="profile-bio">
                   A skilled entrepreneur experienced in manufacturing and construction across Africa.
@@ -146,7 +155,9 @@ export default function ProfilePage() {
               {/* Buttons */}
               <div className="profile-actions">
                 <button className="btn profile-edit">Edit profile</button>
-                <button className="btn profile-inbox">Inbox</button>
+                <button className="btn profile-inbox" onClick={() => router.push('/transactions')}>
+                  Transactions
+                </button>
               </div>
             </div>
           </div>

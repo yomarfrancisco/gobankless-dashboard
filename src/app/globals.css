@@ -800,6 +800,84 @@ body {
   background: #ff1a42;
 }
 
+/* Autonomous mode pill */
+.autonomy-pill {
+  height: 36px;
+  border-radius: 9999px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.04);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.autonomy-label {
+  font-weight: 500;
+  color: #000;
+}
+
+.autonomy-value {
+  font-weight: 600;
+  color: #000;
+}
+
+/* Transactions page */
+.transactions-header {
+  margin-top: 24px;
+  padding: 0 16px;
+}
+
+.transactions-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: #000;
+}
+
+.transactions-list {
+  margin-top: 16px;
+  padding: 0 16px;
+}
+
+.transaction-item {
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.transaction-amount {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
+.transaction-age {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 400;
+}
+
+.transaction-note {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
 /* iOS keyboard shim - hidden input to preserve user gesture context */
 .ios-keyboard-shim {
   position: fixed;

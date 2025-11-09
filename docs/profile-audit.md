@@ -273,3 +273,29 @@ All sheets are controlled by state and rendered at the bottom of the component t
 - The page uses the same glass bar overlay system as the home page
 - All transaction flows (deposit/withdraw/send) are wired and functional via the dollar button
 
+---
+
+## Changes (Post-Audit)
+
+### Inbox → Transactions Rename
+- **Button label**: Changed from "Inbox" to "Transactions"
+- **Class name**: Kept `.profile-inbox` for backward compatibility
+- **Functionality**: Wired to navigate to `/transactions` page
+- **Route**: Created `src/app/transactions/page.tsx` with transaction list view
+- **Navigation**: BottomGlassBar highlights Profile icon when on `/transactions` route
+
+### Autonomous Mode Pill
+- **Placement**: Added below `.profile-handle`, above `.profile-bio` in `.profile-header`
+- **Component**: `.autonomy-pill` with label "Autonomous mode" and value "100%"
+- **Styling**: Compact pill (36px height, rounded, glassmorphism effect)
+- **Accessibility**: `aria-label="Autonomous mode level"`, `aria-live="polite"` on value
+- **State**: Visual only for now, TODO comment added for future state/hook integration
+- **CSS**: Added to `src/app/globals.css` (`.autonomy-pill`, `.autonomy-label`, `.autonomy-value`)
+
+### Transactions Page
+- **Location**: `src/app/transactions/page.tsx`
+- **Layout**: Reuses same glass bar overlay system
+- **Content**: Simple list of transactions with amount, age, and note
+- **Styling**: Neutral grayscale, dividers between items
+- **Demo data**: 4 sample transactions showing autonomous mode actions
+
