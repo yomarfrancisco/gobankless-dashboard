@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import IosKeyboardShim from '@/components/IosKeyboardShim'
+import TopNotifications from '@/components/notifications/TopNotifications'
+import DevNotificationSetup from '@/components/notifications/DevNotificationSetup'
 import { WalletModeProvider } from '@/state/walletMode'
 import { WalletAllocProvider } from '@/state/walletAlloc'
 
@@ -44,6 +46,8 @@ export default function RootLayout({
         <IosKeyboardShim />
         <WalletModeProvider>
           <WalletAllocProvider>
+            <TopNotifications />
+            <DevNotificationSetup />
             {children}
           </WalletAllocProvider>
         </WalletModeProvider>

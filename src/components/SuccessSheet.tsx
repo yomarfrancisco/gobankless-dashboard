@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import ActionSheet from './ActionSheet'
+import { useNotificationStore } from '@/store/notifications'
 import '@/styles/success-sheet.css'
 
 type SuccessSheetProps = {
@@ -21,6 +22,8 @@ export default function SuccessSheet({
   autoDownloadReceipt = true,
   kind = 'send',
 }: SuccessSheetProps) {
+  const pushNotification = useNotificationStore((state) => state.pushNotification)
+
   useEffect(() => {
     if (!open || !autoDownloadReceipt) return
 
@@ -35,6 +38,53 @@ export default function SuccessSheet({
       // Ignore errors
     }
   }, [open, autoDownloadReceipt])
+
+  // Emit payment notification when success sheet opens
+  useEffect(() => {
+    if (!open) return
+
+    if (kind === 'send' && recipient) {
+      // Extract amount from formatted string (e.g., "R 100.00" or "303.464 USDT")
+      const amountMatch = amountZAR.match(/[\d,]+\.?\d*/)
+      const numericAmount = amountMatch ? parseFloat(amountMatch[0].replace(/,/g, '')) : 0
+      const isUSDT = amountZAR.includes('USDT')
+      
+      pushNotification({
+        kind: 'payment_sent',
+        title: 'Payment sent',
+        body: recipient.includes('@') || recipient.includes('.')
+          ? `You sent R${numericAmount.toFixed(2)} to ${recipient}.`
+          : `You sent ${amountZAR} to ${recipient}.`,
+        amount: {
+          currency: isUSDT ? 'USDT' : 'ZAR',
+          value: -numericAmount,
+        },
+        direction: 'down',
+        actor: {
+          type: 'user',
+        },
+        routeOnTap: '/transactions',
+      })
+    } else if (kind === 'deposit') {
+      const amountMatch = amountZAR.match(/[\d,]+\.?\d*/)
+      const numericAmount = amountMatch ? parseFloat(amountMatch[0].replace(/,/g, '')) : 0
+      
+      pushNotification({
+        kind: 'payment_received',
+        title: 'Deposit received',
+        body: `You deposited R${numericAmount.toFixed(2)}.`,
+        amount: {
+          currency: 'ZAR',
+          value: numericAmount,
+        },
+        direction: 'up',
+        actor: {
+          type: 'user',
+        },
+        routeOnTap: '/transactions',
+      })
+    }
+  }, [open, kind, recipient, amountZAR, pushNotification])
 
   return (
     <ActionSheet open={open} onClose={onClose} title="" className="send-success">

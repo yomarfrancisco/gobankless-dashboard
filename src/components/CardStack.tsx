@@ -137,17 +137,13 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
         newFlashDirection[cardType] = 'down'
       }
 
-      // Update previous value
+      // Update previous value AFTER computing direction
+      // (so next change can compare against this value)
       prevValuesRef.current[cardType] = current
     })
 
-    // Only update if there's a change to avoid unnecessary re-renders
-    const hasChange = Object.keys(newFlashDirection).some(
-      (key) => newFlashDirection[key as CardType] !== flashDirection[key as CardType]
-    )
-    if (hasChange) {
-      setFlashDirection(newFlashDirection)
-    }
+    // Update flash direction state (this triggers re-render with flash classes)
+    setFlashDirection(newFlashDirection)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents])
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react'
 import type { CardStackHandle } from '@/components/CardStack'
+import { useNotificationStore } from '@/store/notifications'
 
 type CardType = 'pepe' | 'savings' | 'yield'
 
@@ -29,6 +30,7 @@ export function useAiActionCycle(
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const isRunningRef = useRef(false)
   const isProcessingRef = useRef(false)
+  const pushNotification = useNotificationStore((state) => state.pushNotification)
 
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -131,6 +133,25 @@ export function useAiActionCycle(
           } else {
             setPepe(newTarget)
           }
+
+          // Emit AI trade notification
+          const assetName = targetType === 'yield' ? 'ETH' : 'PEPE'
+          const zarAmount = Math.abs(delta * 18.1)
+          const action = delta > 0 ? 'bought' : 'sold'
+          pushNotification({
+            kind: 'ai_trade',
+            title: 'AI trade executed',
+            body: `Rebalanced: ${action} ${Math.abs(delta)} ${assetName} (R${zarAmount.toFixed(2)}).`,
+            amount: {
+              currency: 'ZAR',
+              value: delta > 0 ? -zarAmount : zarAmount,
+            },
+            direction: delta > 0 ? 'down' : 'up',
+            actor: {
+              type: 'ai',
+            },
+            routeOnTap: '/transactions',
+          })
 
           // 3) Wait for target slot animation
           await sleep(SLOT_MS)

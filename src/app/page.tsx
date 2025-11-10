@@ -203,6 +203,7 @@ export default function Home() {
           setSendRecipient(payload.to)
           setOpenSendDetails(false)
           setTimeout(() => setOpenSendSuccess(true), 220)
+          // Note: notification is emitted in SuccessSheet when it opens
         }}
       />
       <SuccessSheet
