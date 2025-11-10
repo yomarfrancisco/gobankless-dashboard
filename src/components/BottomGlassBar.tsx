@@ -13,12 +13,17 @@ interface BottomGlassBarProps {
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile' || currentPath === '/transactions'
-  const [walletMode, setWalletMode] = useState<WalletMode>('autonomous')
+  
+  // Initialize state from localStorage synchronously to avoid flash
+  const [walletMode, setWalletMode] = useState<WalletMode>(() => {
+    if (typeof window !== 'undefined') {
+      return getWalletMode()
+    }
+    return 'autonomous'
+  })
 
-  // Read wallet mode from localStorage and listen for changes
+  // Listen for storage changes (when user switches mode in another tab)
   useEffect(() => {
-    setWalletMode(getWalletMode())
-    
     // Listen for storage changes (when user switches mode in another tab)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'walletMode' && e.newValue) {
