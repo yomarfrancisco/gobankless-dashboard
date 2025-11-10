@@ -24,7 +24,15 @@ const MAX_COUNT = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_MAX_COUNT ?? 3)
 // Per-flip delay inside a burst (>= CSS animation ~300ms)
 const BURST_STEP_MS = Number(process.env.NEXT_PUBLIC_RANDOM_FLIP_BURST_STEP_MS ?? 350)
 
-export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>) {
+type FlipController = {
+  pause: () => void
+  resume: () => void
+}
+
+export function useRandomCardFlips(
+  ref: React.RefObject<CardStackHandle | null>,
+  controllerRef?: React.MutableRefObject<FlipController | null>
+) {
   useEffect(() => {
     if (!ENABLED || !ref?.current) return
 
@@ -34,6 +42,7 @@ export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>)
     )
 
     let aborted = false
+    let paused = false
     let bursting = false
 
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -51,13 +60,25 @@ export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>)
 
     document.addEventListener('visibilitychange', handleVisibility)
 
+    // Expose pause/resume via controller ref
+    if (controllerRef) {
+      controllerRef.current = {
+        pause: () => {
+          paused = true
+        },
+        resume: () => {
+          paused = false
+        },
+      }
+    }
+
     const run = async () => {
       // initial quiet period
       await sleep(QUIET_MS)
 
       while (ref.current) {
-        // if hidden, idle-loop until visible again
-        while (document.hidden) {
+        // if hidden or paused, idle-loop until visible/resumed
+        while (document.hidden || paused) {
           await sleep(250)
         }
 
@@ -67,6 +88,9 @@ export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>)
 
         if (!ref.current) break
 
+        // Check again if paused
+        if (paused || document.hidden) continue
+
         if (bursting) continue // never overlap bursts
 
         bursting = true
@@ -74,8 +98,8 @@ export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>)
         const flips = rnd(MIN_COUNT, MAX_COUNT)
 
         for (let i = 0; i < flips; i++) {
-          // safety: ensure ref still valid and page visible
-          if (!ref.current || document.hidden) break
+          // safety: ensure ref still valid and page visible and not paused
+          if (!ref.current || document.hidden || paused) break
 
           ref.current.cycleNext()
 
@@ -90,8 +114,9 @@ export function useRandomCardFlips(ref: React.RefObject<CardStackHandle | null>)
 
     return () => {
       aborted = true
+      paused = true
       document.removeEventListener('visibilitychange', handleVisibility)
     }
-  }, [ref])
+  }, [ref, controllerRef])
 }
 

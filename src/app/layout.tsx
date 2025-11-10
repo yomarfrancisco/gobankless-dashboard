@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import IosKeyboardShim from '@/components/IosKeyboardShim'
 import { WalletModeProvider } from '@/state/walletMode'
+import { WalletAllocProvider } from '@/state/walletAlloc'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -42,7 +43,9 @@ export default function RootLayout({
         />
         <IosKeyboardShim />
         <WalletModeProvider>
-          {children}
+          <WalletAllocProvider>
+            {children}
+          </WalletAllocProvider>
         </WalletModeProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@
 @import '../styles/payment-sheet.css';
 @import '../styles/profile-toggle.css';
 @import '../styles/bottom-glass.css';
+@import '../styles/number-roll.css';
 
 :root {
   --top-safe: 176px;

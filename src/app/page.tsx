@@ -12,7 +12,7 @@ import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
 import BankTransferDetailsSheet from '@/components/BankTransferDetailsSheet'
 import { formatUSDT } from '@/lib/money'
-import { useRandomCardFlips } from '@/lib/animations/useRandomCardFlips'
+import { useWalletAlloc } from '@/state/walletAlloc'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
@@ -78,8 +78,9 @@ export default function Home() {
     }
   }, [amountMode])
 
-  // Random card flips (experimental, feature-flagged)
-  useRandomCardFlips(cardStackRef)
+  // Get wallet allocation for funds available display
+  const { alloc } = useWalletAlloc()
+  const fundsAvailableZAR = alloc.totalCents / 100
 
   return (
     <div className="app-shell">
@@ -101,11 +102,7 @@ export default function Home() {
                     <div className="help-icon">?</div>
                   </div>
                   <p className="wallet-subtitle">
-                    {topCardType === 'pepe' 
-                      ? 'R6 103 available' 
-                      : topCardType === 'savings' 
-                      ? 'R6 103 available' 
-                      : 'R6 103 available'}
+                    R{fundsAvailableZAR.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} available
                   </p>
                 </div>
 
