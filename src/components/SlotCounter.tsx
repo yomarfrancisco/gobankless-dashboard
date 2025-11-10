@@ -95,8 +95,13 @@ export default function SlotCounter({
         {renderMajor ? renderMajor(major) : <span className="slot-counter__major">{major}</span>}
         {cents !== undefined && (
           <>
-            <span className="slot-counter__dot">.</span>
-            {renderCents ? renderCents(cents) : <span className="slot-counter__cents">{cents}</span>}
+            {/* Dot is rendered by parent via renderCents callback, not here */}
+            {renderCents ? renderCents(cents) : (
+              <>
+                <span className="slot-counter__dot">.</span>
+                <span className="slot-counter__cents">{cents}</span>
+              </>
+            )}
           </>
         )}
       </span>

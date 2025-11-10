@@ -6,6 +6,15 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Prevent unintended bolding inside rollers */
+.slot-counter__major,
+.slot-counter__digit,
+.slot-counter__digit-column,
+.slot-counter__digit-wrapper {
+  font-weight: 400 !important;
+  font-variation-settings: "wght" 400 !important;
+}
+
 .slot-counter__major {
   display: inline-block;
   font-feature-settings: "tnum";

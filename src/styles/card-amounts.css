@@ -29,68 +29,95 @@
   margin-right: 2px;
 }
 
-.card-amounts__whole,
-.card-amounts__dot {
-  font-size: 52px; /* --amt-xl equivalent */
-  font-weight: 600;
+/* Major line (R amount) */
+.card-amounts__zar.amount-headline {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  font-variation-settings: "wght" 400;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.card-amounts__whole {
+  font-size: 52px; /* matches prior look */
+  font-weight: 400; /* was accidentally 600 */
+  font-variation-settings: "wght" 400;
+  line-height: 1;
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums lining-nums;
 }
 
+/* Decimal dot — same size and weight as integer */
 .card-amounts__dot {
+  font-size: 1em; /* match integer size */
+  font-weight: inherit; /* inherit from parent */
+  line-height: 1;
+  display: inline-block;
+  transform: translateY(0); /* no baseline drift */
+  margin: 0 0.02em;
   vertical-align: baseline;
-  transform: none;
-  margin-left: 1px;
 }
 
+/* Cents — smaller, baseline aligned */
 .card-amounts__cents {
-  font-size: calc(52px * 0.42); /* ~21.84px, smaller than main */
-  font-weight: 500;
+  font-size: 0.6em; /* smaller cents */
+  font-weight: 400;
+  opacity: 0.95;
+  display: inline-block;
+  transform: translateY(0.12em); /* subtle baseline align */
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums lining-nums;
-  opacity: 1;
-  transform: none;
 }
 
 /* Amount headline wrapper (for proper baseline alignment) */
 .amount-headline {
   font-variant-numeric: tabular-nums lining-nums;
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .amt-prefix {
   /* Uses card-amounts__symbol styles */
 }
 
-.amt-int,
-.amt-dot {
-  font-size: 52px; /* --amt-xl equivalent */
-  font-weight: 600;
+.amt-int {
+  font-size: 52px;
+  font-weight: 400;
+  font-variation-settings: "wght" 400;
+  line-height: 1;
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums lining-nums;
 }
 
 .amt-dot {
+  font-size: 1em; /* match integer size */
+  font-weight: inherit;
+  line-height: 1;
+  display: inline-block;
+  transform: translateY(0);
+  margin: 0 0.02em;
   vertical-align: baseline;
-  transform: none;
 }
 
 .amt-cents {
-  font-size: calc(52px * 0.42);
-  font-weight: 500;
+  font-size: 0.6em; /* smaller cents */
+  font-weight: 400;
+  opacity: 0.95;
+  display: inline-block;
+  transform: translateY(0.12em); /* subtle baseline align */
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Second line: USDT */
+/* Second line: USDT (minor line) */
 .card-amounts__usdt {
   margin-top: 4px; /* match original gap from card-balance-section */
-  font-size: 20px; /* match original Pepe card-balance-usdt */
-  font-weight: 400; /* match original Pepe weight */
-  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
-  opacity: 0.8; /* match original Pepe opacity */
+  font-size: 20px; /* clamp(16px, 3.4vw, 22px) equivalent */
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.01em;
+  opacity: 0.9;
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
 }
