@@ -50,6 +50,12 @@ export function useAiActionCycle(
       if (eth > 0) nonCashCards.push({ type: 'yield', balance: eth })
       if (pepe > 0) nonCashCards.push({ type: 'pepe', balance: pepe })
 
+      // Suppress flips without balance changes - ensure we have a valid target
+      if (nonCashCards.length === 0 && cash === 0) {
+        // No valid action possible
+        return
+      }
+
       // If no non-cash cards have balance, allow buying from cash
       if (nonCashCards.length === 0 && cash > 0) {
         // Randomly pick ETH or PEPE to buy
