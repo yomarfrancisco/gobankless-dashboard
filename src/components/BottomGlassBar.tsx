@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getWalletMode, type WalletMode } from '@/lib/state/userPrefs'
+import { useWalletMode } from '@/state/walletMode'
+import '@/styles/bottom-glass.css'
 
 interface BottomGlassBarProps {
   currentPath?: string
@@ -13,39 +13,7 @@ interface BottomGlassBarProps {
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile' || currentPath === '/transactions'
-  
-  // Initialize state from localStorage synchronously to avoid flash
-  const [walletMode, setWalletMode] = useState<WalletMode>(() => {
-    if (typeof window !== 'undefined') {
-      return getWalletMode()
-    }
-    return 'autonomous'
-  })
-
-  // Listen for storage changes (when user switches mode in another tab)
-  useEffect(() => {
-    // Listen for storage changes (when user switches mode in another tab)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'walletMode' && e.newValue) {
-        if (e.newValue === 'autonomous' || e.newValue === 'manual') {
-          setWalletMode(e.newValue)
-        }
-      }
-    }
-    
-    window.addEventListener('storage', handleStorageChange)
-    
-    // Also listen for custom events (same-tab changes)
-    const handleModeChange = () => {
-      setWalletMode(getWalletMode())
-    }
-    window.addEventListener('walletModeChange', handleModeChange)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('walletModeChange', handleModeChange)
-    }
-  }, [])
+  const { mode } = useWalletMode()
 
   return (
     <div className="bottom-menu">
@@ -74,8 +42,8 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
           </div>
           <div className="dollar-sign-container">
             <button
-              className={`dollar-sign-contained ${walletMode === 'manual' ? 'fab-manual' : ''}`}
-              aria-label="Direct payment"
+              className={`dollar-sign-contained fab-dollar ${mode === 'manual' ? 'is-manual' : 'is-autonomous'}`}
+              aria-label={`Direct payment (${mode} mode)`}
               onClick={onDollarClick}
               onTouchStart={onDollarClick}
               type="button"

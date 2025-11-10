@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import IosKeyboardShim from '@/components/IosKeyboardShim'
+import { WalletModeProvider } from '@/state/walletMode'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,9 +25,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head />
       <body className={inter.className}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+(function(){
+  try {
+    var m = localStorage.getItem('gb.walletMode') || 'autonomous';
+    document.documentElement.dataset.walletMode = m;
+  } catch(_) { 
+    document.documentElement.dataset.walletMode = 'autonomous'; 
+  }
+})();`,
+          }}
+        />
         <IosKeyboardShim />
-        {children}
+        <WalletModeProvider>
+          {children}
+        </WalletModeProvider>
       </body>
     </html>
   )

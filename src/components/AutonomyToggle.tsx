@@ -1,36 +1,26 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
-import { getWalletMode, setWalletMode, type WalletMode } from '@/lib/state/userPrefs'
+import { useCallback } from 'react'
+import { useWalletMode } from '@/state/walletMode'
 
 type Props = {
   className?: string
-  onChange?: (mode: WalletMode) => void // future-friendly
+  onChange?: (mode: 'autonomous' | 'manual') => void // future-friendly
 }
 
 export default function AutonomyToggle({ className, onChange }: Props) {
-  const [mode, setMode] = useState<WalletMode>('autonomous')
-
-  useEffect(() => {
-    setMode(getWalletMode())
-  }, [])
+  const { mode, setMode } = useWalletMode()
 
   const update = useCallback(
-    (m: WalletMode) => {
+    (m: 'autonomous' | 'manual') => {
       setMode(m)
-      setWalletMode(m)
       onChange?.(m)
-      
-      // Dispatch custom event for same-tab updates
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('walletModeChange'))
-      }
 
       if (process.env.NEXT_PUBLIC_DEV_PROFILE_TOGGLE_LOGS === '1') {
         console.log('[AutonomyToggle] mode:', m)
       }
     },
-    [onChange]
+    [setMode, onChange]
   )
 
   // a11y: tablist + tabs, arrow keys + space/enter
