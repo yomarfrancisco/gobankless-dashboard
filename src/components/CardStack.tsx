@@ -5,13 +5,11 @@ import { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallba
 import type React from 'react'
 import type { StaticImageData } from 'next/image'
 import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
-import SlotCounter from './SlotCounter'
-import { formatZAR, formatUSDT } from '@/lib/formatCurrency'
 import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
 import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
-import { useWalletAlloc } from '@/state/walletAlloc'
 import { FLIP_MS } from '@/lib/animations/useAiActionCycle'
-import clsx from 'clsx'
+import { useWalletAlloc } from '@/state/walletAlloc'
+import CardStackCard from './CardStackCard'
 
 // Temporary FX rate (will be wired to real API later)
 const FX_USD_ZAR_DEFAULT = 18.1
@@ -74,6 +72,13 @@ const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents'
   yield: 'ethCents',
 }
 
+// Map card type to portfolio symbol
+const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE'> = {
+  savings: 'CASH',
+  pepe: 'PEPE',
+  yield: 'ETH',
+}
+
 interface CardStackProps {
   onTopCardChange?: (cardType: 'pepe' | 'savings' | 'yield') => void
   flipControllerRef?: React.MutableRefObject<{ pause: () => void; resume: () => void } | null>
@@ -93,9 +98,9 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   const touchStartY = useRef<number>(0)
   const touchEndY = useRef<number>(0)
 
-  const { alloc, allocPct } = useWalletAlloc()
-
   // Flash state: track direction for each card type
+  // Note: alloc values are now read in CardStackCard component
+  const { alloc } = useWalletAlloc()
   const [flashDirection, setFlashDirection] = useState<Record<CardType, 'up' | 'down' | null>>({
     savings: null,
     pepe: null,
@@ -319,107 +324,25 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
           console.debug('[CardFlip]', `CardStack-${index}`, 'top card rendered')
         }
 
-        // Get allocation cents for this card
-        const allocKey = CARD_TO_ALLOC_KEY[card.type]
-        const cents = alloc[allocKey]
-        const zar = cents / 100
-        const usdt = zar / FX_USD_ZAR_DEFAULT
-        const pct = allocPct(cents)
-
         return (
-          <div
+          <CardStackCard
             key={index}
+            card={card}
+            index={index}
+            position={position}
+            isTop={isTop}
             className={getCardClasses(index)}
             onClick={() => handleCardClick(index)}
             onTouchStart={(e) => handleTouchStart(e, index)}
             onTouchEnd={(e) => handleTouchEnd(e, index)}
             style={{
-              zIndex: isTop ? 3 : position === 1 ? 2 : 1, // Ensure z-index is correct
+              zIndex: isTop ? 3 : position === 1 ? 2 : 1,
             }}
-          >
-            {card.type === 'yield' ? (
-              <div className="card-canvas card-yield-rounded">
-                <Image
-                  src={card.image}
-                  alt="GoB yield card"
-                  fill
-                  sizes="(max-width: 768px) 88vw, 420px"
-                  priority
-                  style={{ objectFit: 'cover', borderRadius: 'inherit' }}
-                />
-              </div>
-            ) : (
-              <Image
-                src={card.image}
-                alt={card.alt}
-                width={card.width}
-                height={card.height}
-                unoptimized
-              />
-            )}
-
-            {/* Amount display with SlotCounter */}
-            <div className={`card-amounts card-amounts--${card.type}`}>
-              <div
-                className={clsx('card-amounts__zar amount-headline amount-topline', {
-                  'flash-up': flashDirection[card.type] === 'up',
-                  'flash-down': flashDirection[card.type] === 'down',
-                })}
-                aria-label={`${zar.toFixed(2)} rand`}
-                onAnimationEnd={() => {
-                  // Clear flash after animation completes
-                  setFlashDirection((prev) => ({ ...prev, [card.type]: null }))
-                }}
-              >
-                <span className="amt-prefix card-amounts__symbol">R</span>
-                <SlotCounter
-                  value={zar}
-                  format={formatZAR}
-                  durationMs={700}
-                  className="card-amounts__zar-value"
-                  onStart={() => {
-                    // Flash direction is already computed and set in the useEffect
-                    // This callback ensures the flash class is active when animation starts
-                  }}
-                  renderMajor={(major) => <span className="amt-int card-amounts__whole">{major}</span>}
-                  renderCents={(cents) => (
-                    <>
-                      <span className="amt-dot card-amounts__dot">.</span>
-                      <span className="amt-cents card-amounts__cents">{cents}</span>
-                    </>
-                  )}
-                />
-              </div>
-              <div className="card-amounts__usdt" aria-label={`${usdt.toFixed(2)} USDT`}>
-                <SlotCounter
-                  value={usdt}
-                  format={formatUSDT}
-                  durationMs={700}
-                  className="card-amounts__usdt-value"
-                />
-                <span style={{ marginLeft: '4px' }}>USDT</span>
-              </div>
-            </div>
-
-            {/* Top-right card label */}
-            <div className="card-label">{CARD_LABELS[card.type]}</div>
-
-            {/* Bottom-left allocation pill */}
-            <div className="card-allocation-pill">
-              <span className="card-allocation-pill__text">{pct.toFixed(0)}%</span>
-            </div>
-
-            {/* Bottom-right health bar */}
-            <div className="card-health-group">
-              <span className="card-health-label">Health</span>
-              <div className="card-health-bar-container">
-                <div
-                  className={`card-health-bar-fill card-health-bar-fill--${HEALTH_CONFIG[card.type].level}`}
-                  style={{ width: `${HEALTH_CONFIG[card.type].percent}%` }}
-                />
-              </div>
-            </div>
-          </div>
+            flashDirection={flashDirection[card.type]}
+            onFlashEnd={() => {
+              setFlashDirection((prev) => ({ ...prev, [card.type]: null }))
+            }}
+          />
         )
       })}
     </div>

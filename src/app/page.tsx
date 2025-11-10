@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import CardStack, { type CardStackHandle } from '@/components/CardStack'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
@@ -15,6 +15,7 @@ import { formatUSDT } from '@/lib/money'
 import { useWalletAlloc } from '@/state/walletAlloc'
 import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
 import { formatZAR } from '@/lib/formatCurrency'
+import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
@@ -84,6 +85,11 @@ export default function Home() {
   const { alloc, getCash, getEth, getPepe, setCash, setEth, setPepe } = useWalletAlloc()
   const fundsAvailableZAR = alloc.totalCents / 100
   const formattedFunds = formatZAR(fundsAvailableZAR)
+
+  // Initialize portfolio store from wallet allocation
+  useEffect(() => {
+    initPortfolioFromAlloc(alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents)
+  }, [alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents])
 
   // Initialize AI action cycle
   useAiActionCycle(cardStackRef, {

@@ -73,7 +73,14 @@
 .card-health-bar-fill {
   height: 100%;
   border-radius: 9999px;
-  transition: width 300ms ease;
+  transition: width 260ms cubic-bezier(0.33, 1, 0.68, 1); /* easeOutCubic fallback */
+}
+
+/* Disable CSS transition when JS tween is active (reduced motion fallback) */
+@media (prefers-reduced-motion: reduce) {
+  .card-health-bar-fill {
+    transition: none;
+  }
 }
 
 /* Health level colors (monotone) */

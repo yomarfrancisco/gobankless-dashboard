@@ -3,6 +3,8 @@
 import { useEffect, useRef, useCallback } from 'react'
 import type { CardStackHandle } from '@/components/CardStack'
 import { useNotificationStore } from '@/store/notifications'
+import { usePortfolioStore } from '@/store/portfolio'
+import { updatePortfolioHolding } from '@/lib/portfolio/calculateMetrics'
 
 type CardType = 'pepe' | 'savings' | 'yield'
 
@@ -31,6 +33,7 @@ export function useAiActionCycle(
   const isRunningRef = useRef(false)
   const isProcessingRef = useRef(false)
   const pushNotification = useNotificationStore((state) => state.pushNotification)
+  const setHolding = usePortfolioStore((state) => state.setHolding)
 
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -122,12 +125,21 @@ export function useAiActionCycle(
           await cardStackRef.current.flipToCard(targetType, 'forward')
           await sleep(FLIP_MS + 50)
 
-          // 2) Update target card state (SlotCounter will animate from old to new)
+          // 2) Calculate new values
           const oldTarget = target.balance
           const newTarget = Math.max(0, oldTarget + delta)
           const zarDelta = delta * 18.1
           const newCashValue = Math.max(0, cash - zarDelta)
+          const totalZAR = cash + (eth * 18.1) + (pepe * 18.1)
 
+          // 3) Start health + allocation% tween immediately (delay: 0ms)
+          const targetSymbol = targetType === 'yield' ? 'ETH' : 'PEPE'
+          const newTargetZAR = newTarget * 18.1
+          const baseHealth = targetType === 'yield' ? 60 : 25
+          const targetHolding = updatePortfolioHolding(targetSymbol as 'ETH' | 'PEPE', newTargetZAR, totalZAR, baseHealth)
+          setHolding(targetHolding)
+
+          // 4) Update target card state (SlotCounter will animate from old to new after ~120ms stagger)
           if (targetType === 'yield') {
             setEth(newTarget)
           } else {
@@ -153,7 +165,7 @@ export function useAiActionCycle(
             routeOnTap: '/transactions',
           })
 
-          // 3) Wait for target slot animation
+          // 5) Wait for target slot animation (staggered: health/allocation start at 0ms, slot counter starts at ~120ms)
           await sleep(SLOT_MS)
 
           // 4) Flip back to Cash (reverse direction)
