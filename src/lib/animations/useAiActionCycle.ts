@@ -54,11 +54,12 @@ export function useAiActionCycle(
       const ethHolding = getHolding('ETH')
       const pepeHolding = getHolding('PEPE')
 
-      // Get current ZAR amounts from portfolio store
+      // Get current ZAR amounts from portfolio store (single source of truth)
+      // Fallback to wallet alloc if portfolio store not initialized
       const prev: HoldingsZAR = {
-        CASH: cashHolding?.amountZAR ?? getCash(),
-        ETH: ethHolding?.amountZAR ?? getEth() * FX_USD_ZAR_DEFAULT,
-        PEPE: pepeHolding?.amountZAR ?? getPepe() * FX_USD_ZAR_DEFAULT,
+        CASH: cashHolding?.amountZAR ?? getCash(), // getCash() returns ZAR
+        ETH: ethHolding?.amountZAR ?? getEth() * FX_USD_ZAR_DEFAULT, // getEth() returns USDT
+        PEPE: pepeHolding?.amountZAR ?? getPepe() * FX_USD_ZAR_DEFAULT, // getPepe() returns USDT
       }
 
       // Get USDT balances for logic (from wallet alloc)
