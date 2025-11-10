@@ -12,9 +12,10 @@
 
 /* Top line: ZAR */
 .card-amounts__zar {
-  display: flex;
+  display: inline-flex;
   align-items: baseline;
   gap: 2px;
+  font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums; /* prevents jitter on transitions */
 }
 
@@ -29,6 +30,8 @@
   font-size: 52px; /* match original Pepe card-balance-amount */
   font-weight: 400; /* match original Pepe weight */
   letter-spacing: 0.21px; /* match original Pepe letter-spacing */
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 }
 
 .card-amounts__dot {
@@ -43,6 +46,8 @@
   letter-spacing: 0.21px; /* match original Pepe letter-spacing */
   opacity: 1;
   transform: none; /* remove translateY to match original */
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 }
 
 /* Second line: USDT */
@@ -52,6 +57,8 @@
   font-weight: 400; /* match original Pepe weight */
   letter-spacing: 0.21px; /* match original Pepe letter-spacing */
   opacity: 0.8; /* match original Pepe opacity */
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 }
 
 /* Prevent layout shift during card stack transitions */

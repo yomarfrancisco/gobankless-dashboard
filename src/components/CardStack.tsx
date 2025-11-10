@@ -5,19 +5,14 @@ import { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallba
 import type React from 'react'
 import type { StaticImageData } from 'next/image'
 import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
-import NumberRoll from './NumberRoll'
+import SlotCounter from './SlotCounter'
+import { formatZAR, formatUSDT } from '@/lib/formatCurrency'
 import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
 import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
 import { useWalletAlloc } from '@/state/walletAlloc'
-import { useAiRebalance, type AiAction } from '@/lib/aiActions/useAiRebalance'
-import { useRandomCardFlips } from '@/lib/animations/useRandomCardFlips'
 
 // Temporary FX rate (will be wired to real API later)
 const FX_USD_ZAR_DEFAULT = 18.1
-
-function computeZAR(usdt: number, fx: number = FX_USD_ZAR_DEFAULT) {
-  return usdt * fx
-}
 
 // Health levels: 'good' | 'moderate' | 'fragile'
 type HealthLevel = 'good' | 'moderate' | 'fragile'
@@ -77,13 +72,6 @@ const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents'
   yield: 'ethCents',
 }
 
-// Map allocation key to card type
-const ALLOC_KEY_TO_CARD: Record<'cash' | 'eth' | 'pepe', CardType> = {
-  cash: 'savings',
-  eth: 'yield',
-  pepe: 'pepe',
-}
-
 interface CardStackProps {
   onTopCardChange?: (cardType: 'pepe' | 'savings' | 'yield') => void
   flipControllerRef?: React.MutableRefObject<{ pause: () => void; resume: () => void } | null>
@@ -95,10 +83,6 @@ export type CardStackHandle = {
 }
 
 const FLIP_DURATION_MS = 300
-const FLIP_BUFFER_MS = 50
-const NUMBER_ROLL_DURATION_MS = 400
-const COOLDOWN_MIN_MS = 6000
-const COOLDOWN_MAX_MS = 9000
 
 const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack({ onTopCardChange, flipControllerRef: externalFlipControllerRef }, ref) {
   const [order, setOrder] = useState<number[]>([0, 1, 2]) // [top, middle, bottom]
@@ -106,11 +90,8 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   const [phase, setPhase] = useState<'idle' | 'animating'>('idle')
   const touchStartY = useRef<number>(0)
   const touchEndY = useRef<number>(0)
-  const actionQueueRef = useRef<AiAction[]>([])
-  const isProcessingActionRef = useRef(false)
 
-  const { alloc, isRebalancing, setRebalancing, applyAiAction, allocPct } = useWalletAlloc()
-  const aiRebalance = useAiRebalance(alloc)
+  const { alloc, allocPct } = useWalletAlloc()
 
   // Notify parent of top card change
   useEffect(() => {
@@ -127,11 +108,6 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   // Get card index by type
   const getCardIndex = useCallback((cardType: CardType): number => {
     return cardsData.findIndex((c) => c.type === cardType)
-  }, [])
-
-  // Get card type by index
-  const getCardType = useCallback((index: number): CardType => {
-    return cardsData[index].type
   }, [])
 
   // Flip to a specific card type
@@ -152,7 +128,6 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
       if (targetPosition === 0) return
 
       // Calculate how many cycles needed
-      // We need to cycle until target is at position 0
       let cyclesNeeded = targetPosition
 
       return new Promise((resolve) => {
@@ -164,7 +139,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
 
           if (isAnimating) {
             // Wait for current animation to finish
-            setTimeout(() => performCycle(remaining), FLIP_DURATION_MS + FLIP_BUFFER_MS)
+            setTimeout(() => performCycle(remaining), FLIP_DURATION_MS + 50)
             return
           }
 
@@ -178,7 +153,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
 
             // Continue with next cycle if needed
             if (remaining > 1) {
-              setTimeout(() => performCycle(remaining - 1), FLIP_BUFFER_MS)
+              setTimeout(() => performCycle(remaining - 1), 50)
             } else {
               resolve()
             }
@@ -191,100 +166,8 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     [order, isAnimating, getCardIndex]
   )
 
-  // Use external flip controller ref if provided, otherwise create internal one
-  const internalFlipControllerRef = useRef<{ pause: () => void; resume: () => void } | null>(null)
-  const flipControllerRef = externalFlipControllerRef || internalFlipControllerRef
-  
-  // Set up random card flips with controller
-  useRandomCardFlips(ref as React.RefObject<CardStackHandle | null>, flipControllerRef)
-
-  // Process AI action sequence
-  const processAiAction = useCallback(
-    async (action: AiAction) => {
-      if (isProcessingActionRef.current) {
-        // Queue action
-        actionQueueRef.current.push(action)
-        return
-      }
-
-      isProcessingActionRef.current = true
-      setRebalancing(true)
-      
-      // Pause ambient flips
-      if (flipControllerRef.current) {
-        flipControllerRef.current.pause()
-      }
-
-      try {
-        const targetCardType = ALLOC_KEY_TO_CARD[action.to]
-        const sourceCardType = ALLOC_KEY_TO_CARD[action.from]
-
-        // 1. Flip to target card
-        await flipToCard(targetCardType)
-
-        // 2. Wait for flip to complete
-        await new Promise((resolve) => setTimeout(resolve, FLIP_BUFFER_MS))
-
-        // 3. Get old and new values for target
-        const allocKey = CARD_TO_ALLOC_KEY[targetCardType]
-        const oldTargetCents = alloc[allocKey]
-        const newTargetCents = oldTargetCents + action.cents
-
-        // 4. Apply action to state (this triggers NumberRoll animation)
-        applyAiAction(action)
-
-        // 5. Wait for number roll animation
-        await new Promise((resolve) => setTimeout(resolve, NUMBER_ROLL_DURATION_MS))
-
-        // 6. Flip back to Cash (savings)
-        await flipToCard('savings')
-
-        // 7. Wait for flip to complete
-        await new Promise((resolve) => setTimeout(resolve, FLIP_BUFFER_MS))
-
-        // 8. Cash value already updated by applyAiAction, NumberRoll will animate
-        // Wait for number roll animation
-        await new Promise((resolve) => setTimeout(resolve, NUMBER_ROLL_DURATION_MS))
-
-        // 9. Cooldown before resuming ambient flips
-        const cooldown = COOLDOWN_MIN_MS + Math.random() * (COOLDOWN_MAX_MS - COOLDOWN_MIN_MS)
-        await new Promise((resolve) => setTimeout(resolve, cooldown))
-      } finally {
-        setRebalancing(false)
-        isProcessingActionRef.current = false
-
-        // Resume ambient flips
-        if (flipControllerRef.current) {
-          flipControllerRef.current.resume()
-        }
-
-        // Process next queued action if any
-        const nextAction = actionQueueRef.current.shift()
-        if (nextAction) {
-          setTimeout(() => processAiAction(nextAction), 100)
-        }
-      }
-    },
-    [alloc, flipToCard, applyAiAction, setRebalancing]
-  )
-
-  // Subscribe to AI actions
-  useEffect(() => {
-    const unsubscribe = aiRebalance.onAction((action) => {
-      processAiAction(action)
-    })
-
-    // Start AI rebalance generator
-    aiRebalance.start()
-
-    return () => {
-      unsubscribe()
-      aiRebalance.stop()
-    }
-  }, [aiRebalance, processAiAction])
-
   const cycle = () => {
-    if (isAnimating || isRebalancing) return
+    if (isAnimating) return
 
     setIsAnimating(true)
     setPhase('animating')
@@ -296,7 +179,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     }, FLIP_DURATION_MS)
   }
 
-  // Expose cycleNext for external control (e.g., random flips)
+  // Expose cycleNext for external control
   const cycleNext = () => {
     cycle()
   }
@@ -308,7 +191,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
 
   const handleCardClick = (index: number) => {
     // Only respond if this card is the top card (order[0])
-    if (order[0] === index && !isAnimating && !isRebalancing) {
+    if (order[0] === index && !isAnimating) {
       cycle()
     }
   }
@@ -326,7 +209,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
       const minSwipeDistance = 50
 
       // Swipe up detected
-      if (swipeDistance > minSwipeDistance && !isAnimating && !isRebalancing) {
+      if (swipeDistance > minSwipeDistance && !isAnimating) {
         cycle()
       }
     }
@@ -421,13 +304,26 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
               />
             )}
 
-            {/* Amount display with NumberRoll */}
+            {/* Amount display with SlotCounter */}
             <div className={`card-amounts card-amounts--${card.type}`}>
               <div className="card-amounts__zar" aria-label={`${zar.toFixed(2)} rand`}>
-                <NumberRoll valueCents={cents} currency="ZAR" durationMs={NUMBER_ROLL_DURATION_MS} />
+                <span className="card-amounts__symbol">R</span>
+                <SlotCounter
+                  value={zar}
+                  format={formatZAR}
+                  durationMs={700}
+                  className="card-amounts__zar-value"
+                  renderMajor={(major) => <span className="card-amounts__whole">{major}</span>}
+                  renderCents={(cents) => <span className="card-amounts__cents">{cents}</span>}
+                />
               </div>
               <div className="card-amounts__usdt" aria-label={`${usdt.toFixed(2)} USDT`}>
-                <NumberRoll valueCents={Math.round(usdt * 100)} currency="USD" durationMs={NUMBER_ROLL_DURATION_MS} />
+                <SlotCounter
+                  value={usdt}
+                  format={formatUSDT}
+                  durationMs={700}
+                  className="card-amounts__usdt-value"
+                />
                 <span style={{ marginLeft: '4px' }}>USDT</span>
               </div>
             </div>

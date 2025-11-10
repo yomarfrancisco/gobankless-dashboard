@@ -21,6 +21,13 @@ interface WalletAllocContextType {
   setRebalancing: (value: boolean) => void
   applyAiAction: (action: { from: 'cash' | 'eth' | 'pepe'; to: 'cash' | 'eth' | 'pepe'; cents: number }) => void
   allocPct: (value: number) => number
+  // Getters and setters for direct balance updates
+  getCash: () => number
+  getEth: () => number
+  getPepe: () => number
+  setCash: (value: number) => void
+  setEth: (value: number) => void
+  setPepe: (value: number) => void
 }
 
 const WalletAllocContext = createContext<WalletAllocContextType | undefined>(undefined)
@@ -68,8 +75,58 @@ export function WalletAllocProvider({ children }: { children: ReactNode }) {
     [alloc.totalCents]
   )
 
+  const getCash = useCallback(() => alloc.cashCents / 100, [alloc.cashCents])
+  const getEth = useCallback(() => alloc.ethCents / 100, [alloc.ethCents])
+  const getPepe = useCallback(() => alloc.pepeCents / 100, [alloc.pepeCents])
+
+  const setCash = useCallback(
+    (value: number) => {
+      setAlloc((prev) => {
+        const newCashCents = Math.round(value * 100)
+        const diff = newCashCents - prev.cashCents
+        // Adjust total to keep it constant (or allow it to change if needed)
+        return { ...prev, cashCents: newCashCents }
+      })
+    },
+    []
+  )
+
+  const setEth = useCallback(
+    (value: number) => {
+      setAlloc((prev) => {
+        const newEthCents = Math.round(value * 100)
+        return { ...prev, ethCents: newEthCents }
+      })
+    },
+    []
+  )
+
+  const setPepe = useCallback(
+    (value: number) => {
+      setAlloc((prev) => {
+        const newPepeCents = Math.round(value * 100)
+        return { ...prev, pepeCents: newPepeCents }
+      })
+    },
+    []
+  )
+
   return (
-    <WalletAllocContext.Provider value={{ alloc, isRebalancing, setRebalancing, applyAiAction, allocPct }}>
+    <WalletAllocContext.Provider
+      value={{
+        alloc,
+        isRebalancing,
+        setRebalancing,
+        applyAiAction,
+        allocPct,
+        getCash,
+        getEth,
+        getPepe,
+        setCash,
+        setEth,
+        setPepe,
+      }}
+    >
       {children}
     </WalletAllocContext.Provider>
   )
