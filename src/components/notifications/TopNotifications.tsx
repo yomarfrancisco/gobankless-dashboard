@@ -47,15 +47,7 @@ export default function TopNotifications() {
     dismissNotification(notification.id)
   }
 
-  const handleDismiss = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation()
-    dismissNotification(id)
-    setVisibleIds((prev) => {
-      const next = new Set(prev)
-      next.delete(id)
-      return next
-    })
-  }
+  // Dismiss handler removed - notifications auto-dismiss after 3s or on tap
 
   // Haptic feedback (if available)
   const triggerHaptic = () => {
@@ -99,25 +91,20 @@ export default function TopNotifications() {
               <Image
                 src={avatarUrl}
                 alt={notification.actor.type === 'ai' ? 'AI' : 'User'}
-                width={28}
-                height={28}
+                width={38}
+                height={38}
                 className="notification-avatar-img"
                 unoptimized
               />
             </div>
             <div className="notification-content">
-              <div className="notification-title">{notification.title}</div>
+              <div className="notification-head">
+                <div className="notification-title">{notification.title}</div>
+                <div className="notification-meta">
+                  <div className="notification-timestamp">{formatRelativeShort(notification.timestamp)}</div>
+                </div>
+              </div>
               <div className="notification-body">{notification.body}</div>
-            </div>
-            <div className="notification-meta">
-              <button
-                className="notification-dismiss"
-                onClick={(e) => handleDismiss(e, notification.id)}
-                aria-label="Dismiss notification"
-              >
-                ×
-              </button>
-              <div className="notification-timestamp">{formatRelativeShort(notification.timestamp)}</div>
             </div>
           </div>
         )
