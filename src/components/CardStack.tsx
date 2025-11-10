@@ -11,6 +11,7 @@ import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
 import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
 import { useWalletAlloc } from '@/state/walletAlloc'
 import { FLIP_MS } from '@/lib/animations/useAiActionCycle'
+import clsx from 'clsx'
 
 // Temporary FX rate (will be wired to real API later)
 const FX_USD_ZAR_DEFAULT = 18.1
@@ -93,6 +94,62 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   const touchEndY = useRef<number>(0)
 
   const { alloc, allocPct } = useWalletAlloc()
+
+  // Flash state: track direction for each card type
+  const [flashDirection, setFlashDirection] = useState<Record<CardType, 'up' | 'down' | null>>({
+    savings: null,
+    pepe: null,
+    yield: null,
+  })
+  // Track previous values to compute direction
+  const prevValuesRef = useRef<Record<CardType, number>>({
+    savings: alloc.cashCents / 100,
+    pepe: alloc.pepeCents / 100,
+    yield: alloc.ethCents / 100,
+  })
+
+  // Compute flash direction when values change
+  useEffect(() => {
+    const currentValues: Record<CardType, number> = {
+      savings: alloc.cashCents / 100,
+      pepe: alloc.pepeCents / 100,
+      yield: alloc.ethCents / 100,
+    }
+
+    const newFlashDirection: Record<CardType, 'up' | 'down' | null> = {
+      savings: null,
+      pepe: null,
+      yield: null,
+    }
+
+    // Compute direction for each card
+    ;(['savings', 'pepe', 'yield'] as CardType[]).forEach((cardType) => {
+      const prev = prevValuesRef.current[cardType]
+      const current = currentValues[cardType]
+      const delta = current - prev
+
+      // Debounce tiny changes (less than half a cent)
+      if (Math.abs(delta) < 0.005) {
+        newFlashDirection[cardType] = null
+      } else if (delta > 0) {
+        newFlashDirection[cardType] = 'up'
+      } else if (delta < 0) {
+        newFlashDirection[cardType] = 'down'
+      }
+
+      // Update previous value
+      prevValuesRef.current[cardType] = current
+    })
+
+    // Only update if there's a change to avoid unnecessary re-renders
+    const hasChange = Object.keys(newFlashDirection).some(
+      (key) => newFlashDirection[key as CardType] !== flashDirection[key as CardType]
+    )
+    if (hasChange) {
+      setFlashDirection(newFlashDirection)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents])
 
   // Notify parent of top card change
   useEffect(() => {
@@ -307,13 +364,27 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
 
             {/* Amount display with SlotCounter */}
             <div className={`card-amounts card-amounts--${card.type}`}>
-              <div className="card-amounts__zar amount-headline" aria-label={`${zar.toFixed(2)} rand`}>
+              <div
+                className={clsx('card-amounts__zar amount-headline amount-topline', {
+                  'flash-up': flashDirection[card.type] === 'up',
+                  'flash-down': flashDirection[card.type] === 'down',
+                })}
+                aria-label={`${zar.toFixed(2)} rand`}
+                onAnimationEnd={() => {
+                  // Clear flash after animation completes
+                  setFlashDirection((prev) => ({ ...prev, [card.type]: null }))
+                }}
+              >
                 <span className="amt-prefix card-amounts__symbol">R</span>
                 <SlotCounter
                   value={zar}
                   format={formatZAR}
                   durationMs={700}
                   className="card-amounts__zar-value"
+                  onStart={() => {
+                    // Flash direction is already computed and set in the useEffect
+                    // This callback ensures the flash class is active when animation starts
+                  }}
                   renderMajor={(major) => <span className="amt-int card-amounts__whole">{major}</span>}
                   renderCents={(cents) => (
                     <>

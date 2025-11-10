@@ -11,6 +11,7 @@ type Props = {
   durationMs?: number
   easing?: string
   onDone?: () => void
+  onStart?: () => void
   className?: string
   renderMajor?: (major: string) => React.ReactNode
   renderCents?: (cents: string) => React.ReactNode
@@ -27,6 +28,7 @@ export default function SlotCounter({
   durationMs = 700,
   easing = 'easeOutCubic',
   onDone,
+  onStart,
   className = '',
   renderMajor,
   renderCents,
@@ -39,6 +41,7 @@ export default function SlotCounter({
   const startTimeRef = useRef<number | null>(null)
   const startValueRef = useRef<number>(numericValue)
   const targetValueRef = useRef<number>(numericValue)
+  const hasStartedRef = useRef(false)
 
   useEffect(() => {
     if (numericValue !== prevValueRef.current) {
@@ -47,10 +50,16 @@ export default function SlotCounter({
       prevValueRef.current = numericValue
       setIsAnimating(true)
       startTimeRef.current = null
+      hasStartedRef.current = false
 
       const animate = (currentTime: number) => {
         if (startTimeRef.current === null) {
           startTimeRef.current = currentTime
+          // Fire onStart callback at the first animation frame
+          if (onStart && !hasStartedRef.current) {
+            hasStartedRef.current = true
+            onStart()
+          }
         }
 
         const elapsed = currentTime - startTimeRef.current
