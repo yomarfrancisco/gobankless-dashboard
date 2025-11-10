@@ -13,6 +13,8 @@ import SuccessSheet from '@/components/SuccessSheet'
 import BankTransferDetailsSheet from '@/components/BankTransferDetailsSheet'
 import { formatUSDT } from '@/lib/money'
 import { useWalletAlloc } from '@/state/walletAlloc'
+import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
+import { formatZAR } from '@/lib/formatCurrency'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
@@ -79,8 +81,19 @@ export default function Home() {
   }, [amountMode])
 
   // Get wallet allocation for funds available display
-  const { alloc } = useWalletAlloc()
+  const { alloc, getCash, getEth, getPepe, setCash, setEth, setPepe } = useWalletAlloc()
   const fundsAvailableZAR = alloc.totalCents / 100
+  const formattedFunds = formatZAR(fundsAvailableZAR)
+
+  // Initialize AI action cycle
+  useAiActionCycle(cardStackRef, {
+    getCash,
+    getEth,
+    getPepe,
+    setCash,
+    setEth,
+    setPepe,
+  })
 
   return (
     <div className="app-shell">
@@ -102,7 +115,7 @@ export default function Home() {
                     <div className="help-icon">?</div>
                   </div>
                   <p className="wallet-subtitle">
-                    R{fundsAvailableZAR.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} available
+                    R{formattedFunds.major}.{formattedFunds.cents} available
                   </p>
                 </div>
 
