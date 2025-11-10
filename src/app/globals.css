@@ -2,6 +2,7 @@
 @import '../styles/card-overlays.css';
 @import '../styles/success-sheet.css';
 @import '../styles/payment-sheet.css';
+@import '../styles/profile-toggle.css';
 
 :root {
   --top-safe: 176px;
@@ -798,31 +799,6 @@ body {
 
 .profile-inbox:hover {
   background: #ff1a42;
-}
-
-/* Autonomous mode pill */
-.autonomy-pill {
-  height: 36px;
-  border-radius: 9999px;
-  padding: 0 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: rgba(0, 0, 0, 0.04);
-  font-size: 14px;
-  margin-top: 8px;
-}
-
-.autonomy-label {
-  font-weight: 500;
-  color: #000;
-}
-
-.autonomy-value {
-  font-weight: 600;
-  color: #000;
 }
 
 /* Transactions page */

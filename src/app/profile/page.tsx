@@ -11,6 +11,7 @@ import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
 import { formatUSDT } from '@/lib/money'
+import AutonomyToggle from '@/components/AutonomyToggle'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -87,11 +88,9 @@ export default function ProfilePage() {
                 <h1 className="profile-name">Samuel Akoyo</h1>
                 <div className="profile-handle">$samakoyo</div>
 
-                {/* Autonomous mode indicator */}
-                <div className="autonomy-pill" aria-label="Autonomous mode level">
-                  <span className="autonomy-label">Autonomous mode</span>
-                  <span className="autonomy-value" aria-live="polite">100%</span>
-                  {/* TODO: Add state/hook for autonomous mode toggle and level */}
+                {/* Autonomous mode toggle */}
+                <div style={{ marginTop: 8, marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
+                  <AutonomyToggle />
                 </div>
 
                 {/* Bio */}
