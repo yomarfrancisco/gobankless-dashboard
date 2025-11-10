@@ -20,8 +20,6 @@
   padding: 16px 16px 18px;
   margin-bottom: 8px;
   background: rgba(166, 166, 166, 0.7);
-  background-image: linear-gradient(#333, #333);
-  background-blend-mode: overlay;
   backdrop-filter: blur(150px);
   -webkit-backdrop-filter: blur(150px);
   border-radius: 24px;
@@ -33,6 +31,25 @@
   opacity: 0;
   color: #000;
   font-family: "Acumin VF", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+  position: relative;
+}
+
+/* Dark overlay effect */
+.notification-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#333, #333);
+  opacity: 0.3;
+  border-radius: 24px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+
+.notification-item > * {
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes slideDownFadeIn {
