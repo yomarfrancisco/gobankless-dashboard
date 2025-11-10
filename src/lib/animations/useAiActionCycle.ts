@@ -5,8 +5,9 @@ import type { CardStackHandle } from '@/components/CardStack'
 
 type CardType = 'pepe' | 'savings' | 'yield'
 
+export const FLIP_MS = 300 // do not change
+export const CASH_UPDATE_DELAY_MS = FLIP_MS + 150 // small perceptible delay after flip back
 const INTERVAL_MS = 7000 // time between actions
-const FLIP_MS = 300 // do not change
 const SLOT_MS = 700 // slot animation duration per update
 const DELTA_MIN = 5 // USDT min move
 const DELTA_MAX = 40 // USDT max move
@@ -56,11 +57,11 @@ export function useAiActionCycle(
         const delta = rnd(DELTA_MIN, Math.min(DELTA_MAX, Math.floor(cash / 18.1))) // Convert ZAR to USDT estimate
 
         if (delta > 0) {
-          // 1) Flip to target
-          await cardStackRef.current.flipToCard(targetType)
+          // 1) Flip forward to target
+          await cardStackRef.current.flipToCard(targetType, 'forward')
           await sleep(FLIP_MS + 50)
 
-          // 2) Update state first (SlotCounter will animate from old to new)
+          // 2) Update target card state (SlotCounter will animate from old to new)
           const oldTarget = targetType === 'yield' ? eth : pepe
           const newTarget = oldTarget + delta
           const zarDelta = delta * 18.1
@@ -71,16 +72,19 @@ export function useAiActionCycle(
           } else {
             setPepe(newTarget)
           }
-          setCash(newCashValue)
 
-          // 3) Wait for slot animation
+          // 3) Wait for target slot animation
           await sleep(SLOT_MS)
 
-          // 4) Flip to Cash
-          await cardStackRef.current.flipToCard('savings')
+          // 4) Flip back to Cash (reverse direction)
+          await cardStackRef.current.flipToCard('savings', 'back')
           await sleep(FLIP_MS + 50)
 
-          // 5) Cash already updated, slot animation will show transition automatically via SlotCounter
+          // 5) After flip back completes + delay, update cash (triggers slot animation)
+          await sleep(CASH_UPDATE_DELAY_MS)
+          setCash(newCashValue)
+
+          // 6) Wait for cash slot animation
           await sleep(SLOT_MS)
         }
       } else if (nonCashCards.length > 0) {
@@ -106,11 +110,11 @@ export function useAiActionCycle(
         }
 
         if (delta !== 0) {
-          // 1) Flip to target
-          await cardStackRef.current.flipToCard(targetType)
+          // 1) Flip forward to target
+          await cardStackRef.current.flipToCard(targetType, 'forward')
           await sleep(FLIP_MS + 50)
 
-          // 2) Update state first (SlotCounter will animate from old to new)
+          // 2) Update target card state (SlotCounter will animate from old to new)
           const oldTarget = target.balance
           const newTarget = Math.max(0, oldTarget + delta)
           const zarDelta = delta * 18.1
@@ -121,16 +125,19 @@ export function useAiActionCycle(
           } else {
             setPepe(newTarget)
           }
-          setCash(newCashValue)
 
-          // 3) Wait for slot animation
+          // 3) Wait for target slot animation
           await sleep(SLOT_MS)
 
-          // 4) Flip to Cash
-          await cardStackRef.current.flipToCard('savings')
+          // 4) Flip back to Cash (reverse direction)
+          await cardStackRef.current.flipToCard('savings', 'back')
           await sleep(FLIP_MS + 50)
 
-          // 5) Cash already updated, slot animation will show transition automatically via SlotCounter
+          // 5) After flip back completes + delay, update cash (triggers slot animation)
+          await sleep(CASH_UPDATE_DELAY_MS)
+          setCash(newCashValue)
+
+          // 6) Wait for cash slot animation
           await sleep(SLOT_MS)
         }
       }

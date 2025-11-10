@@ -16,7 +16,10 @@
   align-items: baseline;
   gap: 2px;
   font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums; /* prevents jitter on transitions */
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: 0;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .card-amounts__symbol {
@@ -26,28 +29,59 @@
   margin-right: 2px;
 }
 
-.card-amounts__whole {
-  font-size: 52px; /* match original Pepe card-balance-amount */
-  font-weight: 400; /* match original Pepe weight */
-  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
+.card-amounts__whole,
+.card-amounts__dot {
+  font-size: 52px; /* --amt-xl equivalent */
+  font-weight: 600;
   font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .card-amounts__dot {
-  font-size: 52px; /* match main amount size */
-  font-weight: 400; /* match original Pepe weight */
+  vertical-align: baseline;
+  transform: none;
   margin-left: 1px;
 }
 
 .card-amounts__cents {
-  font-size: 36px; /* match original Pepe card-balance-amount-decimal */
-  font-weight: 400; /* match original Pepe weight */
-  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
-  opacity: 1;
-  transform: none; /* remove translateY to match original */
+  font-size: calc(52px * 0.42); /* ~21.84px, smaller than main */
+  font-weight: 500;
   font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
+  opacity: 1;
+  transform: none;
+}
+
+/* Amount headline wrapper (for proper baseline alignment) */
+.amount-headline {
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: 0;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.amt-prefix {
+  /* Uses card-amounts__symbol styles */
+}
+
+.amt-int,
+.amt-dot {
+  font-size: 52px; /* --amt-xl equivalent */
+  font-weight: 600;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.amt-dot {
+  vertical-align: baseline;
+  transform: none;
+}
+
+.amt-cents {
+  font-size: calc(52px * 0.42);
+  font-weight: 500;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 /* Second line: USDT */

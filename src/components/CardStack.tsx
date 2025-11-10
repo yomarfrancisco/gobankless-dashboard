@@ -10,6 +10,7 @@ import { formatZAR, formatUSDT } from '@/lib/formatCurrency'
 import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
 import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
 import { useWalletAlloc } from '@/state/walletAlloc'
+import { FLIP_MS } from '@/lib/animations/useAiActionCycle'
 
 // Temporary FX rate (will be wired to real API later)
 const FX_USD_ZAR_DEFAULT = 18.1
@@ -79,10 +80,10 @@ interface CardStackProps {
 
 export type CardStackHandle = {
   cycleNext: () => void
-  flipToCard: (cardType: CardType) => Promise<void>
+  flipToCard: (cardType: CardType, direction?: 'forward' | 'back') => Promise<void>
 }
 
-const FLIP_DURATION_MS = 300
+const FLIP_DURATION_MS = FLIP_MS
 
 const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack({ onTopCardChange, flipControllerRef: externalFlipControllerRef }, ref) {
   const [order, setOrder] = useState<number[]>([0, 1, 2]) // [top, middle, bottom]
@@ -112,7 +113,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
 
   // Flip to a specific card type
   const flipToCard = useCallback(
-    async (targetCardType: CardType): Promise<void> => {
+    async (targetCardType: CardType, direction: 'forward' | 'back' = 'forward'): Promise<void> => {
       const targetIndex = getCardIndex(targetCardType)
       if (targetIndex === -1) return
 
@@ -306,15 +307,20 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
 
             {/* Amount display with SlotCounter */}
             <div className={`card-amounts card-amounts--${card.type}`}>
-              <div className="card-amounts__zar" aria-label={`${zar.toFixed(2)} rand`}>
-                <span className="card-amounts__symbol">R</span>
+              <div className="card-amounts__zar amount-headline" aria-label={`${zar.toFixed(2)} rand`}>
+                <span className="amt-prefix card-amounts__symbol">R</span>
                 <SlotCounter
                   value={zar}
                   format={formatZAR}
                   durationMs={700}
                   className="card-amounts__zar-value"
-                  renderMajor={(major) => <span className="card-amounts__whole">{major}</span>}
-                  renderCents={(cents) => <span className="card-amounts__cents">{cents}</span>}
+                  renderMajor={(major) => <span className="amt-int card-amounts__whole">{major}</span>}
+                  renderCents={(cents) => (
+                    <>
+                      <span className="amt-dot card-amounts__dot">.</span>
+                      <span className="amt-cents card-amounts__cents">{cents}</span>
+                    </>
+                  )}
                 />
               </div>
               <div className="card-amounts__usdt" aria-label={`${usdt.toFixed(2)} USDT`}>
