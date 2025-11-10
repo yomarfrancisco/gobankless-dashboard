@@ -16,8 +16,7 @@
   align-items: baseline;
   gap: 2px;
   font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums lining-nums;
-  letter-spacing: 0;
+  font-variant-numeric: tabular-nums; /* prevents jitter on transitions */
   line-height: 1;
   color: rgba(255, 255, 255, 0.92);
 }
@@ -39,32 +38,33 @@
 }
 
 .card-amounts__whole {
-  font-size: 52px; /* matches prior look */
-  font-weight: 400; /* was accidentally 600 */
-  font-variation-settings: "wght" 400;
+  font-size: 52px; /* match original Pepe card-balance-amount */
+  font-weight: 400; /* match original Pepe weight */
+  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
   line-height: 1;
   font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums lining-nums;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Decimal dot — same size and weight as integer */
 .card-amounts__dot {
-  font-size: 1em; /* match integer size */
-  font-weight: inherit; /* inherit from parent */
+  font-size: 52px; /* match main amount size (same as integer) */
+  font-weight: 400; /* match original Pepe weight */
   line-height: 1;
   display: inline-block;
-  transform: translateY(0); /* no baseline drift */
-  margin: 0 0.02em;
+  transform: none; /* no baseline drift */
+  margin-left: 1px;
   vertical-align: baseline;
 }
 
 /* Cents — smaller, baseline aligned */
 .card-amounts__cents {
-  font-size: 0.6em; /* smaller cents */
-  font-weight: 400;
-  opacity: 0.95;
+  font-size: 36px; /* match original Pepe card-balance-amount-decimal */
+  font-weight: 400; /* match original Pepe weight */
+  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
+  opacity: 1;
   display: inline-block;
-  transform: translateY(0.12em); /* subtle baseline align */
+  transform: none; /* remove translateY to match original */
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums lining-nums;
 }
@@ -82,30 +82,31 @@
 }
 
 .amt-int {
-  font-size: 52px;
-  font-weight: 400;
-  font-variation-settings: "wght" 400;
+  font-size: 52px; /* match original Pepe card-balance-amount */
+  font-weight: 400; /* match original Pepe weight */
+  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
   line-height: 1;
   font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums lining-nums;
+  font-variant-numeric: tabular-nums;
 }
 
 .amt-dot {
-  font-size: 1em; /* match integer size */
-  font-weight: inherit;
+  font-size: 52px; /* match main amount size (same as integer) */
+  font-weight: 400; /* match original Pepe weight */
   line-height: 1;
   display: inline-block;
-  transform: translateY(0);
-  margin: 0 0.02em;
+  transform: none;
+  margin-left: 1px;
   vertical-align: baseline;
 }
 
 .amt-cents {
-  font-size: 0.6em; /* smaller cents */
-  font-weight: 400;
-  opacity: 0.95;
+  font-size: 36px; /* match original Pepe card-balance-amount-decimal */
+  font-weight: 400; /* match original Pepe weight */
+  letter-spacing: 0.21px; /* match original Pepe letter-spacing */
+  opacity: 1;
   display: inline-block;
-  transform: translateY(0.12em); /* subtle baseline align */
+  transform: none; /* remove translateY to match original */
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums lining-nums;
 }
