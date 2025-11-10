@@ -553,7 +553,11 @@ body {
   border: none;
   cursor: pointer;
   padding: 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.dollar-sign-contained.fab-manual {
+  background: #f5f5f5;
 }
 
 .dollar-sign-contained:hover {

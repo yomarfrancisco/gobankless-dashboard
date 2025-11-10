@@ -20,6 +20,11 @@ export default function AutonomyToggle({ className, onChange }: Props) {
       setMode(m)
       setWalletMode(m)
       onChange?.(m)
+      
+      // Dispatch custom event for same-tab updates
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('walletModeChange'))
+      }
 
       if (process.env.NEXT_PUBLIC_DEV_PROFILE_TOGGLE_LOGS === '1') {
         console.log('[AutonomyToggle] mode:', m)

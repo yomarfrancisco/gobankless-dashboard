@@ -1,7 +1,9 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getWalletMode, type WalletMode } from '@/lib/state/userPrefs'
 
 interface BottomGlassBarProps {
   currentPath?: string
@@ -11,6 +13,34 @@ interface BottomGlassBarProps {
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile' || currentPath === '/transactions'
+  const [walletMode, setWalletMode] = useState<WalletMode>('autonomous')
+
+  // Read wallet mode from localStorage and listen for changes
+  useEffect(() => {
+    setWalletMode(getWalletMode())
+    
+    // Listen for storage changes (when user switches mode in another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'walletMode' && e.newValue) {
+        if (e.newValue === 'autonomous' || e.newValue === 'manual') {
+          setWalletMode(e.newValue)
+        }
+      }
+    }
+    
+    window.addEventListener('storage', handleStorageChange)
+    
+    // Also listen for custom events (same-tab changes)
+    const handleModeChange = () => {
+      setWalletMode(getWalletMode())
+    }
+    window.addEventListener('walletModeChange', handleModeChange)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('walletModeChange', handleModeChange)
+    }
+  }, [])
 
   return (
     <div className="bottom-menu">
@@ -39,7 +69,7 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
           </div>
           <div className="dollar-sign-container">
             <button
-              className="dollar-sign-contained"
+              className={`dollar-sign-contained ${walletMode === 'manual' ? 'fab-manual' : ''}`}
               aria-label="Direct payment"
               onClick={onDollarClick}
               onTouchStart={onDollarClick}
