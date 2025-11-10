@@ -10,8 +10,8 @@ import '@/styles/notifications.css'
 const MAX_VISIBLE = 2
 const AUTO_DISMISS_MS = 3000
 
-// GoB pink logo avatar path (adjust if needed)
-const GOB_AVATAR_PATH = '/assets/gobankless-logo.png'
+// GoB pink logo avatar path (use the provided image)
+const GOB_AVATAR_PATH = '/assets/aa2b32f2dc3e3a159949cb59284abddef5683b05.png'
 
 export default function TopNotifications() {
   const router = useRouter()
