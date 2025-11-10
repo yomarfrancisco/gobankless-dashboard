@@ -2,12 +2,13 @@
 
 import Image from 'next/image'
 import type { StaticImageData } from 'next/image'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import SlotCounter from './SlotCounter'
 import { formatZAR, formatUSDT } from '@/lib/formatCurrency'
 import { useWalletAlloc } from '@/state/walletAlloc'
 import { usePortfolioStore } from '@/store/portfolio'
 import { useTweenNumber } from '@/lib/animations/useTweenNumber'
+import { useTwoStageTween } from '@/lib/animations/useTwoStageTween'
 import clsx from 'clsx'
 
 const FX_USD_ZAR_DEFAULT = 18.1
@@ -88,7 +89,7 @@ export default function CardStackCard({
   const portfolioAllocationPct = holding?.allocationPct ?? pct
   const portfolioHealth = holding?.health ?? HEALTH_CONFIG[card.type].percent
 
-  // Animate allocation % and health
+  // Animate allocation % with fade in/out
   const animatedAllocationPct = useTweenNumber(portfolioAllocationPct, {
     duration: 240,
     delay: 0,
@@ -96,30 +97,111 @@ export default function CardStackCard({
     round: (n) => Math.round(n),
   })
 
-  // Health animation with minimum delta visibility
-  const prevHealthRef = useRef(portfolioHealth)
-  const healthDelta = Math.abs(portfolioHealth - prevHealthRef.current)
-  const minHealthDelta = 0.4
-  const adjustedHealth =
-    healthDelta < minHealthDelta && healthDelta > 0
-      ? portfolioHealth > prevHealthRef.current
-        ? prevHealthRef.current + minHealthDelta
-        : prevHealthRef.current - minHealthDelta
-      : portfolioHealth
+  // Check for reduced motion preference (client-side only)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+      setPrefersReducedMotion(mediaQuery.matches)
+      const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
+      mediaQuery.addEventListener('change', handler)
+      return () => mediaQuery.removeEventListener('change', handler)
+    }
+  }, [])
 
-  const animatedHealth = useTweenNumber(adjustedHealth, {
-    duration: 260,
-    delay: 0,
-    easing: 'easeOutCubic',
+  // Health animation with two-stage tween for minimum visual delta
+  // Skip two-stage for reduced motion (just use direct value)
+  const healthTweenResult = useTwoStageTween(portfolioHealth, {
+    minVisualDelta: 1.0,
+    previewCap: 3.0,
+    stageADuration: 220,
+    stageBDuration: 120,
+    stageBDelay: 40,
     round: (n) => Math.round(n * 10) / 10,
   })
+  const animatedHealth = prefersReducedMotion ? portfolioHealth : healthTweenResult.value
+  const isHealthAnimating = prefersReducedMotion ? false : healthTweenResult.isAnimating
 
-  // Update prev health after animation
+  // Visibility states for numeric readouts
+  const [showHealthValue, setShowHealthValue] = useState(false)
+  const [showAllocationValue, setShowAllocationValue] = useState(false)
+  const prevHealthRef = useRef(portfolioHealth)
+  const prevAllocationRef = useRef(portfolioAllocationPct)
+  const healthVisibilityTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const allocationVisibilityTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const healthPulseTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [isHealthBarChanging, setIsHealthBarChanging] = useState(false)
+
+  // Detect health changes and trigger visibility/pulse
   useEffect(() => {
-    if (Math.abs(animatedHealth - portfolioHealth) < 0.1) {
+    if (portfolioHealth !== prevHealthRef.current) {
+      // Show health value
+      setShowHealthValue(true)
+
+      // Only add pulse if not reduced motion
+      if (!prefersReducedMotion) {
+        setIsHealthBarChanging(true)
+      }
+
+      // Clear existing timeouts
+      if (healthVisibilityTimeoutRef.current) {
+        clearTimeout(healthVisibilityTimeoutRef.current)
+      }
+      if (healthPulseTimeoutRef.current) {
+        clearTimeout(healthPulseTimeoutRef.current)
+      }
+
+      // Hide health value after 1400ms (or shorter for reduced motion)
+      const hideDelay = prefersReducedMotion ? 800 : 1400
+      healthVisibilityTimeoutRef.current = setTimeout(() => {
+        setShowHealthValue(false)
+      }, hideDelay)
+
+      // Remove pulse class after 200ms (only if not reduced motion)
+      if (!prefersReducedMotion) {
+        healthPulseTimeoutRef.current = setTimeout(() => {
+          setIsHealthBarChanging(false)
+        }, 200)
+      }
+
       prevHealthRef.current = portfolioHealth
     }
-  }, [animatedHealth, portfolioHealth])
+
+    return () => {
+      if (healthVisibilityTimeoutRef.current) {
+        clearTimeout(healthVisibilityTimeoutRef.current)
+      }
+      if (healthPulseTimeoutRef.current) {
+        clearTimeout(healthPulseTimeoutRef.current)
+      }
+    }
+  }, [portfolioHealth, prefersReducedMotion])
+
+  // Detect allocation changes and trigger visibility
+  useEffect(() => {
+    if (portfolioAllocationPct !== prevAllocationRef.current) {
+      // Show allocation value
+      setShowAllocationValue(true)
+
+      // Clear existing timeout
+      if (allocationVisibilityTimeoutRef.current) {
+        clearTimeout(allocationVisibilityTimeoutRef.current)
+      }
+
+      // Hide allocation value after 1400ms
+      allocationVisibilityTimeoutRef.current = setTimeout(() => {
+        setShowAllocationValue(false)
+      }, 1400)
+
+      prevAllocationRef.current = portfolioAllocationPct
+    }
+
+    return () => {
+      if (allocationVisibilityTimeoutRef.current) {
+        clearTimeout(allocationVisibilityTimeoutRef.current)
+      }
+    }
+  }, [portfolioAllocationPct])
 
   return (
     <div
@@ -184,15 +266,35 @@ export default function CardStackCard({
 
       {/* Bottom-left allocation pill */}
       <div className="card-allocation-pill">
-        <span className="card-allocation-pill__text">{animatedAllocationPct.toFixed(0)}%</span>
+        <span
+          className={clsx('card-allocation-pill__text', {
+            'card-allocation-pill__text--visible': showAllocationValue,
+          })}
+        >
+          {animatedAllocationPct.toFixed(0)}%
+        </span>
       </div>
 
       {/* Bottom-right health bar */}
       <div className="card-health-group">
-        <span className="card-health-label">Health</span>
+        <span className="card-health-label">
+          Health
+          <span
+            className={clsx('health-value', {
+              'health-value--visible': showHealthValue,
+            })}
+          >
+            {Math.round(animatedHealth)}%
+          </span>
+        </span>
         <div className="card-health-bar-container">
           <div
-            className={`card-health-bar-fill card-health-bar-fill--${HEALTH_CONFIG[card.type].level}`}
+            className={clsx(
+              `card-health-bar-fill card-health-bar-fill--${HEALTH_CONFIG[card.type].level}`,
+              {
+                'card-health-bar-fill--changing': isHealthBarChanging,
+              }
+            )}
             style={{ width: `${Math.max(0, Math.min(100, animatedHealth))}%` }}
           />
         </div>
