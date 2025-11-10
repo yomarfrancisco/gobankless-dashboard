@@ -56,15 +56,16 @@ export function useAiActionCycle(
 
       // Get current ZAR amounts from portfolio store (single source of truth)
       // Fallback to wallet alloc if portfolio store not initialized
+      // Note: wallet alloc stores everything in ZAR cents, so getCash/Eth/Pepe return ZAR
       const prev: HoldingsZAR = {
         CASH: cashHolding?.amountZAR ?? getCash(), // getCash() returns ZAR
-        ETH: ethHolding?.amountZAR ?? getEth() * FX_USD_ZAR_DEFAULT, // getEth() returns USDT
-        PEPE: pepeHolding?.amountZAR ?? getPepe() * FX_USD_ZAR_DEFAULT, // getPepe() returns USDT
+        ETH: ethHolding?.amountZAR ?? getEth(), // getEth() returns ZAR (not USDT)
+        PEPE: pepeHolding?.amountZAR ?? getPepe(), // getPepe() returns ZAR (not USDT)
       }
 
-      // Get USDT balances for logic (from wallet alloc)
-      const eth = getEth()
-      const pepe = getPepe()
+      // Get USDT balances for logic (from wallet alloc, convert ZAR to USDT)
+      const eth = getEth() / FX_USD_ZAR_DEFAULT
+      const pepe = getPepe() / FX_USD_ZAR_DEFAULT
       const cash = getCash()
 
       // Pick target: random among non-cash cards that have balance > 0
