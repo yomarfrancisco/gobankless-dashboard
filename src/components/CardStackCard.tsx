@@ -88,10 +88,11 @@ export default function CardStackCard({
   const symbol = CARD_TO_SYMBOL[card.type]
   const holding = usePortfolioStore((s) => s.holdings[symbol])
   const portfolioAllocationPct = holding?.allocationPct ?? pct
+  const portfolioDisplayPct = holding?.displayPct ?? Math.round(pct)
   const portfolioHealth = holding?.health ?? HEALTH_CONFIG[card.type].percent
 
-  // Animate allocation % with fade in/out
-  const animatedAllocationPct = useTweenNumber(portfolioAllocationPct, {
+  // Animate allocation % with fade in/out (use displayPct for pill, allocationPct for internal calculations)
+  const animatedAllocationPct = useTweenNumber(portfolioDisplayPct, {
     duration: 240,
     delay: 0,
     easing: 'easeOutCubic',

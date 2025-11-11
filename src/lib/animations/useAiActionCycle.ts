@@ -4,8 +4,8 @@ import { useEffect, useRef, useCallback } from 'react'
 import type { CardStackHandle } from '@/components/CardStack'
 import { useNotificationStore } from '@/store/notifications'
 import { usePortfolioStore } from '@/store/portfolio'
-import { computePostTrade, deriveHealth, type HoldingsZAR } from '@/lib/portfolio/applyTrade'
-import { enforceAllocations } from '@/lib/portfolio/calculateMetrics'
+import { computePostTrade, type HoldingsZAR } from '@/lib/portfolio/applyTrade'
+import { derivePortfolio } from '@/lib/portfolio/calculateMetrics'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
@@ -36,7 +36,7 @@ export function useAiActionCycle(
   const isRunningRef = useRef(false)
   const isProcessingRef = useRef(false)
   const pushNotification = useNotificationStore((state) => state.pushNotification)
-  const setHolding = usePortfolioStore((state) => state.setHolding)
+  const setHoldingsBulk = usePortfolioStore((state) => state.setHoldingsBulk)
 
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -118,65 +118,116 @@ export function useAiActionCycle(
 
         // Compute post-trade state using single source of truth
         const trade = { symbol: targetSymbol, deltaZAR }
-        const { next: rawNext, total: rawTotal, alloc: rawAlloc } = computePostTrade(prev, trade)
+        const { next: rawNext } = computePostTrade(prev, trade)
 
-        // Enforce allocation rules: Cash ≥ 90%, ETH + PEPE ≤ 10%
-        // Use the total from prev (should be constant at 6103.00)
-        // This ensures we maintain the exact total across all trades
+        // Get totalZAR from prev (should be constant at 6103.00)
         const totalZAR = prev.CASH + prev.ETH + prev.PEPE
-        const enforced = enforceAllocations(rawNext, totalZAR)
 
-        // Recompute allocations and total after enforcement
-        const finalTotal = enforced.CASH + enforced.ETH + enforced.PEPE
-        const finalAlloc: HoldingsZAR = {
-          CASH: (enforced.CASH / finalTotal) * 100,
-          ETH: (enforced.ETH / finalTotal) * 100,
-          PEPE: (enforced.PEPE / finalTotal) * 100,
+        // Calculate raw percentages from post-trade amounts
+        const rawCashPct = (rawNext.CASH / totalZAR) * 100
+        const rawEthPct = (rawNext.ETH / totalZAR) * 100
+        const rawPepePct = (rawNext.PEPE / totalZAR) * 100
+
+        // Derive portfolio using single source of truth function
+        // This enforces allocation rules, ensures exact totals, and returns display percentages
+        const portfolio = derivePortfolio({
+          totalZAR,
+          cashPct: rawCashPct,
+          ethPct: rawEthPct,
+          pepePct: rawPepePct,
+          fx: FX_USD_ZAR_DEFAULT,
+        })
+
+        // Validation guardrails (dev only)
+        const { holdings, displayPercents } = portfolio
+        const pillSum = displayPercents.cash + displayPercents.eth + displayPercents.pepe
+        const sumZAR = holdings.CASH.amountZAR + holdings.ETH.amountZAR + holdings.PEPE.amountZAR
+        const sumDiff = Math.abs(sumZAR - totalZAR)
+        const cashPct = holdings.CASH.allocationPct
+        const ethPct = holdings.ETH.allocationPct
+        const pepePct = holdings.PEPE.allocationPct
+
+        const isValid =
+          pillSum === 100 &&
+          sumDiff <= 0.01 &&
+          cashPct >= 90 &&
+          ethPct >= 0 &&
+          pepePct >= 0 &&
+          ethPct <= 10 &&
+          pepePct <= 10
+
+        if (!isValid) {
+          console.error(
+            '%c[PORTFOLIO VALIDATION FAILED]',
+            'color: red; font-weight: bold;',
+            {
+              amounts: {
+                CASH: holdings.CASH.amountZAR.toFixed(2),
+                ETH: holdings.ETH.amountZAR.toFixed(2),
+                PEPE: holdings.PEPE.amountZAR.toFixed(2),
+                sum: sumZAR.toFixed(2),
+                expected: totalZAR.toFixed(2),
+                diff: sumDiff.toFixed(4),
+              },
+              percents: {
+                cash: cashPct.toFixed(2),
+                eth: ethPct.toFixed(2),
+                pepe: pepePct.toFixed(2),
+                pillSum,
+              },
+            }
+          )
+          // Do not proceed if validation fails
+          return
         }
 
         // Dev aid: log allocation percentages for verification
-        console.log('[alloc]', {
-          cashPct: finalAlloc.CASH.toFixed(2),
-          ethPct: finalAlloc.ETH.toFixed(2),
-          pepePct: finalAlloc.PEPE.toFixed(2),
-          sumPct: (finalAlloc.CASH + finalAlloc.ETH + finalAlloc.PEPE).toFixed(2),
-          totalZAR: finalTotal.toFixed(2),
+        console.info('[alloc]', {
+          cashPct: cashPct.toFixed(2),
+          ethPct: ethPct.toFixed(2),
+          pepePct: pepePct.toFixed(2),
+          sumPct: (cashPct + ethPct + pepePct).toFixed(2),
+          totalZAR: totalZAR.toFixed(2),
+          displayPercents,
         })
 
         // 1) Flip forward to target
         await cardStackRef.current.flipToCard(targetType, 'forward')
         await sleep(FLIP_MS + 50)
 
-        // 2) Update ALL holdings in portfolio store with enforced values and same totalZAR
+        // 2) Batch update ALL holdings in portfolio store atomically
         // This triggers health/allocation tweens at t=0ms
-        setHolding({
-          symbol: 'CASH',
-          amountZAR: enforced.CASH,
-          amountUSDT: enforced.CASH / FX_USD_ZAR_DEFAULT,
-          allocationPct: Math.round(finalAlloc.CASH * 100) / 100,
-          health: deriveHealth('CASH', enforced, finalTotal),
-        })
-
-        setHolding({
-          symbol: 'ETH',
-          amountZAR: enforced.ETH,
-          amountUSDT: enforced.ETH / FX_USD_ZAR_DEFAULT,
-          allocationPct: Math.round(finalAlloc.ETH * 100) / 100,
-          health: deriveHealth('ETH', enforced, finalTotal),
-        })
-
-        setHolding({
-          symbol: 'PEPE',
-          amountZAR: enforced.PEPE,
-          amountUSDT: enforced.PEPE / FX_USD_ZAR_DEFAULT,
-          allocationPct: Math.round(finalAlloc.PEPE * 100) / 100,
-          health: deriveHealth('PEPE', enforced, finalTotal),
+        setHoldingsBulk({
+          CASH: {
+            symbol: 'CASH',
+            amountZAR: holdings.CASH.amountZAR,
+            amountUSDT: holdings.CASH.amountZAR / FX_USD_ZAR_DEFAULT,
+            allocationPct: holdings.CASH.allocationPct,
+            displayPct: displayPercents.cash,
+            health: holdings.CASH.health,
+          },
+          ETH: {
+            symbol: 'ETH',
+            amountZAR: holdings.ETH.amountZAR,
+            amountUSDT: holdings.ETH.amountZAR / FX_USD_ZAR_DEFAULT,
+            allocationPct: holdings.ETH.allocationPct,
+            displayPct: displayPercents.eth,
+            health: holdings.ETH.health,
+          },
+          PEPE: {
+            symbol: 'PEPE',
+            amountZAR: holdings.PEPE.amountZAR,
+            amountUSDT: holdings.PEPE.amountZAR / FX_USD_ZAR_DEFAULT,
+            allocationPct: holdings.PEPE.allocationPct,
+            displayPct: displayPercents.pepe,
+            health: holdings.PEPE.health,
+          },
         })
 
         // 3) Update wallet allocation (for slot counter animations)
-        // Use enforced values
-        const newTarget = enforced[targetSymbol] / FX_USD_ZAR_DEFAULT
-        const newCashValue = enforced.CASH / FX_USD_ZAR_DEFAULT
+        // Use the same derived amounts (single source of truth)
+        const newTarget = holdings[targetSymbol].amountZAR / FX_USD_ZAR_DEFAULT
+        const newCashValue = holdings.CASH.amountZAR / FX_USD_ZAR_DEFAULT
 
         if (targetType === 'yield') {
           setEth(newTarget)
@@ -220,7 +271,7 @@ export function useAiActionCycle(
     } finally {
       isProcessingRef.current = false
     }
-  }, [cardStackRef, balanceUpdaters, pushNotification, setHolding])
+  }, [cardStackRef, balanceUpdaters, pushNotification, setHoldingsBulk])
 
   const start = useCallback(() => {
     if (isRunningRef.current) return
