@@ -83,7 +83,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(2.1); /* ~2.0–2.2x to mimic the stretched Figma map */
+  transform: scale(1.2); /* zoomed to show more map context while still filling */
   transform-origin: center center;
   will-change: transform;
 }
