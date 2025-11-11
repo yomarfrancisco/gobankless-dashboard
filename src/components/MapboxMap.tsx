@@ -124,6 +124,19 @@ export default function MapboxMap({
 
       map.addControl(geolocate, 'top-right')
 
+      let centeredOnce = false
+
+      geolocate.on('geolocate', (e: any) => {
+        if (centeredOnce) return
+        centeredOnce = true
+        const lng = e.coords.longitude
+        const lat = e.coords.latitude
+        map.setCenter([lng, lat])
+        // Set user location state (will trigger zoom effect)
+        setUserLngLat([lng, lat])
+        console.log('[Mapbox] Centered on user:', { lng, lat })
+      })
+
       // Trigger geolocate after a short delay
       setTimeout(() => {
         try {
