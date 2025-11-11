@@ -58,3 +58,13 @@ export const useNotificationStore = create<NotificationState>((set) => ({
   },
 }))
 
+/**
+ * Get notification detail text from action, reason, or body
+ * Prefers explicit body; else joins action + reason with " — "
+ */
+export function getNotificationDetail(n: NotificationItem): string {
+  // Prefer explicit body; else join action + reason
+  const detail = n.body ?? [n.action, n.reason].filter(Boolean).join(' — ')
+  return detail
+}
+

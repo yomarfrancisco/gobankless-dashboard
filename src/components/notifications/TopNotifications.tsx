@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { useNotificationStore, type NotificationItem } from '@/store/notifications'
+import { useNotificationStore, type NotificationItem, getNotificationDetail } from '@/store/notifications'
 import { formatRelativeShort } from '@/lib/formatRelativeTime'
 import '@/styles/notifications.css'
 
@@ -105,14 +105,9 @@ export default function TopNotifications() {
                 </div>
               </div>
               {(() => {
-                // Assemble body from action + reason, fallback to body
-                const lines: string[] = []
-                if (notification.action) lines.push(notification.action)
-                if (notification.reason) lines.push(notification.reason)
-                const body = lines.length > 0 ? lines.join('\n') : notification.body || ''
-                
-                return body ? (
-                  <p className="notif-body">{body}</p>
+                const detail = getNotificationDetail(notification)
+                return detail ? (
+                  <div className="notif__detail">{detail}</div>
                 ) : null
               })()}
             </div>

@@ -67,7 +67,8 @@ export function setupDevNotificationHelpers() {
         ...baseNotification,
         kind: 'ai_trade',
         title: 'AI trade executed',
-        body: 'Rebalanced: bought 12 PEPE (R120).',
+        action: 'Rebalanced: bought 12 PEPE (R120).',
+        reason: 'Reason: portfolio rebalancing to maintain target allocation.',
         amount: { currency: 'ZAR', value: -120 },
         direction: 'down',
         actor: {

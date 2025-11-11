@@ -239,10 +239,21 @@ export function useAiActionCycle(
         const assetName = targetSymbol
         const zarAmount = Math.abs(deltaZAR)
         const actionVerb = delta > 0 ? 'bought' : 'sold'
+        
+        // Generate a simple reason based on the trade
+        const reasons = [
+          `Short-term volatility in ${assetName}; shifting risk to ${delta > 0 ? assetName : 'cash'}.`,
+          `Rebalancing to maintain target allocation.`,
+          `Market conditions favor this adjustment.`,
+          `Portfolio optimization based on current trends.`,
+        ]
+        const shortWhyString = reasons[Math.floor(Math.random() * reasons.length)]
+        
         pushNotification({
           kind: 'ai_trade',
           title: 'AI trade executed',
           action: `Rebalanced: ${actionVerb} ${Math.abs(delta)} ${assetName} (R${zarAmount.toFixed(2)}).`,
+          reason: shortWhyString,
           amount: {
             currency: 'ZAR',
             value: delta > 0 ? -zarAmount : zarAmount,
