@@ -2,14 +2,18 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useWalletMode } from '@/state/walletMode'
+import '@/styles/bottom-glass.css'
 
 interface BottomGlassBarProps {
   currentPath?: string
+  onDollarClick?: () => void
 }
 
-export default function BottomGlassBar({ currentPath = '/' }: BottomGlassBarProps) {
+export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const isHome = currentPath === '/'
-  const isProfile = currentPath === '/profile'
+  const isProfile = currentPath === '/profile' || currentPath === '/transactions' || currentPath === '/activity'
+  const { mode } = useWalletMode()
 
   return (
     <div className="bottom-menu">
@@ -37,9 +41,15 @@ export default function BottomGlassBar({ currentPath = '/' }: BottomGlassBarProp
             </Link>
           </div>
           <div className="dollar-sign-container">
-            <div className="dollar-sign-contained" aria-label="Direct payment">
-              <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={44} height={44} unoptimized />
-            </div>
+            <button
+              className={`dollar-sign-contained fab-dollar ${mode === 'manual' ? 'is-manual' : 'is-autonomous'}`}
+              aria-label={`Direct payment (${mode} mode)`}
+              onClick={onDollarClick}
+              onTouchStart={onDollarClick}
+              type="button"
+            >
+              <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={60} height={60} unoptimized />
+            </button>
             <div className="nav-label">Direct payment</div>
           </div>
           <div className="nav-item">

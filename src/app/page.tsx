@@ -1,62 +1,257 @@
 'use client'
 
-import { useState } from 'react'
-import CardStack from '@/components/CardStack'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import CardStack, { type CardStackHandle } from '@/components/CardStack'
 import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
+import DepositSheet from '@/components/DepositSheet'
+import WithdrawSheet from '@/components/WithdrawSheet'
+import TransactionSheet from '@/components/TransactionSheet'
+import AmountSheet from '@/components/AmountSheet'
+import SendDetailsSheet from '@/components/SendDetailsSheet'
+import SuccessSheet from '@/components/SuccessSheet'
+import BankTransferDetailsSheet from '@/components/BankTransferDetailsSheet'
+import { formatUSDT } from '@/lib/money'
+import { useWalletAlloc } from '@/state/walletAlloc'
+import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
+import { formatZAR } from '@/lib/formatCurrency'
+import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
+import ConvertCashSection from '@/components/ConvertCashSection'
+import LoadingScreen from '@/components/LoadingScreen'
 
 export default function Home() {
-  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('pepe')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 4000) // Match 4s splash duration
+    return () => clearTimeout(t)
+  }, [])
+  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
+  const cardStackRef = useRef<CardStackHandle>(null)
+  const [openTransaction, setOpenTransaction] = useState(false)
+  const [openDeposit, setOpenDeposit] = useState(false)
+  const [openWithdraw, setOpenWithdraw] = useState(false)
+  const [openAmount, setOpenAmount] = useState(false)
+  const [openDirectPayment, setOpenDirectPayment] = useState(false)
+  const [openSendDetails, setOpenSendDetails] = useState(false)
+  const [openSendSuccess, setOpenSendSuccess] = useState(false)
+  const [openDepositSuccess, setOpenDepositSuccess] = useState(false)
+  const [openBankTransferDetails, setOpenBankTransferDetails] = useState(false)
+  const [amountMode, setAmountMode] = useState<'deposit' | 'withdraw' | 'send' | 'depositCard'>('deposit')
+  const [sendAmountZAR, setSendAmountZAR] = useState(0)
+  const [sendAmountUSDT, setSendAmountUSDT] = useState(0)
+  const [sendRecipient, setSendRecipient] = useState('')
+  const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
+  const [depositAmountZAR, setDepositAmountZAR] = useState(0)
+
+  const openTransactionSheet = useCallback(() => setOpenTransaction(true), [])
+  const closeTransaction = useCallback(() => setOpenTransaction(false), [])
+  const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
+  const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
+  const closeDirectPayment = useCallback(() => setOpenDirectPayment(false), [])
+  const openWithdrawSheet = useCallback(() => setOpenWithdraw(true), [])
+  const closeDeposit = useCallback(() => setOpenDeposit(false), [])
+  const closeWithdraw = useCallback(() => setOpenWithdraw(false), [])
+  const closeAmount = useCallback(() => setOpenAmount(false), [])
+  const closeSendDetails = useCallback(() => setOpenSendDetails(false), [])
+  const closeSendSuccess = useCallback(() => {
+    setOpenSendSuccess(false)
+    setSendRecipient('')
+    setSendAmountZAR(0)
+    setSendAmountUSDT(0)
+  }, [])
+  const closeDepositSuccess = useCallback(() => {
+    setOpenDepositSuccess(false)
+    setDepositAmountZAR(0)
+  }, [])
+  const closeBankTransferDetails = useCallback(() => {
+    setOpenBankTransferDetails(false)
+  }, [])
+
+  const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
+    if (method === 'email' || method === 'wallet' || method === 'brics') {
+      setAmountMode('send')
+      setSendMethod(method)
+      setOpenDirectPayment(false)
+      setTimeout(() => setOpenAmount(true), 220)
+    }
+  }, [])
+
+  const handleAmountSubmit = useCallback((amountZAR: number) => {
+    if (amountMode === 'send') {
+      setSendAmountZAR(amountZAR)
+      // Calculate USDT amount (using same rate as AmountSheet: 18.1)
+      const fxRateZARperUSDT = 18.1
+      setSendAmountUSDT(amountZAR / fxRateZARperUSDT)
+      setOpenAmount(false)
+      
+      setTimeout(() => setOpenSendDetails(true), 220)
+    }
+  }, [amountMode])
+
+  // Get wallet allocation for funds available display
+  const { alloc, getCash, getEth, getPepe, setCash, setEth, setPepe } = useWalletAlloc()
+  const fundsAvailableZAR = alloc.totalCents / 100
+  const formattedFunds = formatZAR(fundsAvailableZAR)
+
+  // Initialize portfolio store from wallet allocation
+  useEffect(() => {
+    initPortfolioFromAlloc(alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents)
+  }, [alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents])
+
+  // Initialize AI action cycle
+  useAiActionCycle(cardStackRef, {
+    getCash,
+    getEth,
+    getPepe,
+    setCash,
+    setEth,
+    setPepe,
+  })
 
   return (
-    <div className="app-shell">
+    <>
+      {loading && <LoadingScreen />}
+      <div className="app-shell">
       <div className="mobile-frame">
         <div className="dashboard-container">
-          <TopGlassBar />
-
-          {/* Content Area */}
-          <div className="content">
-            <div className="card-switch">
-              <div className="frame-parent">
-                <div className="wallet-header">
-                  <h1 className="wallet-title">Wallet</h1>
-                  <div className="help-icon">?</div>
-                </div>
-                <p className="wallet-subtitle">
-                  {topCardType === 'pepe' 
-                    ? '$PEPE stablecoin' 
-                    : topCardType === 'savings' 
-                    ? 'ZAR stablecoin' 
-                    : 'ETH stablecoin'}
-                </p>
-              </div>
-
-              {/* Card Stack */}
-              <CardStack onTopCardChange={setTopCardType} />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="action-buttons">
-              <button className="btn btn-deposit">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M7 17L17 7" />
-                  <path d="M7 7h10v10" />
-                </svg>
-                Deposit
-              </button>
-              <button className="btn btn-withdraw">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M17 7L7 17" />
-                  <path d="M17 17H7V7" />
-                </svg>
-                Withdraw
-              </button>
-            </div>
+          {/* Overlay: Glass bars only */}
+          <div className="overlay-glass">
+            <TopGlassBar />
+            <BottomGlassBar currentPath="/" onDollarClick={openTransactionSheet} />
           </div>
 
-          <BottomGlassBar currentPath="/" />
+          {/* Scrollable content */}
+          <div className="scroll-content">
+            <div className="content">
+              <div className="card-switch">
+                <div className="frame-parent">
+                  <div className="wallet-header">
+                    <h1 className="wallet-title">Autonomous wallet</h1>
+                    <div className="help-icon">?</div>
+                  </div>
+                  <p className="wallet-subtitle">
+                    R{formattedFunds.major}.{formattedFunds.cents} available
+                  </p>
+                </div>
+
+                {/* Card Stack */}
+                <CardStack ref={cardStackRef} onTopCardChange={setTopCardType} />
+              </div>
+
+              {/* Convert cash to crypto section */}
+              <div className="convertCashSpacing">
+                <ConvertCashSection />
+              </div>
+
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Sheets */}
+      <TransactionSheet
+        open={openTransaction}
+        onClose={closeTransaction}
+        onSelect={(action) => {
+          setOpenTransaction(false)
+          if (action === 'deposit') {
+            setTimeout(() => setOpenDeposit(true), 220)
+          } else if (action === 'withdraw') {
+            setTimeout(() => setOpenWithdraw(true), 220)
+          } else if (action === 'payment') {
+            setTimeout(() => setOpenDirectPayment(true), 220)
+          }
+        }}
+      />
+      <DepositSheet
+        open={openDirectPayment}
+        onClose={closeDirectPayment}
+        variant="direct-payment"
+        onSelect={handleDirectSelect}
+      />
+      <DepositSheet
+        open={openDeposit}
+        onClose={closeDeposit}
+        variant="deposit"
+        onSelect={(method) => {
+          setOpenDeposit(false)
+          if (method === 'bank') {
+            setTimeout(() => setOpenBankTransferDetails(true), 220)
+          } else if (method === 'card') {
+            setAmountMode('depositCard')
+            setTimeout(() => setOpenAmount(true), 220)
+          } else {
+            setAmountMode('deposit')
+            setTimeout(() => setOpenAmount(true), 220)
+          }
+        }}
+      />
+      <WithdrawSheet
+        open={openWithdraw}
+        onClose={closeWithdraw}
+        onSelect={(method) => {
+          setOpenWithdraw(false)
+          setAmountMode('withdraw')
+          setTimeout(() => setOpenAmount(true), 220)
+        }}
+      />
+      <AmountSheet
+        open={openAmount}
+        onClose={closeAmount}
+        mode={amountMode}
+        balanceZAR={200}
+        fxRateZARperUSDT={18.1}
+        ctaLabel={amountMode === 'depositCard' ? 'Deposit' : amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
+        onSubmit={amountMode === 'depositCard' ? ({ amountZAR }) => {
+          setDepositAmountZAR(amountZAR)
+          setOpenAmount(false)
+          setTimeout(() => setOpenDepositSuccess(true), 220)
+        } : amountMode !== 'send' ? ({ amountZAR, amountUSDT }) => {
+          setOpenAmount(false)
+          console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
+        } : undefined}
+        onAmountSubmit={amountMode === 'send' ? handleAmountSubmit : undefined}
+      />
+      <SendDetailsSheet
+        open={openSendDetails}
+        onClose={closeSendDetails}
+        amountZAR={sendAmountZAR}
+        amountUSDT={sendAmountUSDT}
+        sendMethod={sendMethod}
+        onPay={(payload) => {
+          console.log('PAY', payload)
+          setSendRecipient(payload.to)
+          setOpenSendDetails(false)
+          setTimeout(() => setOpenSendSuccess(true), 220)
+          // Note: notification is emitted in SuccessSheet when it opens
+        }}
+      />
+      <SuccessSheet
+        open={openSendSuccess}
+        onClose={closeSendSuccess}
+        amountZAR={sendMethod === 'wallet' ? formatUSDT(sendAmountUSDT) : `R ${sendAmountZAR.toLocaleString('en-ZA', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`}
+        recipient={sendRecipient}
+        kind="send"
+      />
+      <SuccessSheet
+        open={openDepositSuccess}
+        onClose={closeDepositSuccess}
+        amountZAR={`R ${depositAmountZAR.toLocaleString('en-ZA', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`}
+        recipient=""
+        kind="deposit"
+      />
+      <BankTransferDetailsSheet
+        open={openBankTransferDetails}
+        onClose={closeBankTransferDetails}
+      />
+      </div>
+    </>
   )
 }

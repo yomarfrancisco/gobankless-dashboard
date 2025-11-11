@@ -1,8 +1,12 @@
 'use client'
 
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 export default function TopGlassBar() {
+  const pathname = usePathname()
+  const isActivityPage = pathname === '/activity'
+
   return (
     <div className="page-title-gobankless">
       <Image
@@ -23,15 +27,28 @@ export default function TopGlassBar() {
         priority
         unoptimized
       />
-      <Image
-        src="/assets/core/gobankless-logo.png"
-        alt="GoBankless"
-        className="gobankless-logo"
-        width={220}
-        height={65}
-        priority
-        unoptimized
-      />
+      {isActivityPage ? (
+        <Image
+          src="/assets/Activity.png"
+          alt="Activity"
+          className="gobankless-logo activity-logo"
+          width={220}
+          height={65}
+          priority
+          unoptimized
+          style={{ transform: 'scale(0.7)', transformOrigin: 'left center' }}
+        />
+      ) : (
+        <Image
+          src="/assets/core/gobankless-logo.png"
+          alt="GoBankless"
+          className="gobankless-logo"
+          width={220}
+          height={65}
+          priority
+          unoptimized
+        />
+      )}
       <div className="icons">
         <div className="icon-group">
           <Image src="/assets/core/scan.svg" alt="Scan" className="icon" width={24} height={24} />

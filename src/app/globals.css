@@ -1,3 +1,19 @@
+@import '../styles/card-amounts.css';
+@import '../styles/card-overlays.css';
+@import '../styles/success-sheet.css';
+@import '../styles/payment-sheet.css';
+@import '../styles/profile-toggle.css';
+@import '../styles/bottom-glass.css';
+@import '../styles/slot-counter.css';
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
+:root {
+  --top-safe: 176px;
+  --bottom-safe: 132px;
+  --sheet-max-h: 520px;
+  --sheet-header-offset: 64px;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -48,7 +64,23 @@ body {
   min-height: 100dvh;
   position: relative;
   background: #fff;
-  overflow: hidden;
+  overflow: visible;
+}
+
+/* Overlay: Glass bars fixed on top */
+.overlay-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.overlay-glass .icons,
+.overlay-glass .icon-group,
+.overlay-glass .nav-container,
+.overlay-glass .dollar-sign-contained,
+.overlay-glass .nav-item {
+  pointer-events: auto;
 }
 
 /* Page Title with Broken Glass */
@@ -60,7 +92,8 @@ body {
   left: 0;
   height: 160px;
   z-index: 10;
-  overflow: hidden;
+  overflow: visible;
+  background: transparent !important;
 }
 
 .glass-shard-small {
@@ -83,6 +116,7 @@ body {
   height: 65px;
   object-fit: cover;
   z-index: 2;
+  background: transparent !important;
 }
 
 .spraypaint-effect {
@@ -98,6 +132,7 @@ body {
 
 .icons {
   position: absolute;
+  background: transparent !important;
   width: 100%;
   top: 0;
   right: 0;
@@ -122,18 +157,37 @@ body {
   object-fit: cover;
 }
 
+/* Scrollable content area */
+.scroll-content {
+  position: relative;
+  height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  background: transparent;
+  z-index: 1;
+}
+
+.scroll-content::before {
+  content: "";
+  display: block;
+  height: var(--top-safe, 176px);
+}
+
+.scroll-content::after {
+  content: "";
+  display: block;
+  height: var(--bottom-safe, 132px);
+}
+
 /* Content Area */
 .content {
-  position: absolute;
   width: 100%;
-  top: 160px;
-  right: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0 16px;
-  z-index: 1;
+  position: relative;
 }
 
 .card-switch {
@@ -190,79 +244,58 @@ body {
   opacity: 0.5;
 }
 
-/* Card Stack */
-.stack {
-  position: relative;
-  width: 100%;
-  max-width: 398px;
-  height: 286px;
-  margin: 16px auto;
-}
+/* Card Stack - Animation styles moved to src/styles/card-flip.css */
+@import '../styles/card-flip.css';
 
-.card {
-  position: absolute;
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 8px 28px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  transition: transform 300ms ease, opacity 300ms ease, box-shadow 300ms ease;
-  will-change: transform, opacity;
-}
-
-.card.no-hover {
-  pointer-events: none;
-}
-
-.card:hover:not(.no-hover) {
-  transform: translateY(-4px);
-}
-
-/* Position classes */
-.pos-top {
-  z-index: 3;
-  left: 0;
-  top: 0;
-  width: 100%;
-  max-width: 398px;
-  height: 238px;
-}
-
-.pos-mid {
-  z-index: 2;
-  left: 16px;
-  top: 50px;
-  width: calc(100% - 32px);
-  max-width: 366px;
-  height: 213px;
-}
-
-.pos-back {
-  z-index: 1;
-  left: 32px;
-  top: 100px;
-  width: calc(100% - 64px);
-  max-width: 334px;
-  height: 193px;
-}
-
-/* Cycling animation */
-.card.cycling-out {
-  transform: translateY(-120%);
-  opacity: 0;
-}
-
-/* Accessibility: respect prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  .card {
-    transition: none;
-  }
-}
-
-.card img {
+/* Only target the card's background image (not flags or other images) */
+.card > img.card-bg {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.card-canvas {
+  position: relative;
+  aspect-ratio: 86 / 54;
+  width: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  line-height: 0;
+}
+
+/* Next.js Image wrapper span defaults to inline-block; force block */
+.card-canvas > span {
+  display: block;
+  line-height: 0;
+  height: 100% !important;
+  width: 100% !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit;
+}
+
+/* The actual <img> element */
+.card-canvas img {
+  display: block;
+  object-fit: cover;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+}
+
+/* Ensure yield card renders properly */
+.card-yield-rounded,
+.card-canvas,
+.card-canvas img {
+  opacity: 1 !important;
+  z-index: auto;
+}
+
+/* Move yield card down 2px to eliminate bottom gap */
+.card-yield-rounded {
+  position: relative;
+  top: 2px;
 }
 
 /* Card Text Overlays */
@@ -304,7 +337,7 @@ body {
   letter-spacing: 0.21px;
 }
 
-.card-balance-usdc {
+.card-balance-usdt {
   font-size: 20px;
   font-weight: 400;
   color: #f5f5f5;
@@ -357,12 +390,17 @@ body {
   align-items: center;
   gap: 16px;
   margin-top: 24px;
-  z-index: 2;
+  z-index: 1;
+}
+
+.profile-actions {
+  position: relative;
+  z-index: 1;
 }
 
 .btn {
-  width: calc(100% - 64px);
-  max-width: 334px;
+  width: calc((100% - 64px) * 0.9);
+  max-width: 301px;
   height: 56px;
   border-radius: 42px;
   display: flex;
@@ -425,6 +463,7 @@ body {
   height: 150px;
   z-index: 5;
   pointer-events: none;
+  background: transparent !important;
 }
 
 .bottom-menu-container {
@@ -434,6 +473,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  background: transparent !important;
 }
 
 .bottom-glass-wrapper {
@@ -445,6 +485,7 @@ body {
   bottom: 0;
   z-index: 0;
   pointer-events: none;
+  background: transparent !important;
 }
 
 .bottom-glass-texture {
@@ -458,7 +499,7 @@ body {
 
 .nav-container {
   position: absolute;
-  bottom: 20px;
+  bottom: 23px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -506,14 +547,15 @@ body {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: none;
   cursor: pointer;
+  padding: 0;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -527,8 +569,8 @@ body {
 }
 
 .dollar-sign-contained img {
-  width: 44px;
-  height: 44px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
 }
 
@@ -760,5 +802,94 @@ body {
 
 .profile-inbox:hover {
   background: #ff1a42;
+}
+
+/* Transactions page */
+.transactions-header {
+  margin-top: 24px;
+  padding: 0 16px;
+}
+
+.transactions-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: #000;
+}
+
+.transactions-list {
+  margin-top: 16px;
+  padding: 0 16px;
+}
+
+.transaction-item {
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.transaction-amount {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
+.transaction-age {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 400;
+}
+
+.transaction-note {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* iOS keyboard shim - hidden input to preserve user gesture context */
+.ios-keyboard-shim {
+  position: fixed;
+  /* must be in the viewport and not display:none/visibility:hidden */
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0.01;
+  border: 0;
+  padding: 0;
+  z-index: -1; /* still focusable */
+}
+
+/* Spacing above Convert cash to crypto to give the cards some air */
+.convertCashSpacing {
+  margin-top: clamp(24px, 5vh, 56px);
+}
+
+/* TEST ONLY: move Mapbox logo off-screen (avoid CSS Modules purity issues) */
+.mapboxgl-ctrl-logo {
+  position: absolute !important;
+  bottom: -200px !important;
+  right: -200px !important;
+  pointer-events: none;
+}
+
+/* Hide Mapbox default user dot & accuracy circle (we'll draw our own) */
+.mapboxgl-user-location-dot {
+  display: none !important;
+}
+
+.mapboxgl-user-location-accuracy-circle {
+  display: none !important;
 }
 

@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import IosKeyboardShim from '@/components/IosKeyboardShim'
+import TopNotifications from '@/components/notifications/TopNotifications'
+import DevNotificationSetup from '@/components/notifications/DevNotificationSetup'
+import { WalletModeProvider } from '@/state/walletMode'
+import { WalletAllocProvider } from '@/state/walletAlloc'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,7 +28,30 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head />
+      <body className={inter.className}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+(function(){
+  try {
+    var m = localStorage.getItem('gb.walletMode') || 'autonomous';
+    document.documentElement.dataset.walletMode = m;
+  } catch(_) { 
+    document.documentElement.dataset.walletMode = 'autonomous'; 
+  }
+})();`,
+          }}
+        />
+        <IosKeyboardShim />
+        <WalletModeProvider>
+          <WalletAllocProvider>
+            <TopNotifications />
+            <DevNotificationSetup />
+            {children}
+          </WalletAllocProvider>
+        </WalletModeProvider>
+      </body>
     </html>
   )
 }
