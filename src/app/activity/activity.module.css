@@ -1,19 +1,12 @@
 /* Activity Page Styles */
 
-.activityHeaderSection {
-  padding: 20px 16px 16px;
-}
-
-.pageTitle {
-  font-size: 28px;
-  font-weight: 600;
-  color: #000;
-  margin: 0;
-  line-height: 1.2;
+.activityPage {
+  /* Root class for scoping Activity-specific styles */
 }
 
 .activityContainer {
   padding: 0 16px 24px;
+  margin-top: 8px; /* Match spacing after wallet-header */
 }
 
 .activitySection {
@@ -21,12 +14,13 @@
 }
 
 .sectionTitle {
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.6);
+  font-size: 16px;
+  letter-spacing: 0.08px;
+  font-weight: 300;
+  color: #0a0a0a;
+  opacity: 0.5;
   margin: 0 0 12px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none; /* sentence case, not uppercase */
 }
 
 .activityList {
@@ -35,13 +29,19 @@
   gap: 8px;
 }
 
-/* Activity Item Card */
+/* Activity Item Card - lighter background with subtle pink tint */
 .activityItem {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   padding: 16px;
-  background: rgba(166, 166, 166, 0.7);
+  /* Light grey base with subtle pink wash */
+  background: linear-gradient(
+      0deg,
+      rgba(255, 0, 114, 0.03),  /* subtle pink wash */
+      rgba(255, 0, 114, 0.03)
+    ),
+    #F4F5F7;                    /* light grey base */
   backdrop-filter: blur(150px);
   -webkit-backdrop-filter: blur(150px);
   border-radius: 24px;
@@ -49,17 +49,9 @@
   position: relative;
 }
 
-/* Dark overlay effect (matching notification style) */
+/* Remove dark overlay for Activity cards (lighter background) */
 .activityItem::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(#333, #333);
-  opacity: 0.3;
-  border-radius: 24px;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  z-index: 0;
+  display: none;
 }
 
 .activityItem > * {

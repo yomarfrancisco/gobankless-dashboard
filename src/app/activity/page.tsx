@@ -105,10 +105,14 @@ export default function ActivityPage() {
 
           {/* Scrollable content */}
           <div className="scroll-content">
-            <div className="content" style={{ background: '#fff' }}>
-              {/* Header */}
-              <div className={styles.activityHeaderSection}>
-                <h1 className={styles.pageTitle}>Transactions</h1>
+            <div className={`content ${styles.activityPage}`} style={{ background: '#fff' }}>
+              {/* Header - match Home typography */}
+              <div className="card-switch">
+                <div className="frame-parent">
+                  <div className="wallet-header">
+                    <h1 className="wallet-title">Transactions</h1>
+                  </div>
+                </div>
               </div>
 
               {/* Activity sections */}

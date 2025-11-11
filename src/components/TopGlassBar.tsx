@@ -31,11 +31,12 @@ export default function TopGlassBar() {
         <Image
           src="/assets/Activity.png"
           alt="Activity"
-          className="gobankless-logo"
+          className="gobankless-logo activity-logo"
           width={220}
           height={65}
           priority
           unoptimized
+          style={{ transform: 'scale(0.7)', transformOrigin: 'left center' }}
         />
       ) : (
         <Image

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { useActivityStore } from './activity'
+import { joinActionAndReason } from '@/lib/notifications/formatReason'
 
 export type NotificationKind =
   | 'payment_sent'
@@ -51,8 +52,8 @@ export const useNotificationStore = create<NotificationState>((set) => ({
 
     // Also add to activity store
     const activityStore = useActivityStore.getState()
-    // Get detail text (prefer body, else join action + reason)
-    const detail = notification.body ?? [notification.action, notification.reason].filter(Boolean).join(' — ')
+    // Get detail text using the same formatter as notifications
+    const detail = getNotificationDetail(notification)
     activityStore.add({
       id: notification.id,
       actor: notification.actor || { type: 'user' },
@@ -81,11 +82,18 @@ export const useNotificationStore = create<NotificationState>((set) => ({
 
 /**
  * Get notification detail text from action, reason, or body
- * Prefers explicit body; else joins action + reason with " — "
+ * Prefers explicit body; else joins action + reason with proper punctuation
  */
 export function getNotificationDetail(n: NotificationItem): string {
-  // Prefer explicit body; else join action + reason
-  const detail = n.body ?? [n.action, n.reason].filter(Boolean).join(' — ')
-  return detail
+  // Prefer explicit body
+  if (n.body) return n.body
+
+  // Join action + reason with proper punctuation (no ". —" sequences)
+  if (n.action && n.reason) {
+    return joinActionAndReason(n.action, n.reason)
+  }
+
+  // Fallback to whichever is available
+  return n.action || n.reason || ''
 }
 
