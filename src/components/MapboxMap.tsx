@@ -169,6 +169,100 @@ export default function MapboxMap({
       }
     }
 
+    // Haversine distance helper (km)
+    const haversineKm = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
+      const R = 6371 // km
+      const dLat = ((b.lat - a.lat) * Math.PI) / 180
+      const dLng = ((b.lng - a.lng) * Math.PI) / 180
+      const la1 = (a.lat * Math.PI) / 180
+      const la2 = (b.lat * Math.PI) / 180
+      const s =
+        Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2
+      return 2 * R * Math.asin(Math.sqrt(s))
+    }
+
+    // Get branches from map source
+    const getBranches = (): Array<{ id: string; lng: number; lat: number; name: string }> => {
+      if (!mapRef.current) return []
+
+      try {
+        const source = mapRef.current.getSource('branch-src') as mapboxgl.GeoJSONSource
+        if (!source || !source._data) return []
+
+        const data = source._data as GeoJSON.FeatureCollection
+        if (!data.features) return []
+
+        return data.features.map((f, idx) => {
+          const coords = (f.geometry as GeoJSON.Point).coordinates
+          return {
+            id: f.properties?.id || `branch-${idx}`,
+            lng: coords[0],
+            lat: coords[1],
+            name: f.properties?.name || 'Branch',
+          }
+        })
+      } catch (error) {
+        log(`error getting branches: ${error}`)
+        return []
+      }
+    }
+
+    // Find nearest branch to user location
+    const nearestBranch = (user: { lat: number; lng: number }) => {
+      const branches = getBranches()
+      if (branches.length === 0) return { branch: null, distanceKm: Infinity }
+
+      let best = null as { id: string; lng: number; lat: number; name: string } | null
+      let bestD = Infinity
+
+      for (const br of branches) {
+        const d = haversineKm(user, { lat: br.lat, lng: br.lng })
+        if (d < bestD) {
+          bestD = d
+          best = br
+        }
+      }
+
+      return { branch: best, distanceKm: bestD }
+    }
+
+    // Auto-center logic with 100km rule
+    const handleAutoCenter = (user: { lat: number; lng: number }) => {
+      if (!mapRef.current) return
+
+      const { branch, distanceKm } = nearestBranch(user)
+
+      if (!branch) {
+        log('no branches available for auto-center')
+        return
+      }
+
+      log(`nearest branch: ${branch.name} at ${distanceKm.toFixed(1)}km`)
+
+      if (distanceKm <= 100) {
+        // Show both user and nearest branch
+        const bounds = new mapboxgl.LngLatBounds()
+        bounds.extend([user.lng, user.lat])
+        bounds.extend([branch.lng, branch.lat])
+        mapRef.current.fitBounds(bounds, { padding: 64, maxZoom: 15, duration: 700 })
+        log(`fitted bounds to user and branch (${distanceKm.toFixed(1)}km away)`)
+      } else {
+        // Center on branch and show ~50 km radius
+        const lat = branch.lat
+        const lng = branch.lng
+        const dLat = 50 / 111.32 // ~deg for 50km
+        const kmPerDegLon = 111.32 * Math.cos((lat * Math.PI) / 180)
+        const dLng = 50 / kmPerDegLon
+
+        const bounds = new mapboxgl.LngLatBounds(
+          [lng - dLng, lat - dLat],
+          [lng + dLng, lat + dLat]
+        )
+        mapRef.current.fitBounds(bounds, { padding: 64, duration: 700 })
+        log(`centered on branch (${distanceKm.toFixed(1)}km away), showing 50km radius`)
+      }
+    }
+
     // Function to add test branches
     const addTestBranches = () => {
       if (!mapRef.current) return
@@ -182,7 +276,7 @@ export default function MapboxMap({
               type: 'Point' as const,
               coordinates: [28.0549, -26.1077] as [number, number],
             },
-            properties: { name: 'GoB Sandton' },
+            properties: { name: 'GoB Sandton', id: 'sandton' },
           },
           {
             type: 'Feature' as const,
@@ -190,7 +284,7 @@ export default function MapboxMap({
               type: 'Point' as const,
               coordinates: [28.0325, -26.1372] as [number, number],
             },
-            properties: { name: 'GoB Rosebank' },
+            properties: { name: 'GoB Rosebank', id: 'rosebank' },
           },
         ],
       }
@@ -314,12 +408,27 @@ export default function MapboxMap({
 
       map.addControl(geolocate, 'top-right')
 
+      // Debounce auto-center to prevent repeated fits
+      let fitOnce = false
+      let geolocateErrorHandled = false
+
       // Handle geolocate events
       geolocate.on('geolocate', (e: any) => {
         const { coords } = e
-        log(`geolocate: user at [${coords.longitude}, ${coords.latitude}]`)
+        const user = { lng: coords.longitude, lat: coords.latitude }
+        log(`geolocate: user at [${user.lng}, ${user.lat}]`)
+
         // Load ATMs near user location
-        loadATMsNear(coords.longitude, coords.latitude)
+        loadATMsNear(user.lng, user.lat)
+
+        // Auto-center on user and nearest branch (once)
+        if (!fitOnce) {
+          fitOnce = true
+          // Small delay to ensure branches are loaded
+          setTimeout(() => {
+            handleAutoCenter(user)
+          }, 300)
+        }
       })
 
       geolocate.on('trackuserlocationstart', () => {
@@ -330,12 +439,36 @@ export default function MapboxMap({
         log('geolocate: tracking ended')
       })
 
+      geolocate.on('error', (e: any) => {
+        log(`geolocate error: ${e.error?.message || 'unknown'}`)
+        // Fallback: use current map center as "user" location
+        if (!geolocateErrorHandled && !fitOnce) {
+          geolocateErrorHandled = true
+          setTimeout(() => {
+            const center = map.getCenter()
+            const user = { lng: center.lng, lat: center.lat }
+            log(`geolocate denied, using map center as user: [${user.lng}, ${user.lat}]`)
+            handleAutoCenter(user)
+          }, 500)
+        }
+      })
+
       // Auto-activate geolocate on first render
       setTimeout(() => {
         try {
           geolocate.trigger()
         } catch (error) {
           log(`geolocate trigger error: ${error}`)
+          // If trigger fails, use fallback
+          if (!geolocateErrorHandled && !fitOnce) {
+            geolocateErrorHandled = true
+            setTimeout(() => {
+              const center = map.getCenter()
+              const user = { lng: center.lng, lat: center.lat }
+              log(`geolocate unavailable, using map center: [${user.lng}, ${user.lat}]`)
+              handleAutoCenter(user)
+            }, 500)
+          }
         }
       }, 1000)
 
