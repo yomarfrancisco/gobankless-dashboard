@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import styles from './ConvertCashSection.module.css'
-import MapboxMap from './MapboxMap'
+import MapboxMap, { type Marker } from './MapboxMap'
 
-const markers = [
+const markers: Marker[] = [
   { id: 'dealer-1', lng: 28.0549, lat: -26.1064, kind: 'dealer', label: 'Nearest dealer' },
   { id: 'branch-1', lng: 28.0598, lat: -26.1089, kind: 'branch', label: 'Partner branch' },
 ]

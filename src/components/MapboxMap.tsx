@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
 
-type Marker = {
+export type Marker = {
   id: string
   lng: number
   lat: number
