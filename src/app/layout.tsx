@@ -6,6 +6,7 @@ import TopNotifications from '@/components/notifications/TopNotifications'
 import DevNotificationSetup from '@/components/notifications/DevNotificationSetup'
 import { WalletModeProvider } from '@/state/walletMode'
 import { WalletAllocProvider } from '@/state/walletAlloc'
+import SplashOnceProvider from '@/providers/SplashOnceProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -44,13 +45,15 @@ export default function RootLayout({
           }}
         />
         <IosKeyboardShim />
-        <WalletModeProvider>
-          <WalletAllocProvider>
-            <TopNotifications />
-            <DevNotificationSetup />
-            {children}
-          </WalletAllocProvider>
-        </WalletModeProvider>
+        <SplashOnceProvider>
+          <WalletModeProvider>
+            <WalletAllocProvider>
+              <TopNotifications />
+              <DevNotificationSetup />
+              {children}
+            </WalletAllocProvider>
+          </WalletModeProvider>
+        </SplashOnceProvider>
       </body>
     </html>
   )
