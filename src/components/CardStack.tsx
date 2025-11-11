@@ -60,7 +60,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'mzn',
-    image: '/assets/cards/card - MZN.jpg',
+    image: '/assets/cards/card-MZN.jpg',
     alt: 'MZN Cash Card',
     width: 342,
     height: 213,
