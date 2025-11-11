@@ -48,6 +48,7 @@ export default function MapboxMap({
   const logsRef = useRef<string[]>([])
   const [logs, setLogs] = useState<string[]>([])
   const [hasError, setHasError] = useState(false)
+  const [userLngLat, setUserLngLat] = useState<[number, number] | null>(null)
 
   const log = (message: string) => {
     const timestamped = `${new Date().toISOString()}  ${message}`
@@ -115,29 +116,6 @@ export default function MapboxMap({
       loadedRef.current = true
       log('event: load')
 
-      // --- Geolocate & Debug Overlay ---
-      const overlay = document.createElement('div')
-      overlay.textContent = 'Finding your location...'
-      overlay.style.position = 'absolute'
-      overlay.style.top = '12px'
-      overlay.style.left = '50%'
-      overlay.style.transform = 'translateX(-50%)'
-      overlay.style.zIndex = '999'
-      overlay.style.padding = '6px 12px'
-      overlay.style.borderRadius = '6px'
-      overlay.style.background = 'rgba(0, 0, 0, 0.6)'
-      overlay.style.color = '#fff'
-      overlay.style.fontSize = '12px'
-      overlay.style.fontFamily = 'system-ui, sans-serif'
-      overlay.style.pointerEvents = 'none'
-      overlay.style.transition = 'opacity 0.4s ease'
-      overlay.style.opacity = '0.9'
-
-      const container = containerId
-        ? document.getElementById(containerId)
-        : containerRef.current
-      container?.appendChild(overlay)
-
       const geolocate = new mapboxgl.GeolocateControl({
         positionOptions: { enableHighAccuracy: true },
         showUserLocation: true,
@@ -146,44 +124,12 @@ export default function MapboxMap({
 
       map.addControl(geolocate, 'top-right')
 
-      let centeredOnce = false
-
-      geolocate.on('geolocate', (e: any) => {
-        if (centeredOnce) return
-        centeredOnce = true
-        const lng = e.coords.longitude
-        const lat = e.coords.latitude
-        const zoom = 13
-        map.setCenter([lng, lat])
-        map.setZoom(zoom)
-        overlay.textContent = 'Centered on your location'
-        setTimeout(() => {
-          overlay.style.opacity = '0'
-          setTimeout(() => overlay.remove(), 500)
-        }, 1200)
-        console.log('[Mapbox] Centered on user:', { lng, lat })
-      })
-
-      geolocate.on('error', (e: any) => {
-        overlay.textContent = 'Unable to fetch location'
-        console.warn('[Mapbox] Geolocate error', e)
-        setTimeout(() => {
-          overlay.style.opacity = '0'
-          setTimeout(() => overlay.remove(), 500)
-        }, 2000)
-      })
-
       // Trigger geolocate after a short delay
       setTimeout(() => {
         try {
           geolocate.trigger()
         } catch (err) {
-          overlay.textContent = 'Unable to fetch location'
           console.warn('[Mapbox] Geolocate trigger failed', err)
-          setTimeout(() => {
-            overlay.style.opacity = '0'
-            setTimeout(() => overlay.remove(), 500)
-          }, 2000)
         }
       }, 500)
 
@@ -331,6 +277,74 @@ export default function MapboxMap({
       created.forEach((marker) => marker.remove())
     }
   }, [markers, showDebug])
+
+  // Effect to keep nearest branch in view while user stays centered
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !userLngLat || !markers?.length) return
+
+    const logMessage = (message: string) => {
+      const timestamped = `${new Date().toISOString()}  ${message}`
+      logsRef.current = [...logsRef.current.slice(-200), timestamped]
+      if (showDebug) {
+        console.log(`[MapboxMap] ${message}`)
+        setLogs([...logsRef.current])
+      }
+    }
+
+    // Filter branches only
+    const branches = markers.filter((m) => m.kind === 'branch')
+    if (!branches.length) return
+
+    const [userLng, userLat] = userLngLat
+
+    // Haversine distance (meters)
+    const R = 6371000
+    const toRad = (d: number) => (d * Math.PI) / 180
+    const dist = (a: [number, number], b: [number, number]) => {
+      const dLat = toRad(b[1] - a[1])
+      const dLng = toRad(b[0] - a[0])
+      const lat1 = toRad(a[1])
+      const lat2 = toRad(b[1])
+      const s =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
+      return 2 * R * Math.asin(Math.sqrt(s))
+    }
+
+    // Find nearest branch
+    let nearest = branches[0]
+    let best = dist([userLng, userLat], [nearest.lng, nearest.lat])
+    for (let i = 1; i < branches.length; i++) {
+      const d = dist([userLng, userLat], [branches[i].lng, branches[i].lat])
+      if (d < best) {
+        best = d
+        nearest = branches[i]
+      }
+    }
+
+    // Compute zoom to include user + nearest branch; keep user centered
+    const bounds = new mapboxgl.LngLatBounds()
+      .extend([userLng, userLat])
+      .extend([nearest.lng, nearest.lat])
+
+    const cfb = map.cameraForBounds(bounds, {
+      padding: { top: 32, right: 32, bottom: 32, left: 32 },
+      maxZoom: 16,
+    })
+
+    // Apply zoom while keeping user center
+    if (cfb?.zoom) {
+      map.setCenter([userLng, userLat])
+      map.setZoom(Math.min(cfb.zoom, 16))
+      logMessage(`zoomed to show nearest branch (${nearest.label}) while keeping user centered`)
+    } else {
+      // Fallback to sane zoom
+      map.setCenter([userLng, userLat])
+      map.setZoom(12)
+      logMessage('fallback zoom applied (cameraForBounds returned undefined)')
+    }
+  }, [userLngLat, markers, showDebug])
 
   // If containerId is provided, we don't render our own container
   // Fallback and debug overlay will be rendered as siblings in the parent
