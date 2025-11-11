@@ -5,6 +5,7 @@
 @import '../styles/profile-toggle.css';
 @import '../styles/bottom-glass.css';
 @import '../styles/slot-counter.css';
+@import 'mapbox-gl/dist/mapbox-gl.css';
 
 :root {
   --top-safe: 176px;

@@ -2,32 +2,33 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 8px 16px 16px;
+  padding: 28px 16px 0; /* + breathing room from cards */
   gap: 8px;
   color: #0a0a0a;
   font-family: Figtree, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
 
-.header {
+.headerRow {
   display: flex;
+  gap: 12px;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
 }
 
 .title {
-  letter-spacing: 0.08px;
+  font-family: Figtree, system-ui;
   font-weight: 300;
-  font-size: 22px; /* match Figma */
+  font-size: 22px;
+  letter-spacing: 0.08px;
   margin: 0;
 }
 
-.help {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid rgba(10, 10, 10, 0.7);
-  background: transparent;
+.helpBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid #e2e2e2;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,83 +40,51 @@
   flex-shrink: 0;
 }
 
-.subcopy {
+.sub {
+  opacity: 0.5;
+  margin-top: 6px;
   letter-spacing: 0.08px;
   font-weight: 300;
-  opacity: 0.5;
-  margin: 0;
 }
 
 /* Map card wrapper */
 .mapCard {
   position: relative;
-  border-radius: 32px;
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(222, 218, 214, 0.9), rgba(232, 223, 216, 0.9)), #efece7;
-  /* Fixed visual height to match Figma */
-  height: 512px; /* ~Figma mobile height */
+  margin-top: 12px;
   width: 100%;
+  /* Make it tall like Figma (about ~2x current). Adjust as needed. */
+  aspect-ratio: 360 / 520; /* taller card */
+  border-radius: 24px;
+  overflow: hidden;
+  background: #efece7;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
-/* On slightly larger phones and up, give a little more height */
-@media (min-width: 400px) {
+@media (min-width: 390px) {
   .mapCard {
-    height: 560px;
+    aspect-ratio: 398 / 560; /* keep tall on larger phones */
   }
 }
 
-@media (min-width: 480px) {
-  .mapCard {
-    height: 600px;
-  }
-}
-
-/* Inner zoom wrapper for the base map image */
-.mapZoom {
+.map {
   position: absolute;
   inset: 0;
-  overflow: hidden; /* important so scaling doesn't bleed outside */
 }
 
-/* Let Next/Image fill, then scale the actual <img> */
-.mapZoom :global(img) {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.2); /* zoomed to show more map context while still filling */
-  transform-origin: center center;
-  will-change: transform;
-}
-
-/* Fold overlays: ensure they cover full height and keep subtlety */
-.fold {
+/* Folds over the live map */
+.fold1,
+.fold2 {
   position: absolute;
   inset: 0;
   mix-blend-mode: multiply;
-  opacity: 0.22; /* as before */
+  opacity: 0.22;
   pointer-events: none;
   object-fit: cover;
 }
 
-.here {
-  position: absolute;
-  left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
-  padding: 6px 8px;
-  border-radius: 10px;
-  backdrop-filter: blur(12px);
-  background: linear-gradient(#5c5c5c, #5c5c5c), rgba(153, 153, 153, 0.97);
-  color: #fff;
-  font-size: 11px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-}
-
-.markers {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+/* Optional slight variance to mimic mock */
+.fold2 {
+  opacity: 0.18;
 }
 
 /* Respect safe areas and keep consistent gutters */

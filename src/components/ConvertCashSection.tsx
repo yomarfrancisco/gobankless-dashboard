@@ -1,64 +1,50 @@
 import Image from 'next/image'
 import styles from './ConvertCashSection.module.css'
+import MapboxMap from './MapboxMap'
+
+const markers = [
+  { id: 'dealer-1', lng: 28.0549, lat: -26.1064, kind: 'dealer', label: 'Nearest dealer' },
+  { id: 'branch-1', lng: 28.0598, lat: -26.1089, kind: 'branch', label: 'Partner branch' },
+]
 
 export default function ConvertCashSection() {
   return (
-    <section className={styles.wrap} aria-labelledby="convert-cash-title">
-      <header className={styles.header}>
-        <h2 id="convert-cash-title" className={styles.title}>
+    <section className={styles.wrap} aria-labelledby="convert-title">
+      <div className={styles.headerRow}>
+        <h2 id="convert-title" className={styles.title}>
           Convert cash to crypto
         </h2>
-        <button
-          type="button"
-          className={styles.help}
-          aria-label="About converting cash to crypto"
-        >
+        <button className={styles.helpBtn} aria-label="Help">
           ?
         </button>
-      </header>
-      <p className={styles.subcopy}>
+      </div>
+      <p className={styles.sub}>
         Find partner bank managers and branches to help you open an account.
       </p>
 
-      {/* Map card (static first; keep structure ready for live map swap) */}
       <div className={styles.mapCard}>
-        {/* Map image as the base layer with zoom wrapper */}
-        <div className={styles.mapZoom}>
-          <Image
-            src="/assets/map.png"
-            alt="Johannesburg/Sandton map"
-            fill
-            priority
-            sizes="(max-width: 480px) 100vw, 480px"
-            style={{ objectFit: 'cover' }}
-          />
-        </div>
+        {/* Live map layer */}
+        <MapboxMap
+          className={styles.map}
+          markers={markers}
+          styleUrl="mapbox://styles/mapbox/light-v11"
+        />
 
-        {/* Fold overlays (paper texture/crease) */}
+        {/* Paper/fold overlays on top, matching the mock */}
         <Image
           src="/assets/fold1.png"
           alt=""
-          aria-hidden="true"
-          className={styles.fold}
           fill
-          sizes="(max-width: 768px) 92vw, 720px"
+          className={styles.fold1}
+          priority
         />
         <Image
           src="/assets/fold2.png"
           alt=""
-          aria-hidden="true"
-          className={styles.fold}
           fill
-          sizes="(max-width: 768px) 92vw, 720px"
+          className={styles.fold2}
+          priority
         />
-
-        {/* Optional "You are here" chip — keep in DOM, hidden by default */}
-        <div className={styles.here} hidden>
-          <span>You are here</span>
-        </div>
-
-        {/* Markers layer – leave empty for now; we'll populate later */}
-        <div className={styles.markers} aria-hidden="true" />
       </div>
     </section>
   )
