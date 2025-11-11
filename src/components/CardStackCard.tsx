@@ -212,20 +212,17 @@ export default function CardStackCard({
         <Image src={card.image} alt={card.alt} width={card.width} height={card.height} unoptimized />
       )}
 
-      {/* Currency badge at top-left */}
-      <div className="card-header-left">
-        <div className="currency-badge" aria-label="Currency: South African Rand">
-          <img
-            src="/assets/south%20africa.svg"
-            alt="South Africa flag"
-            className="currency-flag"
-            width={18}
-            height={18}
-            loading="lazy"
-            decoding="async"
-          />
-          <span className="currency-code">ZAR</span>
-        </div>
+      {/* Currency chip at top-left (no badge background) */}
+      <div className="card-currency-chip" aria-hidden>
+        <img
+          src="/assets/south%20africa.svg"
+          alt=""
+          className="card-flag"
+          width={20}
+          height={14}
+          draggable={false}
+        />
+        <span className="card-zar-label">ZAR</span>
       </div>
 
       {/* Amount display with SlotCounter (shifted down) */}
