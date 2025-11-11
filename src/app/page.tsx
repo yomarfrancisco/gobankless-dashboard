@@ -23,7 +23,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 3000)
+    const t = setTimeout(() => setLoading(false), 4000) // Match 4s splash duration
     return () => clearTimeout(t)
   }, [])
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
@@ -109,10 +109,10 @@ export default function Home() {
     setPepe,
   })
 
-  if (loading) return <LoadingScreen />
-
   return (
-    <div className="app-shell">
+    <>
+      {loading && <LoadingScreen />}
+      <div className="app-shell">
       <div className="mobile-frame">
         <div className="dashboard-container">
           {/* Overlay: Glass bars only */}
@@ -251,6 +251,7 @@ export default function Home() {
         open={openBankTransferDetails}
         onClose={closeBankTransferDetails}
       />
-    </div>
+      </div>
+    </>
   )
 }
