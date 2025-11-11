@@ -1,13 +1,13 @@
 /* CSS Variables for flag size (single source of truth) */
 :root {
-  --flag-w: 14px;
-  --flag-h: 10px;
+  --flag-w: 42px;
+  --flag-h: 30px;
 }
 
 @media (min-width: 391px) {
   :root {
-    --flag-w: 16px;
-    --flag-h: 11px;
+    --flag-w: 48px;
+    --flag-h: 33px;
   }
 }
 
@@ -44,12 +44,12 @@
 
 /* Lock flag size with high specificity and CSS variables */
 #flag-za.card-flag {
-  width: 14px !important;
-  height: 10px !important;
-  min-width: 14px !important;
-  min-height: 10px !important;
-  max-width: 14px !important;
-  max-height: 10px !important;
+  width: 42px !important;
+  height: 30px !important;
+  min-width: 42px !important;
+  min-height: 30px !important;
+  max-width: 42px !important;
+  max-height: 30px !important;
   object-fit: contain;
   display: block;
   background: transparent !important;
@@ -71,12 +71,12 @@
 
 @media (min-width: 391px) {
   #flag-za.card-flag {
-    width: 16px !important;
-    height: 11px !important;
-    min-width: 16px !important;
-    min-height: 11px !important;
-    max-width: 16px !important;
-    max-height: 11px !important;
+    width: 48px !important;
+    height: 33px !important;
+    min-width: 48px !important;
+    min-height: 33px !important;
+    max-width: 48px !important;
+    max-height: 33px !important;
   }
 }
 
