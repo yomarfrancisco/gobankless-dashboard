@@ -1,4 +1,26 @@
+/* CSS Variables for flag size (single source of truth) */
+:root {
+  --flag-w: 10px;
+  --flag-h: 7px;
+}
+
+@media (min-width: 391px) {
+  :root {
+    --flag-w: 11px;
+    --flag-h: 7.7px;
+  }
+}
+
 /* Currency chip at top-left (no badge background) */
+/* Kill any inherited chip/badge styling */
+.card-currency-chip,
+.card-currency-chip * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  backdrop-filter: none !important;
+}
+
 .card-currency-chip {
   position: absolute;
   top: 14px;
@@ -8,7 +30,7 @@
   gap: 6px;
   z-index: 2;
   pointer-events: none;
-  background: transparent !important;
+  transform: none !important; /* prevent ancestor scaling */
 }
 
 /* Ensure there is NO background, shadow, or rounded container */
@@ -17,11 +39,16 @@
   content: none !important;
 }
 
-.card-flag {
-  display: block;
-  width: 10px;
-  height: 7px;
+/* Lock flag size with high specificity and CSS variables */
+#flag-za.card-flag {
+  width: var(--flag-w) !important;
+  height: var(--flag-h) !important;
+  min-width: var(--flag-w) !important;
+  min-height: var(--flag-h) !important;
+  max-width: var(--flag-w) !important;
+  max-height: var(--flag-h) !important;
   object-fit: contain;
+  display: block;
   background: transparent !important;
   border-radius: 0 !important;
   box-shadow: none !important;
@@ -36,14 +63,6 @@
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
-}
-
-/* Slightly larger on >390px devices */
-@media (min-width: 391px) {
-  .card-flag {
-    width: 11px;
-    height: 7.7px;
-  }
 }
 
 .card-amounts {

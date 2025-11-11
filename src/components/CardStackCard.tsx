@@ -76,6 +76,16 @@ export default function CardStackCard({
 }: CardStackCardProps) {
   const { alloc, allocPct } = useWalletAlloc()
 
+  // Debug: verify flag size after mount
+  useEffect(() => {
+    const el = document.getElementById('flag-za')
+    if (el) {
+      const r = el.getBoundingClientRect()
+      // eslint-disable-next-line no-console
+      console.log('[FLAG ZA SIZE]', Math.round(r.width), 'x', Math.round(r.height))
+    }
+  }, [])
+
   // Get allocation cents for this card
   const allocKey = CARD_TO_ALLOC_KEY[card.type]
   const cents = alloc[allocKey]
@@ -215,11 +225,11 @@ export default function CardStackCard({
       {/* Currency chip at top-left (no badge background) */}
       <div className="card-currency-chip" aria-hidden>
         <img
+          id="flag-za"
           src="/assets/south%20africa.svg"
           alt=""
           className="card-flag"
-          width={10}
-          height={7}
+          style={{ width: '10px', height: '7px' }}
           draggable={false}
         />
         <span className="card-zar-label">ZAR</span>
