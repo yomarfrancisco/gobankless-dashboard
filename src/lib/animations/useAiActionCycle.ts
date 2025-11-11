@@ -238,11 +238,11 @@ export function useAiActionCycle(
         // Emit AI trade notification
         const assetName = targetSymbol
         const zarAmount = Math.abs(deltaZAR)
-        const action = delta > 0 ? 'bought' : 'sold'
+        const actionVerb = delta > 0 ? 'bought' : 'sold'
         pushNotification({
           kind: 'ai_trade',
           title: 'AI trade executed',
-          body: `Rebalanced: ${action} ${Math.abs(delta)} ${assetName} (R${zarAmount.toFixed(2)}).`,
+          action: `Rebalanced: ${actionVerb} ${Math.abs(delta)} ${assetName} (R${zarAmount.toFixed(2)}).`,
           amount: {
             currency: 'ZAR',
             value: delta > 0 ? -zarAmount : zarAmount,

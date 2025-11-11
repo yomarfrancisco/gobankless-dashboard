@@ -11,15 +11,17 @@ export type NotificationKind =
 export type NotificationItem = {
   id: string // uuid
   kind: NotificationKind
-  title: string // e.g., "Payment sent", "Payment received", "Payment failed"
-  body: string // detail line (non-bold)
+  title: string // e.g., "Payment sent", "Payment received", "Payment failed", "AI trade executed"
+  body?: string // detail line (non-bold) - kept for backward compatibility
+  action?: string // e.g., "Rebalanced: sold 1.2 PEPE, bought 0.01 ETH."
+  reason?: string // e.g., "Reason: volatility crossed 25%—moved to cash."
   amount?: {
     // optional: for later Transactions page
     currency: 'ZAR' | 'USDT'
     value: number // positive for inflow, negative for outflow
   }
   direction?: 'up' | 'down' // inflow/outflow (for Transactions derivation)
-  actor: {
+  actor?: {
     type: 'ai' | 'user'
     avatarUrl?: string // user avatar if available
   }

@@ -66,9 +66,9 @@ export default function TopNotifications() {
     <div className="notifications-container" role="status" aria-live="polite" aria-atomic="false">
       {visibleNotifications.map((notification, index) => {
         const avatarUrl =
-          notification.actor.type === 'ai'
+          notification.actor?.type === 'ai'
             ? GOB_AVATAR_PATH
-            : notification.actor.avatarUrl || GOB_AVATAR_PATH
+            : notification.actor?.avatarUrl || GOB_AVATAR_PATH
 
         return (
           <div
@@ -90,7 +90,7 @@ export default function TopNotifications() {
             <div className="notification-avatar">
               <Image
                 src={avatarUrl}
-                alt={notification.actor.type === 'ai' ? 'AI' : 'User'}
+                alt={notification.actor?.type === 'ai' ? 'AI' : 'User'}
                 width={38}
                 height={38}
                 className="notification-avatar-img"
@@ -104,7 +104,17 @@ export default function TopNotifications() {
                   <div className="notification-timestamp">{formatRelativeShort(notification.timestamp)}</div>
                 </div>
               </div>
-              <div className="notification-body">{notification.body}</div>
+              {(() => {
+                // Assemble body from action + reason, fallback to body
+                const lines: string[] = []
+                if (notification.action) lines.push(notification.action)
+                if (notification.reason) lines.push(notification.reason)
+                const body = lines.length > 0 ? lines.join('\n') : notification.body || ''
+                
+                return body ? (
+                  <p className="notif-body">{body}</p>
+                ) : null
+              })()}
             </div>
           </div>
         )

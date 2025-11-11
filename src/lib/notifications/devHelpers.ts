@@ -1,6 +1,7 @@
 /**
  * Dev helper functions for testing notifications
  * Usage: window.debugNotify('payment_sent')
+ * Usage: window.debugAiExamples() - shows 3 example AI trade notifications
  */
 
 import { useNotificationStore } from '@/store/notifications'
@@ -77,6 +78,39 @@ export function setupDevNotificationHelpers() {
 
     const notification = examples[kind] || { ...baseNotification, kind }
     store.pushNotification({ ...notification, ...options })
+  }
+
+  // @ts-ignore
+  window.debugAiExamples = () => {
+    const pushNotification = store.pushNotification
+
+    pushNotification({
+      kind: 'ai_trade',
+      title: 'AI trade executed',
+      action: 'Rebalanced: sold 1.86 PEPE, bought 0.04 ETH.',
+      reason: 'Reason: short-term volatility spike in PEPE; shifting risk to ETH's steadier trend.',
+      timestamp: Date.now(),
+      actor: { type: 'ai' },
+      routeOnTap: '/transactions',
+    })
+
+    pushNotification({
+      kind: 'ai_trade',
+      title: 'AI trade executed',
+      action: 'Reduced ETH exposure by 0.5%.',
+      reason: 'Reason: CPI print hotter than forecast; raising cash buffer.',
+      timestamp: Date.now(),
+      actor: { type: 'ai' },
+    })
+
+    pushNotification({
+      kind: 'ai_trade',
+      title: 'AI trade executed',
+      action: 'Added 2.4 PEPE after retracement.',
+      reason: 'Reason: sentiment reversed from RSI 28 to neutral; capturing rebound zone.',
+      timestamp: Date.now(),
+      actor: { type: 'ai' },
+    })
   }
 }
 

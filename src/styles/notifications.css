@@ -32,6 +32,7 @@
   color: #000;
   font-family: "Acumin VF", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
   position: relative;
+  height: auto; /* Allow height to expand for 1-3 lines */
 }
 
 /* Dark overlay effect */
@@ -118,6 +119,23 @@
   text-overflow: ellipsis;
 }
 
+/* Multi-line body with 3-line clamp */
+.notif-body {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  line-height: 20px;
+  font-weight: 400;
+  font-size: 15px;
+  color: #000;
+  letter-spacing: -0.4px;
+  margin: 0;
+  padding: 0;
+}
+
 /* Meta (timestamp only - no dismiss button) */
 .notification-meta {
   flex-shrink: 0;
@@ -146,6 +164,11 @@
     animation: none;
     transform: translateY(0);
     opacity: 1;
+  }
+  
+  /* Ensure smooth height changes without snapping */
+  .notification-item {
+    transition: height 0.2s ease-out;
   }
 }
 
