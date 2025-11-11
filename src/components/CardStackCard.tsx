@@ -84,8 +84,9 @@ export default function CardStackCard({
   const pct = allocPct(cents)
 
   // Get portfolio data for this card
+  // Use direct selector for reactivity (Zustand will re-render when holdings[symbol] changes)
   const symbol = CARD_TO_SYMBOL[card.type]
-  const holding = usePortfolioStore((state) => state.getHolding(symbol))
+  const holding = usePortfolioStore((s) => s.holdings[symbol])
   const portfolioAllocationPct = holding?.allocationPct ?? pct
   const portfolioHealth = holding?.health ?? HEALTH_CONFIG[card.type].percent
 
@@ -110,10 +111,12 @@ export default function CardStackCard({
   }, [])
 
   // Health animation with two-stage tween for minimum visual delta
+  // Cash: gentler movement (0.6/2.0), ETH/PEPE: standard (1.2/3.5)
   // Skip two-stage for reduced motion (just use direct value)
+  const isCash = card.type === 'savings'
   const healthTweenResult = useTwoStageTween(portfolioHealth, {
-    minVisualDelta: 1.0,
-    previewCap: 3.0,
+    minVisualDelta: isCash ? 0.6 : 1.2,
+    previewCap: isCash ? 2.0 : 3.5,
     stageADuration: 220,
     stageBDuration: 120,
     stageBDelay: 40,
@@ -122,43 +125,27 @@ export default function CardStackCard({
   const animatedHealth = prefersReducedMotion ? portfolioHealth : healthTweenResult.value
   const isHealthAnimating = prefersReducedMotion ? false : healthTweenResult.isAnimating
 
-  // Visibility states for numeric readouts
-  const [showHealthValue, setShowHealthValue] = useState(false)
+  // Visibility states for allocation readout
   const [showAllocationValue, setShowAllocationValue] = useState(false)
   const prevHealthRef = useRef(portfolioHealth)
   const prevAllocationRef = useRef(portfolioAllocationPct)
-  const healthVisibilityTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const allocationVisibilityTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const healthPulseTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [isHealthBarChanging, setIsHealthBarChanging] = useState(false)
 
-  // Detect health changes and trigger visibility/pulse
+  // Detect health changes and trigger pulse (no numeric display)
   useEffect(() => {
     if (portfolioHealth !== prevHealthRef.current) {
-      // Show health value
-      setShowHealthValue(true)
-
       // Only add pulse if not reduced motion
       if (!prefersReducedMotion) {
         setIsHealthBarChanging(true)
-      }
 
-      // Clear existing timeouts
-      if (healthVisibilityTimeoutRef.current) {
-        clearTimeout(healthVisibilityTimeoutRef.current)
-      }
-      if (healthPulseTimeoutRef.current) {
-        clearTimeout(healthPulseTimeoutRef.current)
-      }
+        // Clear existing timeout
+        if (healthPulseTimeoutRef.current) {
+          clearTimeout(healthPulseTimeoutRef.current)
+        }
 
-      // Hide health value after 1400ms (or shorter for reduced motion)
-      const hideDelay = prefersReducedMotion ? 800 : 1400
-      healthVisibilityTimeoutRef.current = setTimeout(() => {
-        setShowHealthValue(false)
-      }, hideDelay)
-
-      // Remove pulse class after 200ms (only if not reduced motion)
-      if (!prefersReducedMotion) {
+        // Remove pulse class after 200ms
         healthPulseTimeoutRef.current = setTimeout(() => {
           setIsHealthBarChanging(false)
         }, 200)
@@ -168,9 +155,6 @@ export default function CardStackCard({
     }
 
     return () => {
-      if (healthVisibilityTimeoutRef.current) {
-        clearTimeout(healthVisibilityTimeoutRef.current)
-      }
       if (healthPulseTimeoutRef.current) {
         clearTimeout(healthPulseTimeoutRef.current)
       }
@@ -277,16 +261,7 @@ export default function CardStackCard({
 
       {/* Bottom-right health bar */}
       <div className="card-health-group">
-        <span className="card-health-label">
-          Health
-          <span
-            className={clsx('health-value', {
-              'health-value--visible': showHealthValue,
-            })}
-          >
-            {Math.round(animatedHealth)}%
-          </span>
-        </span>
+        <span className="card-health-label">Health</span>
         <div className="card-health-bar-container">
           <div
             className={clsx(

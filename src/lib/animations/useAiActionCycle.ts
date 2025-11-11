@@ -5,6 +5,7 @@ import type { CardStackHandle } from '@/components/CardStack'
 import { useNotificationStore } from '@/store/notifications'
 import { usePortfolioStore } from '@/store/portfolio'
 import { computePostTrade, deriveHealth, type HoldingsZAR } from '@/lib/portfolio/applyTrade'
+import { enforceAllocations } from '@/lib/portfolio/calculateMetrics'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
@@ -117,40 +118,65 @@ export function useAiActionCycle(
 
         // Compute post-trade state using single source of truth
         const trade = { symbol: targetSymbol, deltaZAR }
-        const { next, total, alloc } = computePostTrade(prev, trade)
+        const { next: rawNext, total: rawTotal, alloc: rawAlloc } = computePostTrade(prev, trade)
+
+        // Enforce allocation rules: Cash ≥ 90%, ETH + PEPE ≤ 10%
+        // Use the total from prev (should be constant at 6103.00)
+        // This ensures we maintain the exact total across all trades
+        const totalZAR = prev.CASH + prev.ETH + prev.PEPE
+        const enforced = enforceAllocations(rawNext, totalZAR)
+
+        // Recompute allocations and total after enforcement
+        const finalTotal = enforced.CASH + enforced.ETH + enforced.PEPE
+        const finalAlloc: HoldingsZAR = {
+          CASH: (enforced.CASH / finalTotal) * 100,
+          ETH: (enforced.ETH / finalTotal) * 100,
+          PEPE: (enforced.PEPE / finalTotal) * 100,
+        }
+
+        // Dev aid: log allocation percentages for verification
+        console.log('[alloc]', {
+          cashPct: finalAlloc.CASH.toFixed(2),
+          ethPct: finalAlloc.ETH.toFixed(2),
+          pepePct: finalAlloc.PEPE.toFixed(2),
+          sumPct: (finalAlloc.CASH + finalAlloc.ETH + finalAlloc.PEPE).toFixed(2),
+          totalZAR: finalTotal.toFixed(2),
+        })
 
         // 1) Flip forward to target
         await cardStackRef.current.flipToCard(targetType, 'forward')
         await sleep(FLIP_MS + 50)
 
-        // 2) Update ALL holdings in portfolio store (triggers health/allocation tweens at t=0ms)
+        // 2) Update ALL holdings in portfolio store with enforced values and same totalZAR
+        // This triggers health/allocation tweens at t=0ms
         setHolding({
           symbol: 'CASH',
-          amountZAR: next.CASH,
-          amountUSDT: next.CASH / FX_USD_ZAR_DEFAULT,
-          allocationPct: Math.round(alloc.CASH * 100) / 100,
-          health: deriveHealth('CASH', next, total),
+          amountZAR: enforced.CASH,
+          amountUSDT: enforced.CASH / FX_USD_ZAR_DEFAULT,
+          allocationPct: Math.round(finalAlloc.CASH * 100) / 100,
+          health: deriveHealth('CASH', enforced, finalTotal),
         })
 
         setHolding({
           symbol: 'ETH',
-          amountZAR: next.ETH,
-          amountUSDT: next.ETH / FX_USD_ZAR_DEFAULT,
-          allocationPct: Math.round(alloc.ETH * 100) / 100,
-          health: deriveHealth('ETH', next, total),
+          amountZAR: enforced.ETH,
+          amountUSDT: enforced.ETH / FX_USD_ZAR_DEFAULT,
+          allocationPct: Math.round(finalAlloc.ETH * 100) / 100,
+          health: deriveHealth('ETH', enforced, finalTotal),
         })
 
         setHolding({
           symbol: 'PEPE',
-          amountZAR: next.PEPE,
-          amountUSDT: next.PEPE / FX_USD_ZAR_DEFAULT,
-          allocationPct: Math.round(alloc.PEPE * 100) / 100,
-          health: deriveHealth('PEPE', next, total),
+          amountZAR: enforced.PEPE,
+          amountUSDT: enforced.PEPE / FX_USD_ZAR_DEFAULT,
+          allocationPct: Math.round(finalAlloc.PEPE * 100) / 100,
+          health: deriveHealth('PEPE', enforced, finalTotal),
         })
 
         // 3) Update wallet allocation (for slot counter animations)
-        const newTarget = next[targetSymbol] / FX_USD_ZAR_DEFAULT
-        const newCashValue = next.CASH / FX_USD_ZAR_DEFAULT
+        // Use enforced values
+        const newTarget = enforced[targetSymbol] / FX_USD_ZAR_DEFAULT
+        const newCashValue = enforced.CASH / FX_USD_ZAR_DEFAULT
 
         if (targetType === 'yield') {
           setEth(newTarget)

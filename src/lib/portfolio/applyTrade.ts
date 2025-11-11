@@ -52,6 +52,17 @@ export function deriveHealth(
     PEPE: 25,
   }
 
+  // Special handling for Cash: map allocation to [94%, 100%] range for subtle bar motion
+  // 90% cash ≈ 94 health, 100% cash ≈ 100 health
+  // This keeps the bar green and allows subtle wiggling without displaying numbers
+  if (symbol === 'CASH') {
+    const allocationPct = (holdings.CASH / total) * 100
+    // Map from [90%, 100%] allocation to [94%, 100%] health
+    // Linear interpolation: 90% -> 94%, 100% -> 100%
+    const health = 94 + ((allocationPct - 90) / 10) * 6
+    return Math.max(94, Math.min(100, Math.round(health * 10) / 10))
+  }
+
   return calculateHealth(holdings[symbol], total, baseHealth[symbol])
 }
 
