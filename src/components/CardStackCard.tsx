@@ -248,7 +248,15 @@ export default function CardStackCard({
           />
         </div>
       ) : (
-        <Image src={card.image} alt={card.alt} width={card.width} height={card.height} unoptimized />
+        <Image 
+          src={card.image} 
+          alt={card.alt} 
+          width={card.width} 
+          height={card.height} 
+          className="card-bg"
+          aria-hidden="true"
+          unoptimized 
+        />
       )}
 
       {/* Currency chip at top-left (no badge background) - only for ZAR and MZN cards */}

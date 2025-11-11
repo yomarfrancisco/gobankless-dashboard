@@ -27,6 +27,16 @@
   content: none !important;
 }
 
+/* Currency chip container - higher specificity */
+.card .card-currency-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent !important;
+  border: 0;
+  padding: 0;
+}
+
 /* Flag wrap: flex container for flag + currency code */
 .flag-wrap {
   display: inline-flex;
@@ -37,36 +47,39 @@
   padding: 0;
 }
 
-/* Flag icon: canonical size */
-.flag-icon {
-  width: 29px; /* canonical "good" size */
-  height: 20px; /* keep aspect ratio 29×20 */
-  display: block;
-  border-radius: 2px; /* optional, to match SA flag feel */
-  background: transparent;
-  object-fit: contain;
-  overflow: visible !important; /* do NOT clip SVG */
+/* Lock the flag size and prevent shrink/clipping - higher specificity */
+.card .card-currency-chip .flag-icon,
+.card .card-currency-chip img.flag-icon {
+  width: 29px !important;
+  height: 20px !important;
   flex-shrink: 0;
+  object-fit: contain !important;
+  background: transparent;
+  border: 0;
+  display: block;
+  overflow: visible !important; /* do NOT clip SVG */
+  border-radius: 2px; /* optional, to match SA flag feel */
 }
 
-/* Currency code */
-.currency-code {
+/* Currency code - vertical align with flag */
+.card .card-currency-chip .currency-code {
   display: inline-flex;
-  align-items: center; /* vertical centering with the flag */
+  align-items: center; /* vertical align with flag */
+  line-height: 1;
   font-weight: 600;
   font-size: 12px;
-  line-height: 1; /* avoid vertical misalignment */
   letter-spacing: 0.2px;
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
 }
 
-/* Larger screens */
+/* Slight bump on wider phones */
 @media (min-width: 391px) {
-  .flag-icon {
-    width: 32px; /* slight bump on larger phones */
-    height: 22px;
+  .card .card-currency-chip .flag-icon,
+  .card .card-currency-chip img.flag-icon {
+    width: 32px !important;
+    height: 22px !important;
   }
 }
 
