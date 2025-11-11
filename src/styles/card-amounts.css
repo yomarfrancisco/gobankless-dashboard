@@ -1,13 +1,13 @@
 /* CSS Variables for flag size (single source of truth) */
 :root {
-  --flag-w: 10px;
-  --flag-h: 7px;
+  --flag-w: 14px;
+  --flag-h: 10px;
 }
 
 @media (min-width: 391px) {
   :root {
-    --flag-w: 11px;
-    --flag-h: 7.7px;
+    --flag-w: 16px;
+    --flag-h: 11px;
   }
 }
 
@@ -26,11 +26,14 @@
   top: 14px;
   left: 16px;
   display: inline-flex;
-  align-items: center;
+  align-items: baseline; /* ensures flag and ZAR share a common baseline */
   gap: 6px;
   z-index: 2;
   pointer-events: none;
   transform: none !important; /* prevent ancestor scaling */
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0;
 }
 
 /* Ensure there is NO background, shadow, or rounded container */
@@ -41,12 +44,12 @@
 
 /* Lock flag size with high specificity and CSS variables */
 #flag-za.card-flag {
-  width: var(--flag-w) !important;
-  height: var(--flag-h) !important;
-  min-width: var(--flag-w) !important;
-  min-height: var(--flag-h) !important;
-  max-width: var(--flag-w) !important;
-  max-height: var(--flag-h) !important;
+  width: 14px !important;
+  height: 10px !important;
+  min-width: 14px !important;
+  min-height: 10px !important;
+  max-width: 14px !important;
+  max-height: 10px !important;
   object-fit: contain;
   display: block;
   background: transparent !important;
@@ -63,6 +66,18 @@
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
+  margin-top: 0.5px; /* subtle nudge for baseline alignment */
+}
+
+@media (min-width: 391px) {
+  #flag-za.card-flag {
+    width: 16px !important;
+    height: 11px !important;
+    min-width: 16px !important;
+    min-height: 11px !important;
+    max-width: 16px !important;
+    max-height: 11px !important;
+  }
 }
 
 .card-amounts {
