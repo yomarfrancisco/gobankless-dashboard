@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import type { Feature, LineString } from 'geojson'
 import styles from './MapboxMap.module.css'
 
 export type Marker = {
@@ -49,6 +50,7 @@ export default function MapboxMap({
   const [logs, setLogs] = useState<string[]>([])
   const [hasError, setHasError] = useState(false)
   const [userLngLat, setUserLngLat] = useState<[number, number] | null>(null)
+  const [routeData, setRouteData] = useState<Feature<LineString> | null>(null)
 
   const log = (message: string) => {
     const timestamped = `${new Date().toISOString()}  ${message}`
@@ -58,6 +60,18 @@ export default function MapboxMap({
       // Update state only for debug display, throttled
       setLogs([...logsRef.current])
     }
+  }
+
+  // Haversine distance helpers (reusable)
+  const toRad = (d: number) => (d * Math.PI) / 180
+  const R = 6371000
+  const distMeters = (a: [number, number], b: [number, number]) => {
+    const dLat = toRad(b[1] - a[1])
+    const dLng = toRad(b[0] - a[0])
+    const lat1 = toRad(a[1])
+    const lat2 = toRad(b[1])
+    const s = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
+    return 2 * R * Math.asin(Math.sqrt(s))
   }
 
   // Initialize map exactly once
@@ -305,18 +319,6 @@ export default function MapboxMap({
 
     const [userLng, userLat] = userLngLat
 
-    // Haversine helpers
-    const R = 6371000
-    const toRad = (d: number) => (d * Math.PI) / 180
-    const distMeters = (a: [number, number], b: [number, number]) => {
-      const dLat = toRad(b[1] - a[1])
-      const dLng = toRad(b[0] - a[0])
-      const lat1 = toRad(a[1])
-      const lat2 = toRad(b[1])
-      const s = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
-      return 2 * R * Math.asin(Math.sqrt(s))
-    }
-
     // Find nearest branch
     let nearest = branches[0]
     let best = distMeters([userLng, userLat], [nearest.lng, nearest.lat])
@@ -366,6 +368,140 @@ export default function MapboxMap({
       }
     })
   }, [userLngLat, markers]) // not depending on initialZoom/Center; we only care once user+markers exist
+
+  // Effect 1: Fetch route from user to nearest branch
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    if (!loadedRef.current) return
+    if (!userLngLat) return
+    if (!markers?.length) return
+
+    const branches = markers.filter((m) => m.kind === 'branch')
+    if (!branches.length) return
+
+    const [userLng, userLat] = userLngLat
+
+    // Find nearest branch
+    let nearest = branches[0]
+    let best = distMeters([userLng, userLat], [nearest.lng, nearest.lat])
+    for (let i = 1; i < branches.length; i++) {
+      const d = distMeters([userLng, userLat], [branches[i].lng, branches[i].lat])
+      if (d < best) {
+        best = d
+        nearest = branches[i]
+      }
+    }
+
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+    if (!token) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('[map] no token; using straight-line fallback route')
+      }
+      setRouteData({
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: [
+            [userLng, userLat],
+            [nearest.lng, nearest.lat],
+          ],
+        },
+        properties: {},
+      })
+      return
+    }
+
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${userLng},${userLat};${nearest.lng},${nearest.lat}?geometries=geojson&overview=full&access_token=${token}`
+
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((json) => {
+        const geom = json?.routes?.[0]?.geometry
+        if (geom?.type === 'LineString') {
+          setRouteData({ type: 'Feature', geometry: geom, properties: {} })
+          if (process.env.NODE_ENV !== 'production') {
+            console.debug('[map] directions route loaded', {
+              branch: nearest.label || nearest.id,
+              meters: Math.round(best),
+            })
+          }
+        } else {
+          // Fallback
+          setRouteData({
+            type: 'Feature',
+            geometry: {
+              type: 'LineString',
+              coordinates: [
+                [userLng, userLat],
+                [nearest.lng, nearest.lat],
+              ],
+            },
+            properties: {},
+          })
+          if (process.env.NODE_ENV !== 'production') {
+            console.debug('[map] directions missing geometry; using fallback line')
+          }
+        }
+      })
+      .catch(() => {
+        setRouteData({
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [
+              [userLng, userLat],
+              [nearest.lng, nearest.lat],
+            ],
+          },
+          properties: {},
+        })
+        if (process.env.NODE_ENV !== 'production') {
+          console.debug('[map] directions fetch failed; using fallback line')
+        }
+      })
+  }, [userLngLat, markers])
+
+  // Effect 2: Draw / update route layer
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !loadedRef.current) return
+
+    const srcId = 'route-user-branch'
+    const layerId = 'route-user-branch-line'
+
+    if (!routeData) {
+      // Remove if previously added
+      if (map.getLayer(layerId)) map.removeLayer(layerId)
+      if (map.getSource(srcId)) map.removeSource(srcId)
+      return
+    }
+
+    if (!map.getSource(srcId)) {
+      map.addSource(srcId, {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [routeData] },
+      })
+    } else {
+      const src = map.getSource(srcId) as mapboxgl.GeoJSONSource
+      src.setData({ type: 'FeatureCollection', features: [routeData] })
+    }
+
+    if (!map.getLayer(layerId)) {
+      map.addLayer({
+        id: layerId,
+        type: 'line',
+        source: srcId,
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: {
+          'line-color': '#111111',
+          'line-opacity': 0.85,
+          'line-width': 4,
+          'line-blur': 0.5,
+        },
+      })
+    }
+  }, [routeData])
 
   // If containerId is provided, we don't render our own container
   // Fallback and debug overlay will be rendered as siblings in the parent
