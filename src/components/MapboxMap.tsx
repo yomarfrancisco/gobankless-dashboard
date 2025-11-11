@@ -110,10 +110,251 @@ export default function MapboxMap({
     map.touchZoomRotate.enable()
     map.touchZoomRotate.disableRotation()
 
+    // Function to load ATMs near a location
+    const loadATMsNear = async (lng: number, lat: number) => {
+      if (!mapRef.current) return
+
+      try {
+        const token = mapboxgl.accessToken
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/atm.json?proximity=${lng},${lat}&types=poi&limit=15&access_token=${token}`
+        
+        log(`fetching ATMs near [${lng}, ${lat}]`)
+        const response = await fetch(url)
+        const data = await response.json()
+
+        if (!data.features || data.features.length === 0) {
+          log('no ATMs found')
+          return
+        }
+
+        // Create GeoJSON from results
+        const atmGeoJSON = {
+          type: 'FeatureCollection' as const,
+          features: data.features.map((f: any) => ({
+            type: 'Feature' as const,
+            geometry: f.geometry,
+            properties: { name: f.text || 'ATM' },
+          })),
+        }
+
+        // Remove existing ATM source/layer if present
+        if (mapRef.current.getSource('atm-src')) {
+          if (mapRef.current.getLayer('atm-layer')) {
+            mapRef.current.removeLayer('atm-layer')
+          }
+          mapRef.current.removeSource('atm-src')
+        }
+
+        // Add ATM source and layer
+        mapRef.current.addSource('atm-src', {
+          type: 'geojson',
+          data: atmGeoJSON,
+        })
+
+        mapRef.current.addLayer({
+          id: 'atm-layer',
+          type: 'circle',
+          source: 'atm-src',
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#F59E0B',
+            'circle-stroke-width': 1.5,
+            'circle-stroke-color': '#ffffff',
+          },
+        })
+
+        log(`added ${atmGeoJSON.features.length} ATM markers`)
+      } catch (error) {
+        log(`error loading ATMs: ${error}`)
+      }
+    }
+
+    // Function to add test branches
+    const addTestBranches = () => {
+      if (!mapRef.current) return
+
+      const branches = {
+        type: 'FeatureCollection' as const,
+        features: [
+          {
+            type: 'Feature' as const,
+            geometry: {
+              type: 'Point' as const,
+              coordinates: [28.0549, -26.1077] as [number, number],
+            },
+            properties: { name: 'GoB Sandton' },
+          },
+          {
+            type: 'Feature' as const,
+            geometry: {
+              type: 'Point' as const,
+              coordinates: [28.0325, -26.1372] as [number, number],
+            },
+            properties: { name: 'GoB Rosebank' },
+          },
+        ],
+      }
+
+      // Add branch source
+      mapRef.current.addSource('branch-src', {
+        type: 'geojson',
+        data: branches,
+      })
+
+      // Add branch layer
+      mapRef.current.addLayer({
+        id: 'branch-layer',
+        type: 'circle',
+        source: 'branch-src',
+        paint: {
+          'circle-radius': 7,
+          'circle-color': '#D9368B',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#fff',
+        },
+      })
+
+      // Add click handler for branch popups
+      mapRef.current.on('click', 'branch-layer', (e) => {
+        if (!e.features || e.features.length === 0) return
+
+        const feature = e.features[0]
+        const coordinates = (feature.geometry as GeoJSON.Point).coordinates.slice() as [number, number]
+        const name = feature.properties?.name || 'Branch'
+
+        // Create popup
+        new mapboxgl.Popup()
+          .setLngLat(coordinates)
+          .setHTML(`<div style="padding: 8px;"><strong>${name}</strong><br/>Convert here</div>`)
+          .addTo(mapRef.current!)
+      })
+
+      // Change cursor on hover
+      mapRef.current.on('mouseenter', 'branch-layer', () => {
+        if (mapRef.current) {
+          mapRef.current.getCanvas().style.cursor = 'pointer'
+        }
+      })
+
+      mapRef.current.on('mouseleave', 'branch-layer', () => {
+        if (mapRef.current) {
+          mapRef.current.getCanvas().style.cursor = ''
+        }
+      })
+
+      log('added 2 test branch locations')
+    }
+
+    // Function to hide Mapbox logo
+    const hideMapboxLogo = () => {
+      // Wait a bit for logo to render
+      setTimeout(() => {
+        const attribution = document.querySelector('.mapboxgl-ctrl-logo') as HTMLElement
+        if (attribution) {
+          attribution.style.position = 'absolute'
+          attribution.style.bottom = '-200px'
+          log('moved Mapbox logo offscreen')
+        }
+      }, 500)
+    }
+
+    // Function to enable 3D terrain and buildings
+    const enable3DTerrain = () => {
+      if (!mapRef.current) return
+
+      try {
+        // Add DEM terrain source
+        mapRef.current.addSource('mapbox-dem', {
+          type: 'raster-dem',
+          url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+          tileSize: 512,
+          maxzoom: 14,
+        })
+
+        // Set terrain
+        mapRef.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.0 })
+
+        // Add 3D buildings layer
+        mapRef.current.addLayer(
+          {
+            id: '3d-buildings',
+            source: 'composite',
+            'source-layer': 'building',
+            type: 'fill-extrusion',
+            minzoom: 14,
+            paint: {
+              'fill-extrusion-color': '#d1d5db',
+              'fill-extrusion-height': ['get', 'height'],
+              'fill-extrusion-base': ['coalesce', ['get', 'min_height'], 0],
+              'fill-extrusion-opacity': 0.6,
+            },
+          },
+          'waterway-label'
+        )
+
+        log('enabled 3D terrain and buildings')
+      } catch (error) {
+        log(`error enabling 3D terrain: ${error}`)
+      }
+    }
+
     // Register event listeners - NO state updates inside
     map.on('load', () => {
       loadedRef.current = true
       log('event: load')
+
+      // Add GeolocateControl
+      const geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+        showUserHeading: true,
+      })
+
+      map.addControl(geolocate, 'top-right')
+
+      // Auto-activate geolocate on first render
+      geolocate.on('geolocate', (e: any) => {
+        const { coords } = e
+        log(`geolocate: user at [${coords.longitude}, ${coords.latitude}]`)
+        // Load ATMs near user location
+        loadATMsNear(coords.longitude, coords.latitude)
+      })
+
+      // Trigger geolocate automatically
+      setTimeout(() => {
+        geolocate.trigger()
+      }, 1000)
+
+      // Add test branches
+      addTestBranches()
+
+      // Load ATMs near initial center
+      loadATMsNear(initialCenter[0], initialCenter[1])
+
+      // Hide Mapbox logo
+      hideMapboxLogo()
+
+      // Enable 3D terrain
+      enable3DTerrain()
+
+      // Dynamic pitch on zoom
+      map.on('zoom', () => {
+        const z = map.getZoom()
+        const targetPitch = Math.min(60, Math.max(0, (z - 12) * 7))
+        map.setPitch(targetPitch)
+      })
+
+      // Debounced ATM refresh on moveend
+      let moveendTimeout: NodeJS.Timeout
+      map.on('moveend', () => {
+        clearTimeout(moveendTimeout)
+        moveendTimeout = setTimeout(() => {
+          const center = map.getCenter()
+          loadATMsNear(center.lng, center.lat)
+        }, 500)
+      })
 
       // Trigger resize after load - use requestAnimationFrame to avoid reflow
       requestAnimationFrame(() => {
