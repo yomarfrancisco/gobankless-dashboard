@@ -25,7 +25,6 @@ export default function ConvertCashSection() {
       <div className={styles.mapCard}>
         {/* Live map layer */}
         <MapboxMap
-          className={styles.map}
           markers={markers}
           styleUrl="mapbox://styles/mapbox/light-v11"
         />
