@@ -218,8 +218,8 @@ export default function CardStackCard({
           src="/assets/south%20africa.svg"
           alt=""
           className="card-flag"
-          width={20}
-          height={14}
+          width={10}
+          height={7}
           draggable={false}
         />
         <span className="card-zar-label">ZAR</span>
