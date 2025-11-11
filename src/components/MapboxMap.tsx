@@ -16,6 +16,7 @@ export type Marker = {
 
 interface Props {
   className?: string
+  containerId?: string // ID of existing container element
   initialCenter?: [number, number] // [lng, lat]
   initialZoom?: number
   markers?: Marker[]
@@ -31,6 +32,7 @@ const DEBUG_MAP =
 
 export default function MapboxMap({
   className,
+  containerId,
   initialCenter = [28.0567, -26.1069], // Sandton-ish
   initialZoom = 14,
   markers = [],
@@ -38,23 +40,47 @@ export default function MapboxMap({
   styleUrl = 'mapbox://styles/mapbox/light-v11',
   showDebug = DEBUG_MAP,
 }: Props) {
-  const shellRef = useRef<HTMLDivElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const loadedRef = useRef(false)
+  const roRef = useRef<ResizeObserver | null>(null)
+  const lastSizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 })
+  const logsRef = useRef<string[]>([])
   const [logs, setLogs] = useState<string[]>([])
   const [hasError, setHasError] = useState(false)
 
-  useEffect(() => {
-    if (!containerRef.current) return
-    if (mapRef.current) return
+  const log = (message: string) => {
+    const timestamped = `${new Date().toISOString()}  ${message}`
+    logsRef.current = [...logsRef.current.slice(-200), timestamped]
+    if (showDebug) {
+      console.log(`[MapboxMap] ${message}`)
+      // Update state only for debug display, throttled
+      setLogs([...logsRef.current])
+    }
+  }
 
-    const log = (message: string) => {
-      const timestamped = `${new Date().toISOString()}  ${message}`
-      setLogs((prev) => [...prev.slice(-200), timestamped])
-      if (showDebug) {
-        console.log(`[MapboxMap] ${message}`)
-      }
+  // Initialize map exactly once
+  useEffect(() => {
+    // Get container - either by ID or ref
+    const container = containerId
+      ? document.getElementById(containerId)
+      : containerRef.current
+
+    if (!container) {
+      log('error: container not found')
+      return
+    }
+
+    // Guard: prevent double initialization
+    if (mapRef.current) {
+      log('skip: map already initialized')
+      return
+    }
+
+    // Ensure container is empty
+    if (container.children.length > 0) {
+      log('warning: container has children, clearing')
+      container.innerHTML = ''
     }
 
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
@@ -70,12 +96,12 @@ export default function MapboxMap({
 
     log('construct map')
     const map = new mapboxgl.Map({
-      container: containerRef.current,
+      container: container,
       style: styleUrl,
       center: initialCenter,
       zoom: initialZoom,
       attributionControl: false,
-      cooperativeGestures: true, // nicer on mobile
+      cooperativeGestures: true,
       preserveDrawingBuffer: false,
     })
 
@@ -84,7 +110,7 @@ export default function MapboxMap({
     map.touchZoomRotate.enable()
     map.touchZoomRotate.disableRotation()
 
-    // Register event listeners
+    // Register event listeners - NO state updates inside
     map.on('load', () => {
       loadedRef.current = true
       log('event: load')
@@ -116,13 +142,13 @@ export default function MapboxMap({
         log('fitted bounds to markers')
       }
 
-      // Trigger resize after markers are added
-      setTimeout(() => {
+      // Trigger resize after markers - use requestAnimationFrame to avoid reflow
+      requestAnimationFrame(() => {
         if (mapRef.current) {
           mapRef.current.resize()
-          log('resize after load')
+          log('resize after load (raf)')
         }
-      }, 0)
+      })
     })
 
     map.on('styledata', () => {
@@ -136,6 +162,7 @@ export default function MapboxMap({
     map.on('error', (e) => {
       const errorMsg = e?.error?.message ?? 'unknown'
       log(`event: error → ${errorMsg}`)
+      // Only set error state, no other state updates
       setHasError(true)
     })
 
@@ -153,45 +180,130 @@ export default function MapboxMap({
 
     mapRef.current = map
 
-    // ResizeObserver for container size changes
-    const resizeObserver = shellRef.current
-      ? new ResizeObserver(() => {
-          if (mapRef.current) {
-            mapRef.current.resize()
-            log('resizeObserver → map.resize()')
-          }
-        })
-      : null
+    // Throttled ResizeObserver with size checks
+    let rafId = 0
+    const ro = new ResizeObserver((entries) => {
+      const cr = entries[0]?.contentRect
+      if (!cr) return
 
-    if (resizeObserver && shellRef.current) {
-      resizeObserver.observe(shellRef.current)
-    }
+      const w = Math.round(cr.width)
+      const h = Math.round(cr.height)
 
-    // Handle orientation change
-    const handleOrientationChange = () => {
-      if (mapRef.current) {
-        setTimeout(() => {
-          mapRef.current?.resize()
-          log('orientationchange → map.resize()')
-        }, 100)
+      // Ignore zero size
+      if (w === 0 || h === 0) {
+        log(`resizeObserver: zero size (${w}x${h}), skipping`)
+        return
       }
+
+      // Ignore unchanged size
+      if (w === lastSizeRef.current.w && h === lastSizeRef.current.h) {
+        return
+      }
+
+      lastSizeRef.current = { w, h }
+      log(`resizeObserver: size changed to ${w}x${h}`)
+
+      // Throttle with requestAnimationFrame
+      cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        if (mapRef.current) {
+          mapRef.current.resize()
+          log('resizeObserver → map.resize() (raf)')
+        }
+      })
+    })
+
+    ro.observe(container)
+    roRef.current = ro
+
+    // Handle orientation change - throttled
+    let orientationRaf = 0
+    const handleOrientationChange = () => {
+      cancelAnimationFrame(orientationRaf)
+      orientationRaf = requestAnimationFrame(() => {
+        if (mapRef.current) {
+          mapRef.current.resize()
+          log('orientationchange → map.resize() (raf)')
+        }
+      })
     }
     window.addEventListener('orientationchange', handleOrientationChange)
 
     return () => {
       clearTimeout(retryTimeout)
-      if (resizeObserver) {
-        resizeObserver.disconnect()
+      cancelAnimationFrame(rafId)
+      cancelAnimationFrame(orientationRaf)
+      if (roRef.current) {
+        roRef.current.disconnect()
+        roRef.current = null
       }
       window.removeEventListener('orientationchange', handleOrientationChange)
       log('cleanup—remove map')
-      map.remove()
-      mapRef.current = null
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+      }
     }
-  }, [initialCenter, initialZoom, styleUrl, fitToMarkers, markers, showDebug])
+  }, [styleUrl, containerId, showDebug]) // Minimal deps - only styleUrl and containerId
 
+  // Separate effect to update markers when they change (without re-initializing map)
+  useEffect(() => {
+    if (!mapRef.current || !loadedRef.current) return
+
+    // Clear existing markers
+    const existingMarkers = document.querySelectorAll('.mapbox-marker')
+    existingMarkers.forEach((m) => m.remove())
+
+    // Add new markers
+    const mbMarkers: mapboxgl.Marker[] = []
+    markers.forEach((m) => {
+      const el = document.createElement('div')
+      el.className = 'mapbox-marker'
+      el.style.width = '12px'
+      el.style.height = '12px'
+      el.style.borderRadius = '50%'
+      el.style.background = m.kind === 'dealer' ? '#ff9b26' : '#58cdaa'
+      el.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'
+      el.title = m.label ?? m.id
+
+      const mk = new mapboxgl.Marker({ element: el })
+        .setLngLat([m.lng, m.lat])
+        .addTo(mapRef.current!)
+
+      mbMarkers.push(mk)
+    })
+
+    if (fitToMarkers && mbMarkers.length) {
+      const bounds = new mapboxgl.LngLatBounds()
+      mbMarkers.forEach((mk) => bounds.extend(mk.getLngLat()))
+      mapRef.current.fitBounds(bounds, { padding: 32, duration: 0 })
+    }
+  }, [markers, fitToMarkers])
+
+  // If containerId is provided, we don't render our own container
+  if (containerId) {
+    return (
+      <>
+        {hasError && (
+          <div className={styles.fallback}>
+            <Image
+              src="/assets/map.png"
+              alt="Johannesburg/Sandton map (fallback)"
+              fill
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+        )}
+        {showDebug && (
+          <pre className={styles.debug}>{logs.join('\n')}</pre>
+        )}
+      </>
+    )
+  }
+
+  // Fallback: render our own container if no containerId
   return (
-    <div ref={shellRef} className={`${styles.mapShell} ${className || ''}`}>
+    <div ref={containerRef} className={`${styles.mapShell} ${className || ''}`}>
       {hasError && (
         <div className={styles.fallback}>
           <Image
@@ -202,11 +314,6 @@ export default function MapboxMap({
           />
         </div>
       )}
-      <div
-        ref={containerRef}
-        className={styles.map}
-        style={{ width: '100%', height: '100%' }}
-      />
       {showDebug && (
         <pre className={styles.debug}>{logs.join('\n')}</pre>
       )}

@@ -23,13 +23,20 @@ export default function ConvertCashSection() {
       </p>
 
       <div className={styles.mapCard}>
-        {/* Live map layer */}
+        {/* Empty map container - Mapbox will attach here */}
+        <div ref={(el) => {
+          // Expose container ref to MapboxMap via a ref callback
+          // This ensures the container is empty before Mapbox attaches
+        }} className={styles.mapContainer} id="mapbox-container" />
+        
+        {/* Live map component - renders into mapContainer */}
         <MapboxMap
+          containerId="mapbox-container"
           markers={markers}
           styleUrl="mapbox://styles/mapbox/light-v11"
         />
 
-        {/* Paper/fold overlays on top, matching the mock */}
+        {/* Paper/fold overlays as siblings, not children of map container */}
         <Image
           src="/assets/fold1.png"
           alt=""

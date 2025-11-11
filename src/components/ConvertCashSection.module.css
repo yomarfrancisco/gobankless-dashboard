@@ -47,13 +47,12 @@
   font-weight: 300;
 }
 
-/* Map card wrapper */
+/* Map card wrapper - fixed height to avoid resize churn */
 .mapCard {
   position: relative;
   margin-top: 12px;
   width: 100%;
-  /* Make it tall like Figma (about ~2x current). Adjust as needed. */
-  aspect-ratio: 360 / 520; /* taller card */
+  height: 512px; /* Fixed height to match design */
   border-radius: 24px;
   overflow: hidden;
   background: #efece7;
@@ -62,8 +61,15 @@
 
 @media (min-width: 390px) {
   .mapCard {
-    aspect-ratio: 398 / 560; /* keep tall on larger phones */
+    height: 560px; /* Slightly taller on larger phones */
   }
+}
+
+/* Empty map container - Mapbox will attach here */
+.mapContainer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 /* Folds over the live map */
