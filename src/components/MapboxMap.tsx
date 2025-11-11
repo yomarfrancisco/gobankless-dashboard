@@ -115,34 +115,7 @@ export default function MapboxMap({
       loadedRef.current = true
       log('event: load')
 
-      const mbMarkers: mapboxgl.Marker[] = []
-
-      log(`adding ${markers.length} markers`)
-      markers.forEach((m) => {
-        const el = document.createElement('div')
-        el.style.width = '12px'
-        el.style.height = '12px'
-        el.style.borderRadius = '50%'
-        el.style.background = m.kind === 'dealer' ? '#ff9b26' : '#58cdaa'
-        el.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'
-        el.title = m.label ?? m.id
-
-        const mk = new mapboxgl.Marker({ element: el })
-          .setLngLat([m.lng, m.lat])
-          .addTo(map)
-
-        mbMarkers.push(mk)
-        log(`marker added: ${m.id} at [${m.lng}, ${m.lat}]`)
-      })
-
-      if (fitToMarkers && mbMarkers.length) {
-        const bounds = new mapboxgl.LngLatBounds()
-        mbMarkers.forEach((mk) => bounds.extend(mk.getLngLat()))
-        map.fitBounds(bounds, { padding: 32, duration: 0 })
-        log('fitted bounds to markers')
-      }
-
-      // Trigger resize after markers - use requestAnimationFrame to avoid reflow
+      // Trigger resize after load - use requestAnimationFrame to avoid reflow
       requestAnimationFrame(() => {
         if (mapRef.current) {
           mapRef.current.resize()
@@ -246,15 +219,30 @@ export default function MapboxMap({
     }
   }, [styleUrl, containerId, showDebug]) // Minimal deps - only styleUrl and containerId
 
-  // Separate effect to update markers when they change (without re-initializing map)
+  // Separate effect to add/update markers when map is loaded (without re-initializing map)
   useEffect(() => {
     if (!mapRef.current || !loadedRef.current) return
+
+    const log = (message: string) => {
+      const timestamped = `${new Date().toISOString()}  ${message}`
+      logsRef.current = [...logsRef.current.slice(-200), timestamped]
+      if (showDebug) {
+        console.log(`[MapboxMap] ${message}`)
+        setLogs([...logsRef.current])
+      }
+    }
 
     // Clear existing markers
     const existingMarkers = document.querySelectorAll('.mapbox-marker')
     existingMarkers.forEach((m) => m.remove())
 
+    if (markers.length === 0) {
+      log('no markers to add')
+      return
+    }
+
     // Add new markers
+    log(`adding ${markers.length} markers`)
     const mbMarkers: mapboxgl.Marker[] = []
     markers.forEach((m) => {
       const el = document.createElement('div')
@@ -271,14 +259,16 @@ export default function MapboxMap({
         .addTo(mapRef.current!)
 
       mbMarkers.push(mk)
+      log(`marker added: ${m.id} at [${m.lng}, ${m.lat}]`)
     })
 
     if (fitToMarkers && mbMarkers.length) {
       const bounds = new mapboxgl.LngLatBounds()
       mbMarkers.forEach((mk) => bounds.extend(mk.getLngLat()))
       mapRef.current.fitBounds(bounds, { padding: 32, duration: 0 })
+      log('fitted bounds to markers')
     }
-  }, [markers, fitToMarkers])
+  }, [markers, fitToMarkers, showDebug])
 
   // If containerId is provided, we don't render our own container
   // Fallback and debug overlay will be rendered as siblings in the parent
