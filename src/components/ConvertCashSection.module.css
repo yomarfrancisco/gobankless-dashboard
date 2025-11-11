@@ -126,10 +126,3 @@
   }
 }
 
-/* Larger screens can slightly increase the card height while preserving ratio */
-@media (min-width: 480px) {
-  .mapCard {
-    aspect-ratio: 398 / 270; /* closer to mock size */
-  }
-}
-
