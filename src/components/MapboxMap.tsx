@@ -6,6 +6,8 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { Feature, LineString } from 'geojson'
 import styles from './MapboxMap.module.css'
+// static import so Next bundles it and gives us a stable .src
+import userIcon from '../../public/assets/character.png'
 
 export type Marker = {
   id: string
@@ -150,8 +152,27 @@ export default function MapboxMap({
           // add our PNG as <img> to preserve sharpness on retina
           const img = document.createElement('img')
           img.alt = 'You are here'
-          img.src = '/assets/character.png' // from /public
+          // Use static import if available, else fall back to public path:
+          const userIconUrl = (userIcon as any)?.src ?? '/assets/character.png'
+          img.src = userIconUrl
+          // Helpful diagnostics the first time we deploy
+          img.addEventListener('load', () =>
+            log(
+              `[user-icon] loaded w=${img.naturalWidth} h=${img.naturalHeight} url=${userIconUrl}`
+            )
+          )
+          img.addEventListener('error', (e) =>
+            console.error('[user-icon] failed to load', userIconUrl, e)
+          )
+          img.decoding = 'async'
+          img.loading = 'eager'
+          img.referrerPolicy = 'no-referrer'
           el.appendChild(img)
+          // Keep a visible fallback if it still fails
+          if (!img.complete) {
+            el.style.background =
+              'radial-gradient(circle at center, rgba(20,161,91,.35), rgba(20,161,91,0))'
+          }
           userMarkerRef.current = new mapboxgl.Marker({
             element: el,
             anchor: 'center',
