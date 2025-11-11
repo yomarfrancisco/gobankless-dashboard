@@ -212,8 +212,24 @@ export default function CardStackCard({
         <Image src={card.image} alt={card.alt} width={card.width} height={card.height} unoptimized />
       )}
 
-      {/* Amount display with SlotCounter */}
-      <div className={`card-amounts card-amounts--${card.type}`}>
+      {/* Currency badge at top-left */}
+      <div className="card-header-left">
+        <div className="currency-badge" aria-label="Currency: South African Rand">
+          <img
+            src="/assets/south%20africa.svg"
+            alt="South Africa flag"
+            className="currency-flag"
+            width={18}
+            height={18}
+            loading="lazy"
+            decoding="async"
+          />
+          <span className="currency-code">ZAR</span>
+        </div>
+      </div>
+
+      {/* Amount display with SlotCounter (shifted down) */}
+      <div className={`card-amounts card-amounts--${card.type} card-amounts--shifted`}>
         <div
           className={clsx('card-amounts__zar amount-headline amount-topline', {
             'flash-up': flashDirection === 'up',
@@ -222,7 +238,6 @@ export default function CardStackCard({
           aria-label={`${zar.toFixed(2)} rand`}
           onAnimationEnd={onFlashEnd}
         >
-          <span className="amt-prefix card-amounts__symbol">R</span>
           <SlotCounter
             value={zar}
             format={formatZAR}

@@ -1,3 +1,39 @@
+/* Currency badge at top-left */
+.card-header-left {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.currency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.currency-flag {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.currency-code {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+
 .card-amounts {
   position: absolute;
   left: 16px; /* match original Pepe overlay position */
@@ -8,6 +44,11 @@
   line-height: 1;
   pointer-events: none; /* text overlay not clickable */
   z-index: 10; /* ensure amounts sit above card image */
+}
+
+/* Shift amount block down to make space for currency badge */
+.card-amounts--shifted {
+  transform: translateY(18px);
 }
 
 /* Top line: ZAR */
@@ -198,6 +239,19 @@
 .card-amounts--savings {
   left: 16px;
   top: 48px;
+}
+
+/* Responsive: adjust shift and truncate text on narrow screens */
+@media (max-width: 360px) {
+  .card-amounts--shifted {
+    transform: translateY(22px);
+  }
+
+  .currency-code {
+    max-width: 2.5ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* Yield badge positioning (moved from old overlay) */
