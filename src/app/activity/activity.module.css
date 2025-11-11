@@ -1,0 +1,135 @@
+/* Activity Page Styles */
+
+.activityHeaderSection {
+  padding: 20px 16px 16px;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.activityContainer {
+  padding: 0 16px 24px;
+}
+
+.activitySection {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Activity Item Card */
+.activityItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(166, 166, 166, 0.7);
+  backdrop-filter: blur(150px);
+  -webkit-backdrop-filter: blur(150px);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  position: relative;
+}
+
+/* Dark overlay effect (matching notification style) */
+.activityItem::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#333, #333);
+  opacity: 0.3;
+  border-radius: 24px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+
+.activityItem > * {
+  position: relative;
+  z-index: 1;
+}
+
+.activityAvatar {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.activityContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activityHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.activityTitle {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #000;
+  flex: 1;
+}
+
+.activityTime {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.activityBody {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000;
+  letter-spacing: -0.4px;
+  /* multi-line clamp to 3 lines with ellipsis */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* allow wrapping */
+  white-space: normal;
+  word-break: break-word;
+  margin: 0;
+  padding: 0;
+}
+

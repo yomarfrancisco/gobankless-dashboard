@@ -12,9 +12,11 @@ import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
 import { formatUSDT } from '@/lib/money'
 import AutonomyToggle from '@/components/AutonomyToggle'
+import { useActivityStore } from '@/store/activity'
 
 export default function ProfilePage() {
   const router = useRouter()
+  const activityCount = useActivityStore((s) => s.items.length)
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -154,7 +156,12 @@ export default function ProfilePage() {
               {/* Buttons */}
               <div className="profile-actions">
                 <button className="btn profile-edit">Edit profile</button>
-                <button className="btn profile-inbox" onClick={() => router.push('/transactions')}>
+                <button
+                  className={`btn profile-inbox ${activityCount === 0 ? 'disabled' : ''}`}
+                  onClick={() => activityCount > 0 && router.push('/activity')}
+                  disabled={activityCount === 0}
+                  style={{ opacity: activityCount === 0 ? 0.5 : 1, cursor: activityCount === 0 ? 'not-allowed' : 'pointer' }}
+                >
                   Transactions
                 </button>
               </div>

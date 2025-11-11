@@ -12,7 +12,7 @@ interface BottomGlassBarProps {
 
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const isHome = currentPath === '/'
-  const isProfile = currentPath === '/profile' || currentPath === '/transactions'
+  const isProfile = currentPath === '/profile' || currentPath === '/transactions' || currentPath === '/activity'
   const { mode } = useWalletMode()
 
   return (

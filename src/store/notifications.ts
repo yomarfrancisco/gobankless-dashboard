@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useActivityStore } from './activity'
 
 export type NotificationKind =
   | 'payment_sent'
@@ -47,6 +48,26 @@ export const useNotificationStore = create<NotificationState>((set) => ({
     set((state) => ({
       notifications: [...state.notifications, notification].slice(-10), // Keep max 10 in queue
     }))
+
+    // Also add to activity store
+    const activityStore = useActivityStore.getState()
+    // Get detail text (prefer body, else join action + reason)
+    const detail = notification.body ?? [notification.action, notification.reason].filter(Boolean).join(' — ')
+    activityStore.add({
+      id: notification.id,
+      actor: notification.actor || { type: 'user' },
+      title: notification.title,
+      body: detail || undefined,
+      amount: notification.amount
+        ? {
+            currency: notification.amount.currency,
+            value: Math.abs(notification.amount.value),
+            sign: notification.amount.value >= 0 ? 'credit' : 'debit',
+          }
+        : undefined,
+      createdAt: notification.timestamp,
+      routeOnTap: notification.routeOnTap,
+    })
   },
   dismissNotification: (id) => {
     set((state) => ({

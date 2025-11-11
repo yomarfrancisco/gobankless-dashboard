@@ -2,9 +2,11 @@
  * Dev helper functions for testing notifications
  * Usage: window.debugNotify('payment_sent')
  * Usage: window.debugAiExamples() - shows 3 example AI trade notifications
+ * Usage: window.debugSeedActivity() - seeds activity store with sample items
  */
 
 import { useNotificationStore } from '@/store/notifications'
+import { useActivityStore } from '@/store/activity'
 
 export function setupDevNotificationHelpers() {
   if (typeof window === 'undefined') return
@@ -109,6 +111,64 @@ export function setupDevNotificationHelpers() {
       reason: 'Reason: sentiment reversed from RSI 28 to neutral; capturing rebound zone.',
       actor: { type: 'ai' },
     })
+  }
+
+  // @ts-ignore
+  window.debugSeedActivity = () => {
+    const activityStore = useActivityStore.getState()
+    const now = Date.now()
+    const oneHour = 60 * 60 * 1000
+    const oneDay = 24 * oneHour
+    const threeDays = 3 * oneDay
+    const tenDays = 10 * oneDay
+
+    activityStore.addMany([
+      {
+        id: crypto.randomUUID(),
+        actor: { type: 'ai' },
+        title: 'AI trade executed',
+        body: "Rebalanced: sold 1.86 PEPE, bought 0.04 ETH. — Reason: short-term volatility spike in PEPE; shifting risk to ETH's steadier trend.",
+        amount: { currency: 'ZAR', value: 120.50, sign: 'debit' },
+        createdAt: now - oneHour,
+        routeOnTap: '/activity',
+      },
+      {
+        id: crypto.randomUUID(),
+        actor: { type: 'user' },
+        title: 'Payment sent',
+        body: 'You sent R100 to recipient@email.com for "Deposit for the next batch. Thanx."',
+        amount: { currency: 'ZAR', value: 100, sign: 'debit' },
+        createdAt: now - 2 * oneHour,
+        routeOnTap: '/activity',
+      },
+      {
+        id: crypto.randomUUID(),
+        actor: { type: 'user' },
+        title: 'Payment received',
+        body: 'sender@email.com sent you R250 for "[reference]"',
+        amount: { currency: 'ZAR', value: 250, sign: 'credit' },
+        createdAt: now - oneDay,
+        routeOnTap: '/activity',
+      },
+      {
+        id: crypto.randomUUID(),
+        actor: { type: 'ai' },
+        title: 'AI trade executed',
+        body: 'Reduced ETH exposure by 0.5%. — Reason: CPI print hotter than forecast; raising cash buffer.',
+        amount: { currency: 'ZAR', value: 85.30, sign: 'debit' },
+        createdAt: now - threeDays,
+        routeOnTap: '/activity',
+      },
+      {
+        id: crypto.randomUUID(),
+        actor: { type: 'user' },
+        title: 'Refund issued',
+        body: 'We refunded R100 to your card • Ref: 9X3K…',
+        amount: { currency: 'ZAR', value: 100, sign: 'credit' },
+        createdAt: now - tenDays,
+        routeOnTap: '/activity',
+      },
+    ])
   }
 }
 
