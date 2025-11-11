@@ -17,8 +17,15 @@ import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
 import { formatZAR } from '@/lib/formatCurrency'
 import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
 import ConvertCashSection from '@/components/ConvertCashSection'
+import LoadingScreen from '@/components/LoadingScreen'
 
 export default function Home() {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 3000)
+    return () => clearTimeout(t)
+  }, [])
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
   const cardStackRef = useRef<CardStackHandle>(null)
   const [openTransaction, setOpenTransaction] = useState(false)
@@ -101,6 +108,8 @@ export default function Home() {
     setEth,
     setPepe,
   })
+
+  if (loading) return <LoadingScreen />
 
   return (
     <div className="app-shell">
