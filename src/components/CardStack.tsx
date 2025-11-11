@@ -352,12 +352,14 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
             onTouchEnd={(e) => handleTouchEnd(e, cardIdx)}
             style={{
               position: 'absolute',
-              width: `${effectiveStyle.widthPx}px`,
-              height: `${effectiveStyle.heightPx}px`,
-              top: `${effectiveStyle.topPx}px`,
-              left: `${effectiveStyle.leftPx}px`,
+              width: effectiveStyle.width,
+              maxWidth: `${effectiveStyle.maxWidth}px`,
+              height: `${effectiveStyle.height}px`,
+              top: `${effectiveStyle.top}px`,
+              left: `${effectiveStyle.left}px`,
               zIndex: effectiveStyle.zIndex,
               pointerEvents: isTop ? 'auto' : 'none',
+              boxSizing: 'border-box',
               transition: 'width 300ms ease, height 300ms ease, top 300ms ease, left 300ms ease, box-shadow 300ms ease, opacity 300ms ease, transform 300ms ease',
             }}
             flashDirection={flashDirection[card.type]}

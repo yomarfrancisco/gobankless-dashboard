@@ -261,15 +261,18 @@ export default function CardStackCard({
         
         return (
           <div className="card-currency-chip" aria-hidden>
-            <img
-              id={flagInfo.id}
-              src={flagInfo.src}
-              alt=""
-              className="card-flag"
-              style={{ width: '40.3px', height: '28.8px' }}
-              draggable={false}
-            />
-            <span className="card-zar-label">{CURRENCY_LABEL[currency]}</span>
+            <div className="flag-row">
+              <img
+                id={flagInfo.id}
+                src={flagInfo.src}
+                alt=""
+                className="card-flag"
+                draggable={false}
+                decoding="async"
+                loading="eager"
+              />
+              <span className="card-ccy-label">{CURRENCY_LABEL[currency]}</span>
+            </div>
           </div>
         )
       })()}

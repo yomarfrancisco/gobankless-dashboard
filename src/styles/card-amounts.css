@@ -1,16 +1,3 @@
-/* CSS Variables for flag size (single source of truth) */
-:root {
-  --flag-w: 40.3px;
-  --flag-h: 28.8px;
-}
-
-@media (min-width: 391px) {
-  :root {
-    --flag-w: 46.08px;
-    --flag-h: 31.68px;
-  }
-}
-
 /* Currency chip at top-left (no badge background) */
 /* Kill any inherited chip/badge styling */
 .card-currency-chip,
@@ -25,9 +12,6 @@
   position: absolute;
   top: 14px;
   left: 16px;
-  display: inline-flex;
-  align-items: center; /* vertical centering */
-  gap: 4px; /* closer horizontal spacing */
   z-index: 2;
   pointer-events: none;
   transform: none !important; /* prevent ancestor scaling */
@@ -42,41 +26,43 @@
   content: none !important;
 }
 
-/* Lock flag size with high specificity and CSS variables */
-#flag-za.card-flag {
-  width: 40.3px !important;
-  height: 28.8px !important;
-  min-width: 40.3px !important;
-  min-height: 28.8px !important;
-  max-width: 40.3px !important;
-  max-height: 28.8px !important;
+/* Flag row: flex container for flag + currency label */
+.flag-row {
+  display: inline-flex;
+  align-items: center; /* vertical centering */
+  gap: 6px; /* spacing between flag and text */
+}
+
+/* Flag styling - prevent clipping, ensure proper sizing */
+.card-flag {
+  width: 18px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 2px;
+  overflow: visible !important; /* do NOT clip SVG */
+  vertical-align: middle;
   object-fit: contain;
-  display: block;
   background: transparent !important;
-  border-radius: 0 !important;
   box-shadow: none !important;
   flex-shrink: 0;
 }
 
-.card-zar-label {
+/* Currency label */
+.card-ccy-label {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.2px;
   line-height: 1;
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
-  margin-top: 0; /* ensure perfect vertical alignment */
 }
 
+/* Larger screens */
 @media (min-width: 391px) {
-  #flag-za.card-flag {
-    width: 46.08px !important;
-    height: 31.68px !important;
-    min-width: 46.08px !important;
-    min-height: 31.68px !important;
-    max-width: 46.08px !important;
-    max-height: 31.68px !important;
+  .card-flag {
+    width: 20px;
+    height: 13.3px;
   }
 }
 
