@@ -18,6 +18,7 @@
   background: transparent !important;
   box-shadow: none !important;
   border: 0;
+  padding: 0;
 }
 
 /* Ensure there is NO background, shadow, or rounded container */
@@ -26,33 +27,36 @@
   content: none !important;
 }
 
-/* Flag row: flex container for flag + currency label */
-.flag-row {
+/* Flag wrap: flex container for flag + currency code */
+.flag-wrap {
   display: inline-flex;
   align-items: center; /* vertical centering */
-  gap: 6px; /* spacing between flag and text */
+  gap: 6px;
+  background: transparent; /* ensure no gray mask */
+  border: 0;
+  padding: 0;
 }
 
-/* Flag styling - prevent clipping, ensure proper sizing */
-.card-flag {
-  width: 18px;
-  height: 12px;
-  display: inline-block;
-  border-radius: 2px;
-  overflow: visible !important; /* do NOT clip SVG */
-  vertical-align: middle;
+/* Flag icon: canonical size */
+.flag-icon {
+  width: 29px; /* canonical "good" size */
+  height: 20px; /* keep aspect ratio 29×20 */
+  display: block;
+  border-radius: 2px; /* optional, to match SA flag feel */
+  background: transparent;
   object-fit: contain;
-  background: transparent !important;
-  box-shadow: none !important;
+  overflow: visible !important; /* do NOT clip SVG */
   flex-shrink: 0;
 }
 
-/* Currency label */
-.card-ccy-label {
-  font-size: 12px;
+/* Currency code */
+.currency-code {
+  display: inline-flex;
+  align-items: center; /* vertical centering with the flag */
   font-weight: 600;
+  font-size: 12px;
+  line-height: 1; /* avoid vertical misalignment */
   letter-spacing: 0.2px;
-  line-height: 1;
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
@@ -60,9 +64,9 @@
 
 /* Larger screens */
 @media (min-width: 391px) {
-  .card-flag {
-    width: 20px;
-    height: 13.3px;
+  .flag-icon {
+    width: 32px; /* slight bump on larger phones */
+    height: 22px;
   }
 }
 

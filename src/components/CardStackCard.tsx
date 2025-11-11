@@ -261,18 +261,18 @@ export default function CardStackCard({
         
         return (
           <div className="card-currency-chip" aria-hidden>
-            <div className="flag-row">
+            <span className="flag-wrap">
               <img
                 id={flagInfo.id}
                 src={flagInfo.src}
-                alt=""
-                className="card-flag"
+                alt={currency === 'ZAR' ? 'South Africa flag' : 'Mozambique flag'}
+                className="flag-icon"
                 draggable={false}
                 decoding="async"
                 loading="eager"
               />
-              <span className="card-ccy-label">{CURRENCY_LABEL[currency]}</span>
-            </div>
+              <span className="currency-code">{CURRENCY_LABEL[currency]}</span>
+            </span>
           </div>
         )
       })()}
