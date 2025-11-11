@@ -115,6 +115,78 @@ export default function MapboxMap({
       loadedRef.current = true
       log('event: load')
 
+      // --- Geolocate & Debug Overlay ---
+      const overlay = document.createElement('div')
+      overlay.textContent = 'Finding your location...'
+      overlay.style.position = 'absolute'
+      overlay.style.top = '12px'
+      overlay.style.left = '50%'
+      overlay.style.transform = 'translateX(-50%)'
+      overlay.style.zIndex = '999'
+      overlay.style.padding = '6px 12px'
+      overlay.style.borderRadius = '6px'
+      overlay.style.background = 'rgba(0, 0, 0, 0.6)'
+      overlay.style.color = '#fff'
+      overlay.style.fontSize = '12px'
+      overlay.style.fontFamily = 'system-ui, sans-serif'
+      overlay.style.pointerEvents = 'none'
+      overlay.style.transition = 'opacity 0.4s ease'
+      overlay.style.opacity = '0.9'
+
+      const container = containerId
+        ? document.getElementById(containerId)
+        : containerRef.current
+      container?.appendChild(overlay)
+
+      const geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        showUserLocation: true,
+        trackUserLocation: false,
+      })
+
+      map.addControl(geolocate, 'top-right')
+
+      let centeredOnce = false
+
+      geolocate.on('geolocate', (e: any) => {
+        if (centeredOnce) return
+        centeredOnce = true
+        const lng = e.coords.longitude
+        const lat = e.coords.latitude
+        const zoom = 13
+        map.setCenter([lng, lat])
+        map.setZoom(zoom)
+        overlay.textContent = 'Centered on your location'
+        setTimeout(() => {
+          overlay.style.opacity = '0'
+          setTimeout(() => overlay.remove(), 500)
+        }, 1200)
+        console.log('[Mapbox] Centered on user:', { lng, lat })
+      })
+
+      geolocate.on('error', (e: any) => {
+        overlay.textContent = 'Unable to fetch location'
+        console.warn('[Mapbox] Geolocate error', e)
+        setTimeout(() => {
+          overlay.style.opacity = '0'
+          setTimeout(() => overlay.remove(), 500)
+        }, 2000)
+      })
+
+      // Trigger geolocate after a short delay
+      setTimeout(() => {
+        try {
+          geolocate.trigger()
+        } catch (err) {
+          overlay.textContent = 'Unable to fetch location'
+          console.warn('[Mapbox] Geolocate trigger failed', err)
+          setTimeout(() => {
+            overlay.style.opacity = '0'
+            setTimeout(() => overlay.remove(), 500)
+          }, 2000)
+        }
+      }, 500)
+
       // Trigger resize after load - use requestAnimationFrame to avoid reflow
       requestAnimationFrame(() => {
         if (mapRef.current) {
