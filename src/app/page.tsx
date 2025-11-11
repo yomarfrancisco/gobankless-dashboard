@@ -131,7 +131,9 @@ export default function Home() {
               </div>
 
               {/* Convert cash to crypto section */}
-              <ConvertCashSection />
+              <div className="convertCashSpacing">
+                <ConvertCashSection />
+              </div>
 
             </div>
           </div>

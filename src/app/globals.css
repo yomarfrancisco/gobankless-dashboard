@@ -870,3 +870,8 @@ body {
   z-index: -1; /* still focusable */
 }
 
+/* Spacing above Convert cash to crypto to give the cards some air */
+.convertCashSpacing {
+  margin-top: clamp(24px, 5vh, 56px);
+}
+

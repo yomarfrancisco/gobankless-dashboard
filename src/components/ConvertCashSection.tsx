@@ -22,22 +22,24 @@ export default function ConvertCashSection() {
 
       {/* Map card (static first; keep structure ready for live map swap) */}
       <div className={styles.mapCard}>
-        {/* Map image as the base layer */}
-        <Image
-          src="/assets/map.png"
-          alt="Sandton area map"
-          className={styles.mapImg}
-          fill
-          priority={false}
-          sizes="(max-width: 768px) 92vw, 720px"
-        />
+        {/* Map image as the base layer with zoom wrapper */}
+        <div className={styles.mapZoom}>
+          <Image
+            src="/assets/map.png"
+            alt="Johannesburg/Sandton map"
+            fill
+            priority
+            sizes="(max-width: 480px) 100vw, 480px"
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
 
         {/* Fold overlays (paper texture/crease) */}
         <Image
           src="/assets/fold1.png"
           alt=""
           aria-hidden="true"
-          className={styles.foldOne}
+          className={styles.fold}
           fill
           sizes="(max-width: 768px) 92vw, 720px"
         />
@@ -45,7 +47,7 @@ export default function ConvertCashSection() {
           src="/assets/fold2.png"
           alt=""
           aria-hidden="true"
-          className={styles.foldTwo}
+          className={styles.fold}
           fill
           sizes="(max-width: 768px) 92vw, 720px"
         />

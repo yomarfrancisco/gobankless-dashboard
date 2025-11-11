@@ -46,40 +46,56 @@
   margin: 0;
 }
 
-/* Map card */
+/* Map card wrapper */
 .mapCard {
   position: relative;
-  width: 100%;
   border-radius: 32px;
   overflow: hidden;
-  /* match light paper background from mock behind the map */
   background: linear-gradient(180deg, rgba(222, 218, 214, 0.9), rgba(232, 223, 216, 0.9)), #efece7;
-  /* aspect ratio preserves layout across devices */
-  aspect-ratio: 360 / 250; /* tweak if needed; ~1.44 like mock */
+  /* Fixed visual height to match Figma */
+  height: 512px; /* ~Figma mobile height */
+  width: 100%;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
-/* Base map image (Next/Image with fill) */
-.mapImg {
-  object-fit: cover;
+/* On slightly larger phones and up, give a little more height */
+@media (min-width: 400px) {
+  .mapCard {
+    height: 560px;
+  }
 }
 
-/* Fold overlays */
-.foldOne,
-.foldTwo {
+@media (min-width: 480px) {
+  .mapCard {
+    height: 600px;
+  }
+}
+
+/* Inner zoom wrapper for the base map image */
+.mapZoom {
+  position: absolute;
+  inset: 0;
+  overflow: hidden; /* important so scaling doesn't bleed outside */
+}
+
+/* Let Next/Image fill, then scale the actual <img> */
+.mapZoom :global(img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(2.1); /* ~2.0–2.2x to mimic the stretched Figma map */
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Fold overlays: ensure they cover full height and keep subtlety */
+.fold {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.22; /* as before */
   pointer-events: none;
   object-fit: cover;
-  mix-blend-mode: multiply;
-  opacity: 0.22; /* fine-tune */
-}
-
-/* Example slight offset to mimic the crease—adjust to taste */
-.foldOne {
-  inset: 0;
-}
-
-.foldTwo {
-  inset: 0;
 }
 
 .here {
