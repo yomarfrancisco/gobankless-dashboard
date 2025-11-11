@@ -88,8 +88,7 @@ export function setupDevNotificationHelpers() {
       kind: 'ai_trade',
       title: 'AI trade executed',
       action: 'Rebalanced: sold 1.86 PEPE, bought 0.04 ETH.',
-      reason: 'Reason: short-term volatility spike in PEPE; shifting risk to ETH's steadier trend.',
-      timestamp: Date.now(),
+      reason: "Reason: short-term volatility spike in PEPE; shifting risk to ETH's steadier trend.",
       actor: { type: 'ai' },
       routeOnTap: '/transactions',
     })
@@ -99,7 +98,6 @@ export function setupDevNotificationHelpers() {
       title: 'AI trade executed',
       action: 'Reduced ETH exposure by 0.5%.',
       reason: 'Reason: CPI print hotter than forecast; raising cash buffer.',
-      timestamp: Date.now(),
       actor: { type: 'ai' },
     })
 
@@ -108,7 +106,6 @@ export function setupDevNotificationHelpers() {
       title: 'AI trade executed',
       action: 'Added 2.4 PEPE after retracement.',
       reason: 'Reason: sentiment reversed from RSI 28 to neutral; capturing rebound zone.',
-      timestamp: Date.now(),
       actor: { type: 'ai' },
     })
   }
