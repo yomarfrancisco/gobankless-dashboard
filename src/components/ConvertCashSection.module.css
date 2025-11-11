@@ -66,12 +66,6 @@
   }
 }
 
-.map {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
 /* Folds over the live map */
 .fold1,
 .fold2 {
@@ -81,6 +75,7 @@
   opacity: 0.22;
   pointer-events: none;
   object-fit: cover;
+  z-index: 3; /* Above map */
 }
 
 /* Optional slight variance to mimic mock */
