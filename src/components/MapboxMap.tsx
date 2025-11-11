@@ -314,7 +314,7 @@ export default function MapboxMap({
 
       map.addControl(geolocate, 'top-right')
 
-      // Auto-activate geolocate on first render
+      // Handle geolocate events
       geolocate.on('geolocate', (e: any) => {
         const { coords } = e
         log(`geolocate: user at [${coords.longitude}, ${coords.latitude}]`)
@@ -322,9 +322,21 @@ export default function MapboxMap({
         loadATMsNear(coords.longitude, coords.latitude)
       })
 
-      // Trigger geolocate automatically
+      geolocate.on('trackuserlocationstart', () => {
+        log('geolocate: tracking started')
+      })
+
+      geolocate.on('trackuserlocationend', () => {
+        log('geolocate: tracking ended')
+      })
+
+      // Auto-activate geolocate on first render
       setTimeout(() => {
-        geolocate.trigger()
+        try {
+          geolocate.trigger()
+        } catch (error) {
+          log(`geolocate trigger error: ${error}`)
+        }
       }, 1000)
 
       // Add test branches
