@@ -18,7 +18,7 @@ import { formatZAR } from '@/lib/formatCurrency'
 import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
 
 export default function Home() {
-  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield'>('savings')
+  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
   const cardStackRef = useRef<CardStackHandle>(null)
   const [openTransaction, setOpenTransaction] = useState(false)
   const [openDeposit, setOpenDeposit] = useState(false)

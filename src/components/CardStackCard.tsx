@@ -13,7 +13,7 @@ import clsx from 'clsx'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
-type CardType = 'pepe' | 'savings' | 'yield'
+type CardType = 'pepe' | 'savings' | 'yield' | 'mzn'
 
 type HealthLevel = 'good' | 'moderate' | 'fragile'
 
@@ -21,24 +21,47 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
   savings: { level: 'good', percent: 100 },
   pepe: { level: 'fragile', percent: 25 },
   yield: { level: 'moderate', percent: 60 },
+  mzn: { level: 'good', percent: 100 },
 }
 
 const CARD_LABELS: Record<CardType, string> = {
   savings: 'CASH CARD',
   pepe: 'PEPE CARD',
   yield: 'ETH CARD',
+  mzn: 'CASH CARD',
 }
 
-const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents'> = {
+const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents'> = {
   savings: 'cashCents',
   pepe: 'pepeCents',
   yield: 'ethCents',
+  mzn: 'mznCents',
 }
 
-const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE'> = {
+const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN'> = {
   savings: 'CASH',
   pepe: 'PEPE',
   yield: 'ETH',
+  mzn: 'MZN',
+}
+
+// Flag mapping by currency
+const FLAG_BY_CCY: Record<string, { src: string; id: string }> = {
+  ZAR: { src: '/assets/south%20africa.svg', id: 'flag-za' },
+  MZN: { src: '/assets/mozambique.svg', id: 'flag-mz' },
+}
+
+// Currency label mapping
+const CURRENCY_LABEL: Record<string, string> = {
+  ZAR: 'ZAR',
+  MZN: 'MZN',
+}
+
+// Determine currency for card type
+const getCardCurrency = (cardType: CardType): string | null => {
+  if (cardType === 'savings') return 'ZAR'
+  if (cardType === 'mzn') return 'MZN'
+  return null // PEPE and ETH don't show currency chips
 }
 
 type CardStackCardProps = {
@@ -76,19 +99,25 @@ export default function CardStackCard({
 }: CardStackCardProps) {
   const { alloc, allocPct } = useWalletAlloc()
 
-  // Debug: verify flag size after mount
+  // Debug: verify flag size after mount (for both ZAR and MZN)
   useEffect(() => {
-    const el = document.getElementById('flag-za')
-    if (el) {
-      const r = el.getBoundingClientRect()
-      // eslint-disable-next-line no-console
-      console.log('[FLAG ZA SIZE]', Math.round(r.width), 'x', Math.round(r.height))
+    const currency = getCardCurrency(card.type)
+    if (currency) {
+      const flagInfo = FLAG_BY_CCY[currency]
+      if (flagInfo) {
+        const el = document.getElementById(flagInfo.id)
+        if (el) {
+          const r = el.getBoundingClientRect()
+          // eslint-disable-next-line no-console
+          console.log(`[FLAG ${currency} SIZE]`, Math.round(r.width), 'x', Math.round(r.height))
+        }
+      }
     }
-  }, [])
+  }, [card.type])
 
   // Get allocation cents for this card
   const allocKey = CARD_TO_ALLOC_KEY[card.type]
-  const cents = alloc[allocKey]
+  const cents = (alloc as any)[allocKey] || 0
   const zar = cents / 100
   const usdt = zar / FX_USD_ZAR_DEFAULT
   const pct = allocPct(cents)
@@ -222,18 +251,28 @@ export default function CardStackCard({
         <Image src={card.image} alt={card.alt} width={card.width} height={card.height} unoptimized />
       )}
 
-      {/* Currency chip at top-left (no badge background) */}
-      <div className="card-currency-chip" aria-hidden>
-        <img
-          id="flag-za"
-          src="/assets/south%20africa.svg"
-          alt=""
-          className="card-flag"
-          style={{ width: '40.3px', height: '28.8px' }}
-          draggable={false}
-        />
-        <span className="card-zar-label">ZAR</span>
-      </div>
+      {/* Currency chip at top-left (no badge background) - only for ZAR and MZN cards */}
+      {(() => {
+        const currency = getCardCurrency(card.type)
+        if (!currency) return null
+        
+        const flagInfo = FLAG_BY_CCY[currency]
+        if (!flagInfo) return null
+        
+        return (
+          <div className="card-currency-chip" aria-hidden>
+            <img
+              id={flagInfo.id}
+              src={flagInfo.src}
+              alt=""
+              className="card-flag"
+              style={{ width: '40.3px', height: '28.8px' }}
+              draggable={false}
+            />
+            <span className="card-zar-label">{CURRENCY_LABEL[currency]}</span>
+          </div>
+        )
+      })()}
 
       {/* Amount display with SlotCounter (shifted down) */}
       <div className={`card-amounts card-amounts--${card.type} card-amounts--shifted`}>

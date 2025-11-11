@@ -9,6 +9,7 @@ import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
 import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
 import { FLIP_MS } from '@/lib/animations/useAiActionCycle'
 import { useWalletAlloc } from '@/state/walletAlloc'
+import { getStackStyle } from '@/lib/stack/getStackStyle'
 import CardStackCard from './CardStackCard'
 
 // Temporary FX rate (will be wired to real API later)
@@ -22,9 +23,10 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
   savings: { level: 'good', percent: 100 },
   pepe: { level: 'fragile', percent: 25 },
   yield: { level: 'moderate', percent: 60 },
+  mzn: { level: 'good', percent: 100 },
 }
 
-type CardType = 'pepe' | 'savings' | 'yield'
+type CardType = 'pepe' | 'savings' | 'yield' | 'mzn'
 
 interface CardData {
   type: CardType
@@ -56,6 +58,13 @@ const cardsData: CardData[] = [
     width: 310,
     height: 193,
   },
+  {
+    type: 'mzn',
+    image: '/assets/cards/card-savings.jpg', // Reuse savings card image for now
+    alt: 'MZN Cash Card',
+    width: 342,
+    height: 213,
+  },
 ]
 
 // Card labels mapping
@@ -63,24 +72,27 @@ const CARD_LABELS: Record<CardType, string> = {
   savings: 'CASH CARD',
   pepe: 'PEPE CARD',
   yield: 'ETH CARD',
+  mzn: 'CASH CARD',
 }
 
 // Map card type to allocation key
-const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents'> = {
+const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents'> = {
   savings: 'cashCents',
   pepe: 'pepeCents',
   yield: 'ethCents',
+  mzn: 'mznCents',
 }
 
 // Map card type to portfolio symbol
-const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE'> = {
+const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN'> = {
   savings: 'CASH',
   pepe: 'PEPE',
   yield: 'ETH',
+  mzn: 'MZN',
 }
 
 interface CardStackProps {
-  onTopCardChange?: (cardType: 'pepe' | 'savings' | 'yield') => void
+  onTopCardChange?: (cardType: CardType) => void
   flipControllerRef?: React.MutableRefObject<{ pause: () => void; resume: () => void } | null>
 }
 
@@ -92,7 +104,9 @@ export type CardStackHandle = {
 const FLIP_DURATION_MS = FLIP_MS
 
 const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack({ onTopCardChange, flipControllerRef: externalFlipControllerRef }, ref) {
-  const [order, setOrder] = useState<number[]>([0, 1, 2]) // [top, middle, bottom]
+  // Dynamic order initialization based on cards.length
+  const initialOrder = Array.from({ length: cardsData.length }, (_, i) => i)
+  const [order, setOrder] = useState<number[]>(initialOrder)
   const [isAnimating, setIsAnimating] = useState(false)
   const [phase, setPhase] = useState<'idle' | 'animating'>('idle')
   const touchStartY = useRef<number>(0)
@@ -105,12 +119,14 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     savings: null,
     pepe: null,
     yield: null,
+    mzn: null,
   })
   // Track previous values to compute direction
   const prevValuesRef = useRef<Record<CardType, number>>({
     savings: alloc.cashCents / 100,
     pepe: alloc.pepeCents / 100,
     yield: alloc.ethCents / 100,
+    mzn: (alloc as any).mznCents ? (alloc as any).mznCents / 100 : 0,
   })
 
   // Compute flash direction when values change
@@ -119,16 +135,18 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
       savings: alloc.cashCents / 100,
       pepe: alloc.pepeCents / 100,
       yield: alloc.ethCents / 100,
+      mzn: (alloc as any).mznCents ? (alloc as any).mznCents / 100 : 0,
     }
 
     const newFlashDirection: Record<CardType, 'up' | 'down' | null> = {
       savings: null,
       pepe: null,
       yield: null,
+      mzn: null,
     }
 
     // Compute direction for each card
-    ;(['savings', 'pepe', 'yield'] as CardType[]).forEach((cardType) => {
+    ;(['savings', 'pepe', 'yield', 'mzn'] as CardType[]).forEach((cardType) => {
       const prev = prevValuesRef.current[cardType]
       const current = currentValues[cardType]
       const delta = current - prev
@@ -150,7 +168,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     // Update flash direction state (this triggers re-render with flash classes)
     setFlashDirection(newFlashDirection)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents])
+  }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents, (alloc as any).mznCents])
 
   // Notify parent of top card change
   useEffect(() => {
@@ -206,7 +224,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
           setPhase('animating')
 
           setTimeout(() => {
-            setOrder((prevOrder) => [prevOrder[1], prevOrder[2], prevOrder[0]])
+            setOrder((prevOrder) => [...prevOrder.slice(1), prevOrder[0]])
             setPhase('idle')
             setIsAnimating(false)
 
@@ -232,7 +250,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     setPhase('animating')
 
     setTimeout(() => {
-      setOrder((prevOrder) => [prevOrder[1], prevOrder[2], prevOrder[0]])
+      setOrder((prevOrder) => [...prevOrder.slice(1), prevOrder[0]])
       setPhase('idle')
       setIsAnimating(false)
     }, FLIP_DURATION_MS)
@@ -274,37 +292,16 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     }
   }
 
-  const getCardClasses = (index: number) => {
-    const currentOrder = order
-    const position = currentOrder.indexOf(index)
-    const isTop = position === 0
+  const getCardClasses = (index: number, depth: number) => {
+    const isTop = depth === 0
     const isCyclingOut = isTop && phase === 'animating'
 
-    let positionClass = ''
-    if (phase === 'animating') {
-      // During animation, temporarily reassign classes so middle/back animate smoothly
-      if (position === 0) {
-        // Top card: keep pos-top but add cycling-out
-        positionClass = CARD_FLIP_CLASSES.posTop
-      } else if (position === 1) {
-        // Middle card: temporarily becomes pos-top (will animate to top position)
-        positionClass = CARD_FLIP_CLASSES.posTop
-      } else if (position === 2) {
-        // Back card: temporarily becomes pos-mid (will animate to middle position)
-        positionClass = CARD_FLIP_CLASSES.posMid
-      }
-    } else {
-      // Normal state: map position to class
-      if (position === 0) {
-        positionClass = CARD_FLIP_CLASSES.posTop
-      } else if (position === 1) {
-        positionClass = CARD_FLIP_CLASSES.posMid
-      } else {
-        positionClass = CARD_FLIP_CLASSES.posBack
-      }
-    }
+    // During animation, cards move up one position
+    const effectiveDepth = phase === 'animating' && depth > 0 ? depth - 1 : depth
 
-    return `${CARD_FLIP_CLASSES.card} ${positionClass} ${isCyclingOut ? CARD_FLIP_CLASSES.cyclingOut : ''} ${!isTop ? CARD_FLIP_CLASSES.noHover : ''}`
+    // Use computed styles instead of hardcoded classes
+    // Keep base card class for transitions and hover effects
+    return `${CARD_FLIP_CLASSES.card} ${isCyclingOut ? CARD_FLIP_CLASSES.cyclingOut : ''} ${!isTop ? CARD_FLIP_CLASSES.noHover : ''}`
   }
 
   // Debug logging when flag is enabled
@@ -314,29 +311,54 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     }
   }, [])
 
+  const total = cardsData.length
+
+  // Debug: log computed styles on first render
+  useEffect(() => {
+    if (DEV_CARD_FLIP_DEBUG) {
+      console.log('[CardStack] Computed styles for', total, 'cards:')
+      for (let depth = 0; depth < total; depth++) {
+        const style = getStackStyle(depth, total)
+        console.log(`  Depth ${depth}:`, style)
+      }
+    }
+  }, [total])
+
   return (
     <div className={CARD_FLIP_CLASSES.stack}>
-      {cardsData.map((card, index) => {
-        const position = order.indexOf(index)
-        const isTop = position === 0
+      {order.map((cardIdx, depth) => {
+        const card = cardsData[cardIdx]
+        const isTop = depth === 0
+        const stackStyle = getStackStyle(depth, total)
+
+        // During animation, adjust depth for smooth transitions
+        const effectiveDepth = phase === 'animating' && depth > 0 ? depth - 1 : depth
+        const effectiveStyle = phase === 'animating' && depth > 0 ? getStackStyle(effectiveDepth, total) : stackStyle
 
         if (DEV_CARD_FLIP_DEBUG && isTop) {
-          console.debug('[CardFlip]', `CardStack-${index}`, 'top card rendered')
+          console.debug('[CardFlip]', `CardStack-${cardIdx}`, 'top card rendered')
         }
 
         return (
           <CardStackCard
-            key={index}
+            key={cardIdx}
             card={card}
-            index={index}
-            position={position}
+            index={cardIdx}
+            position={depth}
             isTop={isTop}
-            className={getCardClasses(index)}
-            onClick={() => handleCardClick(index)}
-            onTouchStart={(e) => handleTouchStart(e, index)}
-            onTouchEnd={(e) => handleTouchEnd(e, index)}
+            className={getCardClasses(cardIdx, depth)}
+            onClick={() => handleCardClick(cardIdx)}
+            onTouchStart={(e) => handleTouchStart(e, cardIdx)}
+            onTouchEnd={(e) => handleTouchEnd(e, cardIdx)}
             style={{
-              zIndex: isTop ? 3 : position === 1 ? 2 : 1,
+              position: 'absolute',
+              width: `${effectiveStyle.widthPx}px`,
+              height: `${effectiveStyle.heightPx}px`,
+              top: `${effectiveStyle.topPx}px`,
+              left: `${effectiveStyle.leftPx}px`,
+              zIndex: effectiveStyle.zIndex,
+              pointerEvents: isTop ? 'auto' : 'none',
+              transition: 'width 300ms ease, height 300ms ease, top 300ms ease, left 300ms ease, box-shadow 300ms ease, opacity 300ms ease, transform 300ms ease',
             }}
             flashDirection={flashDirection[card.type]}
             onFlashEnd={() => {
