@@ -16,6 +16,7 @@ import { useWalletAlloc } from '@/state/walletAlloc'
 import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
 import { formatZAR } from '@/lib/formatCurrency'
 import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
+import ConvertCashSection from '@/components/ConvertCashSection'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
@@ -128,6 +129,9 @@ export default function Home() {
                 {/* Card Stack */}
                 <CardStack ref={cardStackRef} onTopCardChange={setTopCardType} />
               </div>
+
+              {/* Convert cash to crypto section */}
+              <ConvertCashSection />
 
             </div>
           </div>
