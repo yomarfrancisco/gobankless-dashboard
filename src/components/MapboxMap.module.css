@@ -45,12 +45,3 @@
   z-index: 1;
 }
 
-/* TEST ONLY: move Mapbox logo off-screen without removing it */
-.mapShell :global(.mapboxgl-ctrl-logo),
-:global(#mapbox-container) :global(.mapboxgl-ctrl-logo) {
-  position: absolute !important;
-  bottom: -200px !important;  /* push outside view */
-  right: -200px !important;   /* push outside view */
-  pointer-events: none;
-}
-

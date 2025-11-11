@@ -876,3 +876,11 @@ body {
   margin-top: clamp(24px, 5vh, 56px);
 }
 
+/* TEST ONLY: move Mapbox logo off-screen (avoid CSS Modules purity issues) */
+.mapboxgl-ctrl-logo {
+  position: absolute !important;
+  bottom: -200px !important;
+  right: -200px !important;
+  pointer-events: none;
+}
+
