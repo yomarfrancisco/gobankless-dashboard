@@ -281,24 +281,9 @@ export default function MapboxMap({
   }, [markers, fitToMarkers])
 
   // If containerId is provided, we don't render our own container
+  // Fallback and debug overlay will be rendered as siblings in the parent
   if (containerId) {
-    return (
-      <>
-        {hasError && (
-          <div className={styles.fallback}>
-            <Image
-              src="/assets/map.png"
-              alt="Johannesburg/Sandton map (fallback)"
-              fill
-              style={{ objectFit: 'cover' }}
-            />
-          </div>
-        )}
-        {showDebug && (
-          <pre className={styles.debug}>{logs.join('\n')}</pre>
-        )}
-      </>
-    )
+    return null // Container is managed by parent, we just initialize into it
   }
 
   // Fallback: render our own container if no containerId

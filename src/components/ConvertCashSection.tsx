@@ -24,10 +24,7 @@ export default function ConvertCashSection() {
 
       <div className={styles.mapCard}>
         {/* Empty map container - Mapbox will attach here */}
-        <div ref={(el) => {
-          // Expose container ref to MapboxMap via a ref callback
-          // This ensures the container is empty before Mapbox attaches
-        }} className={styles.mapContainer} id="mapbox-container" />
+        <div className={styles.mapContainer} id="mapbox-container" />
         
         {/* Live map component - renders into mapContainer */}
         <MapboxMap
