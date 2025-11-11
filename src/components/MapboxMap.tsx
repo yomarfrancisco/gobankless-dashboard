@@ -293,7 +293,7 @@ export default function MapboxMap({
 
   // Separate effect to add/update markers when map is loaded (without re-initializing map)
   useEffect(() => {
-    if (!mapRef.current || !loadedRef.current) return
+    if (!mapRef.current || !loadedRef.current || !markers) return
 
     const log = (message: string) => {
       const timestamped = `${new Date().toISOString()}  ${message}`
@@ -304,43 +304,33 @@ export default function MapboxMap({
       }
     }
 
-    // Clear existing markers
-    const existingMarkers = document.querySelectorAll('.mapbox-marker')
-    existingMarkers.forEach((m) => m.remove())
+    // Track created markers for cleanup
+    const created: mapboxgl.Marker[] = []
 
+    // Clear existing markers by removing all markers from the map
+    // We'll track new ones and clean them up on unmount
     if (markers.length === 0) {
       log('no markers to add')
       return
     }
 
-    // Add new markers
+    // Add new markers using Mapbox default marker
     log(`adding ${markers.length} markers`)
-    const mbMarkers: mapboxgl.Marker[] = []
     markers.forEach((m) => {
-      const el = document.createElement('div')
-      el.className = 'mapbox-marker'
-      el.style.width = '12px'
-      el.style.height = '12px'
-      el.style.borderRadius = '50%'
-      el.style.background = m.kind === 'dealer' ? '#ff9b26' : '#58cdaa'
-      el.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'
-      el.title = m.label ?? m.id
-
-      const mk = new mapboxgl.Marker({ element: el })
+      const marker = new mapboxgl.Marker() // default Mapbox pin
         .setLngLat([m.lng, m.lat])
+        .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(m.label ?? ''))
         .addTo(mapRef.current!)
 
-      mbMarkers.push(mk)
+      created.push(marker)
       log(`marker added: ${m.id} at [${m.lng}, ${m.lat}]`)
     })
 
-    if (fitToMarkers && mbMarkers.length) {
-      const bounds = new mapboxgl.LngLatBounds()
-      mbMarkers.forEach((mk) => bounds.extend(mk.getLngLat()))
-      mapRef.current.fitBounds(bounds, { padding: 32, duration: 0 })
-      log('fitted bounds to markers')
+    // Cleanup function
+    return () => {
+      created.forEach((marker) => marker.remove())
     }
-  }, [markers, fitToMarkers, showDebug])
+  }, [markers, showDebug])
 
   // If containerId is provided, we don't render our own container
   // Fallback and debug overlay will be rendered as siblings in the parent

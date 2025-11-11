@@ -2,10 +2,13 @@ import Image from 'next/image'
 import styles from './ConvertCashSection.module.css'
 import MapboxMap, { type Marker } from './MapboxMap'
 
-const markers: Marker[] = [
-  { id: 'dealer-1', lng: 28.0549, lat: -26.1064, kind: 'dealer', label: 'Nearest dealer' },
-  { id: 'branch-1', lng: 28.0598, lat: -26.1089, kind: 'branch', label: 'Partner branch' },
-]
+const sandtonBranch: Marker = {
+  id: 'branch-sandton-city',
+  lng: 28.054167,
+  lat: -26.108333,
+  kind: 'branch',
+  label: 'Sandton City Branch',
+}
 
 export default function ConvertCashSection() {
   return (
@@ -29,7 +32,7 @@ export default function ConvertCashSection() {
         {/* Live map component - renders into mapContainer */}
         <MapboxMap
           containerId="mapbox-container"
-          markers={markers}
+          markers={[sandtonBranch]}
           styleUrl="mapbox://styles/mapbox/light-v11"
         />
 
