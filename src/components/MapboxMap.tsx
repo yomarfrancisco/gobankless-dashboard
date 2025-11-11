@@ -51,6 +51,7 @@ export default function MapboxMap({
   const [hasError, setHasError] = useState(false)
   const [userLngLat, setUserLngLat] = useState<[number, number] | null>(null)
   const [routeData, setRouteData] = useState<Feature<LineString> | null>(null)
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null)
 
   const log = (message: string) => {
     const timestamped = `${new Date().toISOString()}  ${message}`
@@ -132,23 +133,56 @@ export default function MapboxMap({
 
       const geolocate = new mapboxgl.GeolocateControl({
         positionOptions: { enableHighAccuracy: true },
-        showUserLocation: true,
-        trackUserLocation: false,
+        trackUserLocation: true,
+        showUserLocation: false, // hide default dot
+        showAccuracyCircle: false,
       })
 
       map.addControl(geolocate, 'top-right')
 
+      // Helper to (re)place custom user marker
+      function upsertUserMarker(lng: number, lat: number) {
+        // create DOM element once
+        let el = userMarkerRef.current?.getElement()
+        if (!el) {
+          el = document.createElement('div')
+          el.className = styles.userMarker
+          // add our PNG as <img> to preserve sharpness on retina
+          const img = document.createElement('img')
+          img.alt = 'You are here'
+          img.src = '/assets/character.png' // from /public
+          el.appendChild(img)
+          userMarkerRef.current = new mapboxgl.Marker({
+            element: el,
+            anchor: 'center',
+          })
+            .setLngLat([lng, lat])
+            .addTo(map)
+        } else {
+          userMarkerRef.current!.setLngLat([lng, lat])
+        }
+      }
+
       let centeredOnce = false
 
       geolocate.on('geolocate', (e: any) => {
-        if (centeredOnce) return
-        centeredOnce = true
         const lng = e.coords.longitude
         const lat = e.coords.latitude
-        map.setCenter([lng, lat])
-        // Set user location state (will trigger zoom effect)
-        setUserLngLat([lng, lat])
-        console.log('[Mapbox] Centered on user:', { lng, lat })
+
+        // Update custom user marker on every geolocate event
+        upsertUserMarker(lng, lat)
+
+        // (optional) keep map centered on the user when first found
+        if (!centeredOnce) {
+          centeredOnce = true
+          map.setCenter([lng, lat])
+          // Set user location state (will trigger zoom effect)
+          setUserLngLat([lng, lat])
+          console.log('[Mapbox] Centered on user:', { lng, lat })
+        } else {
+          // Update user location state for route recalculation
+          setUserLngLat([lng, lat])
+        }
       })
 
       // Trigger geolocate after a short delay
@@ -256,6 +290,11 @@ export default function MapboxMap({
         roRef.current = null
       }
       window.removeEventListener('orientationchange', handleOrientationChange)
+      // Clean up user marker
+      if (userMarkerRef.current) {
+        userMarkerRef.current.remove()
+        userMarkerRef.current = null
+      }
       log('cleanup—remove map')
       if (mapRef.current) {
         mapRef.current.remove()

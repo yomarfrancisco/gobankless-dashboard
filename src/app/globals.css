@@ -884,3 +884,12 @@ body {
   pointer-events: none;
 }
 
+/* Hide Mapbox default user dot & accuracy circle (we'll draw our own) */
+.mapboxgl-user-location-dot {
+  display: none !important;
+}
+
+.mapboxgl-user-location-accuracy-circle {
+  display: none !important;
+}
+
