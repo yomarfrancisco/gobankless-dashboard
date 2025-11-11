@@ -4,9 +4,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background-color: #ffffff; /* ✅ true white */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   z-index: 9999;
   animation: fadeOut 0.5s ease-in-out 2.5s forwards;
+}
+
+.logoWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 280px; /* Responsive size */
+  aspect-ratio: 220 / 80; /* ✅ maintain logo proportions (220x80 original) */
+  position: relative;
 }
 
 @keyframes fadeOut {
