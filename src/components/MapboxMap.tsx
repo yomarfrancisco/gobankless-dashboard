@@ -294,70 +294,78 @@ export default function MapboxMap({
   // Effect to keep nearest branch in view while user stays centered
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !userLngLat || !markers?.length) return
+    if (!map) return
+    if (!loadedRef.current) return // ensure map is fully loaded
+    if (!userLngLat) return
+    if (!markers?.length) return
 
-    const logMessage = (message: string) => {
-      const timestamped = `${new Date().toISOString()}  ${message}`
-      logsRef.current = [...logsRef.current.slice(-200), timestamped]
-      if (showDebug) {
-        console.log(`[MapboxMap] ${message}`)
-        setLogs([...logsRef.current])
-      }
-    }
-
-    // Filter branches only
+    // Filter branches
     const branches = markers.filter((m) => m.kind === 'branch')
     if (!branches.length) return
 
     const [userLng, userLat] = userLngLat
 
-    // Haversine distance (meters)
+    // Haversine helpers
     const R = 6371000
     const toRad = (d: number) => (d * Math.PI) / 180
-    const dist = (a: [number, number], b: [number, number]) => {
+    const distMeters = (a: [number, number], b: [number, number]) => {
       const dLat = toRad(b[1] - a[1])
       const dLng = toRad(b[0] - a[0])
       const lat1 = toRad(a[1])
       const lat2 = toRad(b[1])
-      const s =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
+      const s = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
       return 2 * R * Math.asin(Math.sqrt(s))
     }
 
     // Find nearest branch
     let nearest = branches[0]
-    let best = dist([userLng, userLat], [nearest.lng, nearest.lat])
+    let best = distMeters([userLng, userLat], [nearest.lng, nearest.lat])
     for (let i = 1; i < branches.length; i++) {
-      const d = dist([userLng, userLat], [branches[i].lng, branches[i].lat])
+      const d = distMeters([userLng, userLat], [branches[i].lng, branches[i].lat])
       if (d < best) {
         best = d
         nearest = branches[i]
       }
     }
 
-    // Compute zoom to include user + nearest branch; keep user centered
-    const bounds = new mapboxgl.LngLatBounds()
-      .extend([userLng, userLat])
-      .extend([nearest.lng, nearest.lat])
+    // Compute zoom so that distance to nearest branch fits inside current viewport
+    // while keeping user at center. We do this by ensuring the distance fits
+    // into min(halfWidth, halfHeight) minus padding, using meters-per-pixel.
+    const container = map.getContainer()
+    const halfW = container.clientWidth / 2
+    const halfH = container.clientHeight / 2
+    const padding = 32 // px safe padding
+    const usable = Math.max(1, Math.min(halfW, halfH) - padding) // px to edge
 
-    const cfb = map.cameraForBounds(bounds, {
-      padding: { top: 32, right: 32, bottom: 32, left: 32 },
-      maxZoom: 16,
+    // meters-per-pixel at given latitude and zoom:
+    // mpp = cos(lat)*2πR / (256 * 2^z)  =>  z = log2(cos(lat)*2πR / (256*mpp))
+    const circ = 2 * Math.PI * R
+    const metersPerPixelNeeded = best / usable
+    const rawZoom = Math.log2(
+      (Math.cos(toRad(userLat)) * circ) / (256 * Math.max(1e-6, metersPerPixelNeeded))
+    )
+    const targetZoom = Math.min(16, Math.max(3, rawZoom)) // clamp
+
+    // Center stays on user, only zoom changes
+    // Debounce micro-bursts from geolocate with rAF
+    requestAnimationFrame(() => {
+      // Make sure center is the user (in case geolocate ran earlier)
+      map.setCenter([userLng, userLat])
+      map.easeTo({ zoom: targetZoom, duration: 500 })
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug(
+          '[map] user @',
+          userLngLat,
+          'nearest branch @',
+          [nearest.lng, nearest.lat],
+          'dist(m)=',
+          Math.round(best),
+          'zoom=',
+          targetZoom.toFixed(2)
+        )
+      }
     })
-
-    // Apply zoom while keeping user center
-    if (cfb?.zoom) {
-      map.setCenter([userLng, userLat])
-      map.setZoom(Math.min(cfb.zoom, 16))
-      logMessage(`zoomed to show nearest branch (${nearest.label}) while keeping user centered`)
-    } else {
-      // Fallback to sane zoom
-      map.setCenter([userLng, userLat])
-      map.setZoom(12)
-      logMessage('fallback zoom applied (cameraForBounds returned undefined)')
-    }
-  }, [userLngLat, markers, showDebug])
+  }, [userLngLat, markers]) // not depending on initialZoom/Center; we only care once user+markers exist
 
   // If containerId is provided, we don't render our own container
   // Fallback and debug overlay will be rendered as siblings in the parent
