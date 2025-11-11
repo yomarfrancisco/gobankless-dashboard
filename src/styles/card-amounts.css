@@ -1,13 +1,13 @@
 /* CSS Variables for flag size (single source of truth) */
 :root {
-  --flag-w: 42px;
-  --flag-h: 30px;
+  --flag-w: 40.3px;
+  --flag-h: 28.8px;
 }
 
 @media (min-width: 391px) {
   :root {
-    --flag-w: 48px;
-    --flag-h: 33px;
+    --flag-w: 46.08px;
+    --flag-h: 31.68px;
   }
 }
 
@@ -26,8 +26,8 @@
   top: 14px;
   left: 16px;
   display: inline-flex;
-  align-items: baseline; /* ensures flag and ZAR share a common baseline */
-  gap: 6px;
+  align-items: center; /* vertical centering */
+  gap: 4px; /* closer horizontal spacing */
   z-index: 2;
   pointer-events: none;
   transform: none !important; /* prevent ancestor scaling */
@@ -44,12 +44,12 @@
 
 /* Lock flag size with high specificity and CSS variables */
 #flag-za.card-flag {
-  width: 42px !important;
-  height: 30px !important;
-  min-width: 42px !important;
-  min-height: 30px !important;
-  max-width: 42px !important;
-  max-height: 30px !important;
+  width: 40.3px !important;
+  height: 28.8px !important;
+  min-width: 40.3px !important;
+  min-height: 28.8px !important;
+  max-width: 40.3px !important;
+  max-height: 28.8px !important;
   object-fit: contain;
   display: block;
   background: transparent !important;
@@ -66,17 +66,17 @@
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
-  margin-top: 0.5px; /* subtle nudge for baseline alignment */
+  margin-top: 0; /* ensure perfect vertical alignment */
 }
 
 @media (min-width: 391px) {
   #flag-za.card-flag {
-    width: 48px !important;
-    height: 33px !important;
-    min-width: 48px !important;
-    min-height: 33px !important;
-    max-width: 48px !important;
-    max-height: 33px !important;
+    width: 46.08px !important;
+    height: 31.68px !important;
+    min-width: 46.08px !important;
+    min-height: 31.68px !important;
+    max-width: 46.08px !important;
+    max-height: 31.68px !important;
   }
 }
 
