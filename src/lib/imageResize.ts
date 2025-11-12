@@ -26,7 +26,13 @@ export async function resizeImage(
 
     const reader = new FileReader()
     reader.onload = (e) => {
-      const img = new window.Image()
+      // Use a DOM-typed constructor that TS accepts
+      const ImageCtor: new () => HTMLImageElement =
+        (typeof globalThis !== 'undefined' && (globalThis as any).Image)
+          ? (globalThis as any).Image
+          : (class {} as unknown as new () => HTMLImageElement)
+      
+      const img = new ImageCtor()
       img.onload = () => {
         // Calculate new dimensions preserving aspect ratio
         let width = img.width

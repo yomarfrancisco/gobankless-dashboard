@@ -96,7 +96,7 @@ export default function ProfileEditSheet() {
           // SSR guard - skip resize check on server
           fileToUpload = file
         } else {
-          // Check if image needs resizing using createImageBitmap (faster) or window.Image (fallback)
+          // Check if image needs resizing using createImageBitmap (faster) or HTMLImageElement (fallback)
           let needsResize = false
 
           if ('createImageBitmap' in window) {
@@ -105,13 +105,19 @@ export default function ProfileEditSheet() {
               needsResize = bmp.width > 1024 || bmp.height > 1024
               bmp.close()
             } catch {
-              // Fallback to window.Image if createImageBitmap fails
+              // Fallback to HTMLImageElement if createImageBitmap fails
               const objectUrl = URL.createObjectURL(file)
-              const htmlImg = new window.Image()
+              
+              // Use a DOM-typed constructor that TS accepts
+              const ImageCtor: new () => HTMLImageElement =
+                (typeof globalThis !== 'undefined' && (globalThis as any).Image)
+                  ? (globalThis as any).Image
+                  : (class {} as unknown as new () => HTMLImageElement)
+              
+              const htmlImg = new ImageCtor()
               needsResize = await new Promise<boolean>((resolve) => {
                 htmlImg.onload = () => {
-                  const resize = htmlImg.width > 1024 || htmlImg.height > 1024
-                  resolve(resize)
+                  resolve(htmlImg.width > 1024 || htmlImg.height > 1024)
                 }
                 htmlImg.onerror = () => resolve(false)
                 htmlImg.src = objectUrl
@@ -119,13 +125,19 @@ export default function ProfileEditSheet() {
               URL.revokeObjectURL(objectUrl)
             }
           } else {
-            // Fallback to window.Image
+            // Fallback to HTMLImageElement
             const objectUrl = URL.createObjectURL(file)
-            const htmlImg = new window.Image()
+            
+            // Use a DOM-typed constructor that TS accepts
+            const ImageCtor: new () => HTMLImageElement =
+              (typeof globalThis !== 'undefined' && (globalThis as any).Image)
+                ? (globalThis as any).Image
+                : (class {} as unknown as new () => HTMLImageElement)
+            
+            const htmlImg = new ImageCtor()
             needsResize = await new Promise<boolean>((resolve) => {
               htmlImg.onload = () => {
-                const resize = htmlImg.width > 1024 || htmlImg.height > 1024
-                resolve(resize)
+                resolve(htmlImg.width > 1024 || htmlImg.height > 1024)
               }
               htmlImg.onerror = () => resolve(false)
               htmlImg.src = objectUrl
