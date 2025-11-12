@@ -115,7 +115,7 @@ export default function MapboxMap({
     log('construct map')
     const map = new mapboxgl.Map({
       container: container,
-      style: styleUrl,
+      style: 'mapbox://styles/mapbox/dark-v11',
       center: initialCenter,
       zoom: initialZoom,
       attributionControl: false,
