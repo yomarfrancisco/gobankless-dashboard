@@ -19,9 +19,14 @@ export async function resizeImage(
   const { maxEdge = 1024, quality = 0.9, outputType = 'image/jpeg' } = options
 
   return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') {
+      reject(new Error('Image resize requires browser environment'))
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = (e) => {
-      const img = new Image()
+      const img = new window.Image()
       img.onload = () => {
         // Calculate new dimensions preserving aspect ratio
         let width = img.width

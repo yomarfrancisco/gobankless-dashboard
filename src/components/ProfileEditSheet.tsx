@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { UserCircle2, Share2, LogOut } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
@@ -92,20 +92,50 @@ export default function ProfileEditSheet() {
       // Resize if needed (optional: only if > 1024px)
       let fileToUpload = file
       try {
-        // Check if image needs resizing by loading it
-        const img = new Image()
-        const imgLoadPromise = new Promise<boolean>((resolve) => {
-          img.onload = () => {
-            const needsResize = img.width > 1024 || img.height > 1024
-            resolve(needsResize)
-          }
-          img.onerror = () => resolve(false)
-          img.src = previewUrl
-        })
+        if (typeof window === 'undefined') {
+          // SSR guard - skip resize check on server
+          fileToUpload = file
+        } else {
+          // Check if image needs resizing using createImageBitmap (faster) or window.Image (fallback)
+          let needsResize = false
 
-        const needsResize = await imgLoadPromise
-        if (needsResize) {
-          fileToUpload = await resizeImage(file, { maxEdge: 1024 })
+          if ('createImageBitmap' in window) {
+            try {
+              const bmp = await createImageBitmap(file)
+              needsResize = bmp.width > 1024 || bmp.height > 1024
+              bmp.close()
+            } catch {
+              // Fallback to window.Image if createImageBitmap fails
+              const objectUrl = URL.createObjectURL(file)
+              const htmlImg = new window.Image()
+              needsResize = await new Promise<boolean>((resolve) => {
+                htmlImg.onload = () => {
+                  const resize = htmlImg.width > 1024 || htmlImg.height > 1024
+                  resolve(resize)
+                }
+                htmlImg.onerror = () => resolve(false)
+                htmlImg.src = objectUrl
+              })
+              URL.revokeObjectURL(objectUrl)
+            }
+          } else {
+            // Fallback to window.Image
+            const objectUrl = URL.createObjectURL(file)
+            const htmlImg = new window.Image()
+            needsResize = await new Promise<boolean>((resolve) => {
+              htmlImg.onload = () => {
+                const resize = htmlImg.width > 1024 || htmlImg.height > 1024
+                resolve(resize)
+              }
+              htmlImg.onerror = () => resolve(false)
+              htmlImg.src = objectUrl
+            })
+            URL.revokeObjectURL(objectUrl)
+          }
+
+          if (needsResize) {
+            fileToUpload = await resizeImage(file, { maxEdge: 1024 })
+          }
         }
       } catch (resizeErr) {
         console.warn('Resize failed, using original:', resizeErr)
@@ -177,7 +207,7 @@ export default function ProfileEditSheet() {
       >
         {showDefault ? (
           <>
-            <Image
+            <NextImage
               src="/assets/avatar-profile.png"
               alt="Profile avatar"
               fill
@@ -202,7 +232,7 @@ export default function ProfileEditSheet() {
             </span>
           </>
         ) : (
-          <Image
+          <NextImage
             src={avatarUrl}
             alt="Profile avatar"
             fill
@@ -261,7 +291,7 @@ export default function ProfileEditSheet() {
               aria-label="Change profile photo"
               type="button"
             >
-              <Image
+              <NextImage
                 src="/assets/profile/add_circle_outlined.svg"
                 alt=""
                 width={24}
