@@ -24,33 +24,45 @@ function getInitial(name?: string, email?: string): string {
 
 const Avatar = ({ name, email, size = 72, rounded = 24, className }: Props) => {
   const initial = useMemo(() => getInitial(name, email), [name, email])
-  const fontSize = Math.round(size * 0.42)
+  const fontSize = Math.round(size * 0.39) // Adjusted for better visual balance
 
   return (
     <div
       className={clsx('relative overflow-hidden', className)}
-      style={{ width: size, height: size, borderRadius: rounded }}
+      style={{ 
+        width: size, 
+        height: size, 
+        borderRadius: rounded,
+        flexShrink: 0, // Prevent shrinking
+      }}
       aria-label={`Avatar ${name || email || ''}`}
     >
       <Image
         src="/assets/avatar-profile.png"
         alt=""
-        fill
-        sizes={`${size}px`}
+        width={size}
+        height={size}
         priority={false}
-        style={{ objectFit: 'cover', objectPosition: 'top' }}
+        style={{ 
+          width: `${size}px`,
+          height: `${size}px`,
+          objectFit: 'cover',
+          objectPosition: 'center',
+          display: 'block',
+          borderRadius: `${rounded}px`,
+        }}
       />
       <span
         aria-hidden="true"
         style={{
           position: 'absolute',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -52%)',
+          inset: 0,
+          display: 'grid',
+          placeItems: 'center',
           fontWeight: 300,
           fontSize,
           letterSpacing: '-0.23px',
-          color: '#f5f5f5',
+          color: 'rgba(245, 245, 245, 0.95)',
           textShadow: '0 1px 2px rgba(0,0,0,0.35)',
           userSelect: 'none',
           pointerEvents: 'none',

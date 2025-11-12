@@ -108,7 +108,7 @@ export default function ProfilePage() {
               <div className="profile-header">
                 <Avatar
                   name="Samuel Akoyo"
-                  size={104}
+                  size={72}
                   rounded={24}
                   className="profile-avatar"
                 />
