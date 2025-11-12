@@ -14,6 +14,7 @@ import { formatUSDT } from '@/lib/money'
 import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
 import { useTransactSheet } from '@/store/useTransactSheet'
+import Avatar from '@/components/Avatar'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -105,13 +106,11 @@ export default function ProfilePage() {
             <div className="content" style={{ background: '#fff' }}>
               {/* Avatar + name + handle */}
               <div className="profile-header">
-                <Image
-                  src="/assets/profile/headshot.png"
-                  alt="Profile"
+                <Avatar
+                  name="Samuel Akoyo"
+                  size={104}
+                  rounded={24}
                   className="profile-avatar"
-                  width={104}
-                  height={104}
-                  unoptimized
                 />
                 <h1 className="profile-name">Samuel Akoyo</h1>
                 <div className="profile-handle">$samakoyo</div>
