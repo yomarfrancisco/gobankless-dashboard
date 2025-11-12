@@ -1,18 +1,25 @@
 'use client'
 
 import { HandCoins, BanknoteArrowUp, BanknoteArrowDown } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
+import TransferCardsIcon from './TransferCardsIcon'
 
 type Props = {
   open: boolean
   onClose: () => void
-  onSelect?: (action: 'deposit' | 'withdraw' | 'payment') => void
+  onSelect?: (action: 'deposit' | 'withdraw' | 'payment' | 'transfer') => void
 }
 
 export default function TransactionSheet({ open, onClose, onSelect }: Props) {
-  const handleSelect = (action: 'deposit' | 'withdraw' | 'payment') => {
-    if (onSelect) {
+  const router = useRouter()
+  
+  const handleSelect = (action: 'deposit' | 'withdraw' | 'payment' | 'transfer') => {
+    if (action === 'transfer') {
+      onClose()
+      router.push('/transfer')
+    } else if (onSelect) {
       onSelect(action)
     }
   }
@@ -36,6 +43,13 @@ export default function TransactionSheet({ open, onClose, onSelect }: Props) {
         title="Payment"
         caption="Pay anyone via email, handle, or wallet"
         onClick={() => handleSelect('payment')}
+      />
+      <ActionSheetItem
+        icon={<TransferCardsIcon />}
+        title="Transfer"
+        caption="Transfer funds between your various fiat and crypto wallets."
+        onClick={() => handleSelect('transfer')}
+        ariaLabel="Transfer funds between wallets"
       />
     </ActionSheet>
   )

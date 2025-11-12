@@ -11,11 +11,12 @@ type Props = {
   title: string
   caption?: string
   onClick?: () => void
+  ariaLabel?: string
 }
 
-export default function ActionSheetItem({ iconSrc, icon, title, caption, onClick }: Props) {
+export default function ActionSheetItem({ iconSrc, icon, title, caption, onClick, ariaLabel }: Props) {
   return (
-    <button className="asi" onClick={onClick}>
+    <button className="asi" onClick={onClick} aria-label={ariaLabel || title}>
       <div className="asi-left">
         <div className="asi-icon">
           {icon ? icon : iconSrc && <Image src={iconSrc} alt="" width={24} height={24} />}
