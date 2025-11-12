@@ -9,6 +9,7 @@ export type NotificationKind =
   | 'payment_failed'
   | 'refund'
   | 'ai_trade'
+  | 'mode-change'
 
 export type NotificationItem = {
   id: string // uuid

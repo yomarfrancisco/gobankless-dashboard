@@ -36,10 +36,10 @@ export default function RootLayout({
             __html: `
 (function(){
   try {
-    var m = localStorage.getItem('gb.walletMode') || 'autonomous';
+    var m = localStorage.getItem('gb.walletMode') || 'manual';
     document.documentElement.dataset.walletMode = m;
   } catch(_) { 
-    document.documentElement.dataset.walletMode = 'autonomous'; 
+    document.documentElement.dataset.walletMode = 'manual'; 
   }
 })();`,
           }}

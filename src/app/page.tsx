@@ -17,6 +17,7 @@ import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
 import { formatZAR } from '@/lib/formatCurrency'
 import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
 import ConvertCashSection from '@/components/ConvertCashSection'
+import { useWalletMode } from '@/state/walletMode'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
@@ -87,12 +88,15 @@ export default function Home() {
   const fundsAvailableZAR = alloc.totalCents / 100
   const formattedFunds = formatZAR(fundsAvailableZAR)
 
+  // Get wallet mode to gate animations
+  const { mode } = useWalletMode()
+
   // Initialize portfolio store from wallet allocation
   useEffect(() => {
     initPortfolioFromAlloc(alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents)
   }, [alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents])
 
-  // Initialize AI action cycle
+  // Initialize AI action cycle - only run in autonomous mode
   useAiActionCycle(cardStackRef, {
     getCash,
     getEth,
@@ -100,7 +104,7 @@ export default function Home() {
     setCash,
     setEth,
     setPepe,
-  })
+  }, mode === 'autonomous')
 
   return (
     <div className="app-shell">

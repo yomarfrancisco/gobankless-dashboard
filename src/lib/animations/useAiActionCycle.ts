@@ -30,7 +30,8 @@ type BalanceUpdaters = {
 
 export function useAiActionCycle(
   cardStackRef: React.RefObject<CardStackHandle | null>,
-  balanceUpdaters: BalanceUpdaters
+  balanceUpdaters: BalanceUpdaters,
+  enabled: boolean = true
 ) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const isRunningRef = useRef(false)
@@ -309,11 +310,15 @@ export function useAiActionCycle(
   }, [])
 
   useEffect(() => {
-    start()
+    if (enabled) {
+      start()
+    } else {
+      stop()
+    }
     return () => {
       stop()
     }
-  }, [start, stop])
+  }, [enabled, start, stop])
 
   return {
     start,
