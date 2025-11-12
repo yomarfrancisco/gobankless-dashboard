@@ -18,7 +18,7 @@ import { useTransactSheet } from '@/store/useTransactSheet'
 export default function ProfilePage() {
   const router = useRouter()
   const activityCount = useActivityStore((s) => s.items.length)
-  const { setOnSelect } = useTransactSheet()
+  const { setOnSelect, open } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -97,7 +97,7 @@ export default function ProfilePage() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/profile" />
+            <BottomGlassBar currentPath="/profile" onDollarClick={() => open()} />
           </div>
 
           {/* Scrollable content */}

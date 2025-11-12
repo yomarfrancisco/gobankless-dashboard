@@ -22,7 +22,7 @@ import { useWalletMode } from '@/state/walletMode'
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
   const cardStackRef = useRef<CardStackHandle>(null)
-  const { setOnSelect } = useTransactSheet()
+  const { setOnSelect, open } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -157,7 +157,7 @@ export default function Home() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/" onDollarClick={openTransactionSheet} />
+            <BottomGlassBar currentPath="/" onDollarClick={() => open()} />
           </div>
 
           {/* Scrollable content */}

@@ -14,13 +14,7 @@ interface BottomGlassBarProps {
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const { open } = useTransactSheet()
   
-  const handleDollarClick = () => {
-    if (onDollarClick) {
-      onDollarClick() // Use provided handler if exists (for backward compatibility)
-    } else {
-      open() // Use global store
-    }
-  }
+  const handleDollarClick = onDollarClick ?? (() => open())
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile' || currentPath === '/transactions' || currentPath === '/activity'
   const { mode } = useWalletMode()
