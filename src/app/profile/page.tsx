@@ -15,6 +15,7 @@ import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import { useUserProfileStore } from '@/store/userProfile'
+import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import Avatar from '@/components/Avatar'
 
 export default function ProfilePage() {
@@ -22,6 +23,7 @@ export default function ProfilePage() {
   const activityCount = useActivityStore((s) => s.items.length)
   const { setOnSelect, open } = useTransactSheet()
   const { profile } = useUserProfileStore()
+  const { open: openProfileEdit } = useProfileEditSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -183,7 +185,7 @@ export default function ProfilePage() {
 
               {/* Buttons */}
               <div className="profile-actions">
-                <button className="btn profile-edit" onClick={() => router.push('/profile/edit')}>
+                <button className="btn profile-edit" onClick={openProfileEdit}>
                   Edit profile
                 </button>
                 <button
