@@ -8,6 +8,7 @@
   justify-content: center;
   transition: opacity 150ms ease;
   flex-shrink: 0;
+  color: #121212; /* Dark color for icon */
 }
 
 .addIconButton:hover {
@@ -16,6 +17,13 @@
 
 .addIconButton:active {
   opacity: 0.5;
+}
+
+.addIconSvg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  flex-shrink: 0;
 }
 
 .fileInput {

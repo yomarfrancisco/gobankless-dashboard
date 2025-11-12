@@ -26,7 +26,9 @@ export default function ProfileEditSheet() {
   const [avatarSheetOpen, setAvatarSheetOpen] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(defaultProfile.avatarUrl)
   const [isUploading, setIsUploading] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputLibraryRef = useRef<HTMLInputElement>(null)
+  const fileInputCameraRef = useRef<HTMLInputElement>(null)
+  const fileInputFileRef = useRef<HTMLInputElement>(null)
   // TODO: Use useUserProfileStore when available
   const profile = { ...defaultProfile, avatarUrl }
 
@@ -35,21 +37,19 @@ export default function ProfileEditSheet() {
   }
 
   const handleAvatarAction = async (action: 'library' | 'camera' | 'file') => {
-    if (!fileInputRef.current) return
+    if (typeof window === 'undefined') return
 
-    // Configure file input based on action
-    if (action === 'library') {
-      fileInputRef.current.accept = 'image/*'
-      ;(fileInputRef.current as any).capture = undefined
-    } else if (action === 'camera') {
-      fileInputRef.current.accept = 'image/*'
-      ;(fileInputRef.current as any).capture = 'environment'
-    } else if (action === 'file') {
-      fileInputRef.current.accept = ''
-      ;(fileInputRef.current as any).capture = undefined
+    // Close sheet immediately
+    setAvatarSheetOpen(false)
+
+    // Trigger the appropriate file input
+    if (action === 'library' && fileInputLibraryRef.current) {
+      fileInputLibraryRef.current.click()
+    } else if (action === 'camera' && fileInputCameraRef.current) {
+      fileInputCameraRef.current.click()
+    } else if (action === 'file' && fileInputFileRef.current) {
+      fileInputFileRef.current.click()
     }
-
-    fileInputRef.current.click()
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -303,12 +303,21 @@ export default function ProfileEditSheet() {
               aria-label="Change profile photo"
               type="button"
             >
-              <NextImage
-                src="/assets/profile/add_circle_outlined.svg"
-                alt=""
-                width={24}
-                height={24}
-              />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className={styles.addIconSvg}
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 9.34784 20.9464 6.8043 19.0711 4.92893C17.1957 3.05357 14.6522 2 12 2ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 14.1217 19.1571 16.1566 17.6569 17.6569C16.1566 19.1571 14.1217 20 12 20ZM13 11H15.5C15.7761 11 16 11.2239 16 11.5V12.5C16 12.7761 15.7761 13 15.5 13H13V15.5C13 15.7761 12.7761 16 12.5 16H11.5C11.2239 16 11 15.7761 11 15.5V13H8.5C8.22386 13 8 12.7761 8 12.5V11.5C8 11.2239 8.22386 11 8.5 11H11V8.5C11 8.22386 11.2239 8 11.5 8H12.5C12.7761 8 13 8.22386 13 8.5V11Z"
+                  fill="currentColor"
+                />
+              </svg>
             </button>
           }
         />
@@ -339,13 +348,31 @@ export default function ProfileEditSheet() {
         onSelect={handleAvatarAction}
       />
 
-      {/* Hidden file input */}
+      {/* Hidden file inputs for different actions */}
       <input
-        ref={fileInputRef}
+        ref={fileInputLibraryRef}
         type="file"
         accept="image/*"
         className={styles.fileInput}
         onChange={handleFileChange}
+        data-mode="library"
+      />
+      <input
+        ref={fileInputCameraRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className={styles.fileInput}
+        onChange={handleFileChange}
+        data-mode="camera"
+      />
+      <input
+        ref={fileInputFileRef}
+        type="file"
+        accept="image/*"
+        className={styles.fileInput}
+        onChange={handleFileChange}
+        data-mode="file"
       />
     </>
   )
