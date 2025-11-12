@@ -1,81 +1,30 @@
-.sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  border: none;
-  cursor: pointer;
+/* Profile Edit Sheet - White Pop-up Theme */
+.profileEdit {
+  max-height: 70vh;
 }
 
 .content {
-  position: relative;
-  width: 100%;
-  max-width: 430px;
-  background: #000;
-  color: #f5f5f5;
-  border-radius: 24px 24px 0 0;
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
-  overflow: hidden;
-  margin: 0 auto;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 64px;
   padding: 0 16px;
-  position: relative;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
+  gap: 16px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .title {
   font-size: 18px;
   font-weight: 600;
-  letter-spacing: 0.08px;
-  margin: 0;
-  color: #f5f5f5;
-}
-
-.closeBtn {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: #f5f5f5;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.scrollArea {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  color: #0a0a0a;
+  text-align: center;
+  margin: 8px 0 16px 0;
+  padding-top: 8px;
 }
 
 /* Capsule Styles */
 .capsule {
-  background: #1c1c1e;
+  background: #f2f2f7;
   border-radius: 24px;
   overflow: hidden;
   width: 100%;
@@ -145,7 +94,6 @@
   display: flex;
   align-items: center;
   min-height: 64px;
-  height: auto;
   padding: 16px;
   background: transparent;
   border: none;
@@ -159,6 +107,7 @@
 
 .row:active {
   opacity: 0.7;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .rowLeft {
@@ -169,22 +118,22 @@
 }
 
 .rowIcon {
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.9);
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
+  /* SVG icons - if colored, leave as-is; if monochrome, will be dark by default */
 }
 
 .rowLabel {
   font-size: 16px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.95);
+  color: #0a0a0a;
 }
 
 .rowValue {
   font-size: 16px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.75);
+  color: #3a3a3a;
   text-align: right;
   margin-right: 8px;
 }
@@ -192,32 +141,31 @@
 .chevron {
   width: 20px;
   height: 20px;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(10, 10, 10, 0.9);
   flex-shrink: 0;
 }
 
 /* Links Section */
-.linksSection {
-  margin-top: 20px;
-}
-
 .linksHeader {
   font-size: 13px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #6b7280;
   padding: 0 16px 8px;
-  margin: 0 0 8px 0;
+  margin: 0;
 }
 
 /* Footer */
 .footer {
-  padding: 16px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding: 16px 0;
   padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
-  background: #000;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
   flex-shrink: 0;
+  z-index: 2;
 }
 
 .doneBtn {
@@ -238,4 +186,3 @@
 .doneBtn:active {
   opacity: 0.8;
 }
-
