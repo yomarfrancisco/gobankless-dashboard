@@ -8,6 +8,7 @@ import { WalletModeProvider } from '@/state/walletMode'
 import { WalletAllocProvider } from '@/state/walletAlloc'
 import SplashOnceProvider from '@/providers/SplashOnceProvider'
 import TransactionSheet from '@/components/TransactionSheet'
+import ProfileEditSheet from '@/components/ProfileEditSheet'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -54,6 +55,8 @@ export default function RootLayout({
               {children}
               {/* Global Transact Sheet */}
               <TransactionSheet />
+              {/* Global Profile Edit Sheet */}
+              <ProfileEditSheet />
             </WalletAllocProvider>
           </WalletModeProvider>
         </SplashOnceProvider>

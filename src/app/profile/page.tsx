@@ -13,12 +13,14 @@ import SuccessSheet from '@/components/SuccessSheet'
 import { formatUSDT } from '@/lib/money'
 import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
+import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import Avatar from '@/components/Avatar'
 
 export default function ProfilePage() {
   const router = useRouter()
   const activityCount = useActivityStore((s) => s.items.length)
+  const { open: openProfileEdit } = useProfileEditSheet()
   const { setOnSelect, open } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
@@ -180,7 +182,9 @@ export default function ProfilePage() {
 
               {/* Buttons */}
               <div className="profile-actions">
-                <button className="btn profile-edit">Edit profile</button>
+                <button className="btn profile-edit" onClick={openProfileEdit}>
+                  Edit profile
+                </button>
                 <button
                   className={`btn profile-inbox ${activityCount === 0 ? 'disabled' : ''}`}
                   onClick={() => activityCount > 0 && router.push('/activity')}
