@@ -14,12 +14,14 @@ import { formatUSDT } from '@/lib/money'
 import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
 import { useTransactSheet } from '@/store/useTransactSheet'
+import { useUserProfileStore } from '@/store/userProfile'
 import Avatar from '@/components/Avatar'
 
 export default function ProfilePage() {
   const router = useRouter()
   const activityCount = useActivityStore((s) => s.items.length)
   const { setOnSelect, open } = useTransactSheet()
+  const { profile } = useUserProfileStore()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -107,13 +109,14 @@ export default function ProfilePage() {
               {/* Avatar + name + handle */}
               <div className="profile-header">
                 <Avatar
-                  name="Samuel Akoyo"
+                  name={profile.fullName}
+                  email={profile.email}
                   size={96}
                   rounded={24}
                   className="profile-avatar"
                 />
-                <h1 className="profile-name">Samuel Akoyo</h1>
-                <div className="profile-handle">$samakoyo</div>
+                <h1 className="profile-name">{profile.fullName || 'User'}</h1>
+                <div className="profile-handle">{profile.handle}</div>
 
                 {/* Autonomous mode toggle */}
                 <div style={{ marginTop: 8, marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
@@ -180,7 +183,9 @@ export default function ProfilePage() {
 
               {/* Buttons */}
               <div className="profile-actions">
-                <button className="btn profile-edit">Edit profile</button>
+                <button className="btn profile-edit" onClick={() => router.push('/profile/edit')}>
+                  Edit profile
+                </button>
                 <button
                   className={`btn profile-inbox ${activityCount === 0 ? 'disabled' : ''}`}
                   onClick={() => activityCount > 0 && router.push('/activity')}
