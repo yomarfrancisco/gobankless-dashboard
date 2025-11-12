@@ -115,7 +115,7 @@ export default function MapboxMap({
     log('construct map')
     const map = new mapboxgl.Map({
       container: container,
-      style: 'mapbox://styles/mapbox/navigation-night-v1',
+      style: 'mapbox://styles/mapbox/navigation-day-v1',
       center: initialCenter,
       zoom: initialZoom,
       attributionControl: false,
