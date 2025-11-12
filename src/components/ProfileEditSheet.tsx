@@ -8,6 +8,8 @@ import ActionSheetItem from './ActionSheetItem'
 import AvatarActionSheet from './AvatarActionSheet'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { uploadAvatar } from '@/lib/profile'
+import { resizeImage } from '@/lib/imageResize'
+import { useNotificationStore } from '@/store/notifications'
 import styles from './ProfileEditSheet.module.css'
 
 // Temporary profile data - will use store when available
@@ -20,8 +22,10 @@ const defaultProfile = {
 
 export default function ProfileEditSheet() {
   const { isOpen, close } = useProfileEditSheet()
+  const pushNotification = useNotificationStore((state) => state.pushNotification)
   const [avatarSheetOpen, setAvatarSheetOpen] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(defaultProfile.avatarUrl)
+  const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   // TODO: Use useUserProfileStore when available
   const profile = { ...defaultProfile, avatarUrl }
@@ -54,7 +58,12 @@ export default function ProfileEditSheet() {
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image too large (max 5MB).')
+      pushNotification({
+        kind: 'payment_failed',
+        title: 'Image too large',
+        body: 'Maximum file size is 5MB. Please choose a smaller image.',
+        actor: { type: 'user' },
+      })
       e.target.value = ''
       return
     }
@@ -62,21 +71,75 @@ export default function ProfileEditSheet() {
     // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']
     if (!validTypes.includes(file.type)) {
-      alert('Invalid file type. Please use JPEG, PNG, WebP, or HEIC.')
+      pushNotification({
+        kind: 'payment_failed',
+        title: 'Invalid file type',
+        body: 'Please use JPEG, PNG, WebP, or HEIC format.',
+        actor: { type: 'user' },
+      })
       e.target.value = ''
       return
     }
 
+    setIsUploading(true)
+    const previousAvatarUrl = avatarUrl
+
     try {
-      // Upload avatar (stub returns data URL for now)
-      const url = await uploadAvatar(file)
+      // Optimistic UI: show preview immediately
+      const previewUrl = URL.createObjectURL(file)
+      setAvatarUrl(previewUrl)
+
+      // Resize if needed (optional: only if > 1024px)
+      let fileToUpload = file
+      try {
+        // Check if image needs resizing by loading it
+        const img = new Image()
+        const imgLoadPromise = new Promise<boolean>((resolve) => {
+          img.onload = () => {
+            const needsResize = img.width > 1024 || img.height > 1024
+            resolve(needsResize)
+          }
+          img.onerror = () => resolve(false)
+          img.src = previewUrl
+        })
+
+        const needsResize = await imgLoadPromise
+        if (needsResize) {
+          fileToUpload = await resizeImage(file, { maxEdge: 1024 })
+        }
+      } catch (resizeErr) {
+        console.warn('Resize failed, using original:', resizeErr)
+        // Continue with original file if resize fails
+      }
+
+      // Upload avatar
+      const url = await uploadAvatar(fileToUpload)
+      
+      // Revoke preview URL and set final URL
+      URL.revokeObjectURL(previewUrl)
       setAvatarUrl(url)
+
       // TODO: Update profile store
       // updateProfile({ avatarUrl: url })
+
+      pushNotification({
+        kind: 'payment_sent',
+        title: 'Profile photo updated',
+        body: 'Your profile picture has been updated successfully.',
+        actor: { type: 'user' },
+      })
     } catch (err) {
       console.error('Failed to upload avatar:', err)
-      alert('Could not update photo. Try again.')
+      // Revert to previous avatar on error
+      setAvatarUrl(previousAvatarUrl)
+      pushNotification({
+        kind: 'payment_failed',
+        title: 'Upload failed',
+        body: 'Could not update photo. Please try again.',
+        actor: { type: 'user' },
+      })
     } finally {
+      setIsUploading(false)
       e.target.value = ''
     }
   }
@@ -145,6 +208,31 @@ export default function ProfileEditSheet() {
             fill
             style={{ objectFit: 'cover', borderRadius: '50%' }}
           />
+        )}
+        {isUploading && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(0, 0, 0, 0.5)',
+              borderRadius: '50%',
+              zIndex: 2,
+            }}
+          >
+            <div
+              style={{
+                width: 20,
+                height: 20,
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                borderTopColor: '#fff',
+                borderRadius: '50%',
+                animation: 'spin 0.6s linear infinite',
+              }}
+            />
+          </div>
         )}
       </div>
     )
