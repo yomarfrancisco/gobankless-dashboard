@@ -5,6 +5,7 @@ import { UserCircle2, Share2, LogOut } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
+import { useAvatarEditSheet } from '@/store/useAvatarEditSheet'
 // Temporary profile data - will use store when available
 const defaultProfile = {
   fullName: 'Samuel Akoyo',
@@ -14,12 +15,16 @@ const defaultProfile = {
 
 export default function ProfileEditSheet() {
   const { isOpen, close } = useProfileEditSheet()
+  const { open: openAvatarEdit } = useAvatarEditSheet()
   // TODO: Use useUserProfileStore when available
   const profile = defaultProfile
 
   const handleProfilePicture = () => {
     close()
-    console.log('Edit avatar')
+    // Small delay to allow ProfileEditSheet to close first
+    setTimeout(() => {
+      openAvatarEdit()
+    }, 220)
   }
 
   const handleNameHandle = () => {
