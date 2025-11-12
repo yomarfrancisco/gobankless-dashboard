@@ -24,28 +24,30 @@ function getInitial(name?: string, email?: string): string {
 
 const Avatar = ({ name, email, size = 72, rounded = 24, className }: Props) => {
   const initial = useMemo(() => getInitial(name, email), [name, email])
-  const fontSize = Math.round(size * 0.39) // Adjusted for better visual balance
+  const fontSize = Math.round(size * 0.44) // 0.44 of size for better visual balance
 
   return (
     <div
       className={clsx('relative overflow-hidden', className)}
       style={{ 
+        position: 'relative',
         width: size, 
         height: size, 
         borderRadius: rounded,
         flexShrink: 0, // Prevent shrinking
+        overflow: 'hidden', // Clip initial within rounded frame
       }}
       aria-label={`Avatar ${name || email || ''}`}
     >
       <Image
         src="/assets/avatar-profile.png"
         alt=""
-        width={size}
-        height={size}
+        fill
         priority={false}
+        sizes={`${size}px`}
         style={{ 
-          width: `${size}px`,
-          height: `${size}px`,
+          width: '100%',
+          height: '100%',
           objectFit: 'cover',
           objectPosition: 'center',
           display: 'block',
@@ -56,16 +58,19 @@ const Avatar = ({ name, email, size = 72, rounded = 24, className }: Props) => {
         aria-hidden="true"
         style={{
           position: 'absolute',
-          inset: 0,
-          display: 'grid',
-          placeItems: 'center',
+          inset: 0, // Anchor to the wrapper, not the page
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           fontWeight: 300,
           fontSize,
+          lineHeight: 1,
           letterSpacing: '-0.23px',
-          color: 'rgba(245, 245, 245, 0.95)',
+          color: 'rgba(245, 245, 245, 0.96)',
           textShadow: '0 1px 2px rgba(0,0,0,0.35)',
+          zIndex: 1, // Above the image
           userSelect: 'none',
-          pointerEvents: 'none',
+          pointerEvents: 'none', // Don't block taps
         }}
       >
         {initial}
