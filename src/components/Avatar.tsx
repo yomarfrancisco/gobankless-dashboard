@@ -22,9 +22,9 @@ function getInitial(name?: string, email?: string): string {
   return 'S' // fallback
 }
 
-const Avatar = ({ name, email, size = 72, rounded = 24, className }: Props) => {
+const Avatar = ({ name, email, size = 96, rounded = 24, className }: Props) => {
   const initial = useMemo(() => getInitial(name, email), [name, email])
-  const fontSize = Math.round(size * 0.44) // 0.44 of size for better visual balance
+  const fontSize = Math.round(size * 0.48) // 0.48 of size for proportional scaling
 
   return (
     <div
@@ -62,12 +62,12 @@ const Avatar = ({ name, email, size = 72, rounded = 24, className }: Props) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontWeight: 300,
+          fontWeight: 400,
           fontSize,
           lineHeight: 1,
           letterSpacing: '-0.23px',
           color: 'rgba(245, 245, 245, 0.96)',
-          textShadow: '0 1px 2px rgba(0,0,0,0.35)',
+          textShadow: '0 1px 3px rgba(0, 0, 0, 0.35)',
           zIndex: 1, // Above the image
           userSelect: 'none',
           pointerEvents: 'none', // Don't block taps
