@@ -8,6 +8,7 @@ import { WalletModeProvider } from '@/state/walletMode'
 import { WalletAllocProvider } from '@/state/walletAlloc'
 import SplashOnceProvider from '@/providers/SplashOnceProvider'
 import TransactionSheet from '@/components/TransactionSheet'
+import MobileFrame from '@/components/MobileFrame'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -51,7 +52,9 @@ export default function RootLayout({
             <WalletAllocProvider>
               <TopNotifications />
               <DevNotificationSetup />
-              {children}
+              <MobileFrame>
+                {children}
+              </MobileFrame>
               {/* Global Transact Sheet */}
               <TransactionSheet />
             </WalletAllocProvider>
