@@ -151,6 +151,7 @@ export default function MapboxMap({
           el.className = styles.userMarker
           // add our PNG as <img> to preserve sharpness on retina
           const img = document.createElement('img')
+          img.className = styles.userImg
           img.alt = 'You are here'
           // Use static import if available, else fall back to public path:
           const userIconUrl = (userIcon as any)?.src ?? '/assets/character.png'
@@ -168,11 +169,6 @@ export default function MapboxMap({
           img.loading = 'eager'
           img.referrerPolicy = 'no-referrer'
           el.appendChild(img)
-          // Keep a visible fallback if it still fails
-          if (!img.complete) {
-            el.style.background =
-              'radial-gradient(circle at center, rgba(20,161,91,.35), rgba(20,161,91,0))'
-          }
           userMarkerRef.current = new mapboxgl.Marker({
             element: el,
             anchor: 'center',

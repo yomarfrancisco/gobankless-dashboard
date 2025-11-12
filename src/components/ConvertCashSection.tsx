@@ -22,7 +22,7 @@ export default function ConvertCashSection() {
         </button>
       </div>
       <p className={styles.sub}>
-        Find partner bank managers and branches to help you open an account.
+        Deposit cash and receive stablecoins directly from verified agents and partner branches.
       </p>
 
       <div className={styles.mapCard}>
