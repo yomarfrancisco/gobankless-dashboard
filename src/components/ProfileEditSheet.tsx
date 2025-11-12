@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import Image from 'next/image'
 import { X, Camera, ChevronRight, Instagram, Linkedin, Music2, Mail } from 'lucide-react'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
@@ -77,7 +78,7 @@ export default function ProfileEditSheet() {
 
   if (!isOpen) return null
 
-  return (
+  return ReactDOM.createPortal(
     <div className={styles.sheet} aria-modal="true" role="dialog">
       <button className={styles.overlay} onClick={handleClose} aria-label="Close" />
       <div className={styles.content}>
@@ -163,7 +164,8 @@ export default function ProfileEditSheet() {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
