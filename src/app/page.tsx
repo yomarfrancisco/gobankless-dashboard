@@ -6,7 +6,7 @@ import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
-import TransactionSheet from '@/components/TransactionSheet'
+import { useTransactSheet } from '@/store/useTransactSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
@@ -22,7 +22,7 @@ import { useWalletMode } from '@/state/walletMode'
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
   const cardStackRef = useRef<CardStackHandle>(null)
-  const [openTransaction, setOpenTransaction] = useState(false)
+  const { setOnSelect } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -39,8 +39,28 @@ export default function Home() {
   const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
   const [depositAmountZAR, setDepositAmountZAR] = useState(0)
 
-  const openTransactionSheet = useCallback(() => setOpenTransaction(true), [])
-  const closeTransaction = useCallback(() => setOpenTransaction(false), [])
+  // Register onSelect handler for global Transact sheet
+  useEffect(() => {
+    setOnSelect((action) => {
+      if (action === 'deposit') {
+        setTimeout(() => setOpenDeposit(true), 220)
+      } else if (action === 'withdraw') {
+        setTimeout(() => setOpenWithdraw(true), 220)
+      } else if (action === 'payment') {
+        setFlowType('payment')
+        setTimeout(() => setOpenDirectPayment(true), 220)
+      } else if (action === 'transfer') {
+        setFlowType('transfer')
+        setAmountMode('send')
+        setSendMethod('brics') // Use GoBankless Handle flow like payment
+        setTimeout(() => setOpenAmount(true), 220)
+      }
+    })
+    
+    return () => {
+      setOnSelect(null) // Cleanup on unmount
+    }
+  }, [setOnSelect])
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
   const closeDirectPayment = useCallback(() => setOpenDirectPayment(false), [])
@@ -167,26 +187,6 @@ export default function Home() {
       </div>
 
       {/* Sheets */}
-      <TransactionSheet
-        open={openTransaction}
-        onClose={closeTransaction}
-        onSelect={(action) => {
-          setOpenTransaction(false)
-          if (action === 'deposit') {
-            setTimeout(() => setOpenDeposit(true), 220)
-          } else if (action === 'withdraw') {
-            setTimeout(() => setOpenWithdraw(true), 220)
-          } else if (action === 'payment') {
-            setFlowType('payment')
-            setTimeout(() => setOpenDirectPayment(true), 220)
-          } else if (action === 'transfer') {
-            setFlowType('transfer')
-            setAmountMode('send')
-            setSendMethod('brics') // Use GoBankless Handle flow like payment
-            setTimeout(() => setOpenAmount(true), 220)
-          }
-        }}
-      />
       <DepositSheet
         open={openDirectPayment}
         onClose={closeDirectPayment}

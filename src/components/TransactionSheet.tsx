@@ -3,22 +3,20 @@
 import { HandCoins, BanknoteArrowUp, BanknoteArrowDown, ArrowLeftRight } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
+import { useTransactSheet } from '@/store/useTransactSheet'
 
-type Props = {
-  open: boolean
-  onClose: () => void
-  onSelect?: (action: 'deposit' | 'withdraw' | 'payment' | 'transfer') => void
-}
-
-export default function TransactionSheet({ open, onClose, onSelect }: Props) {
+export default function TransactionSheet() {
+  const { isOpen, close, onSelect } = useTransactSheet()
+  
   const handleSelect = (action: 'deposit' | 'withdraw' | 'payment' | 'transfer') => {
+    close()
     if (onSelect) {
       onSelect(action)
     }
   }
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="Transact">
+    <ActionSheet open={isOpen} onClose={close} title="Transact">
       <ActionSheetItem
         icon={<BanknoteArrowUp size={22} strokeWidth={2} />}
         title="Deposit"

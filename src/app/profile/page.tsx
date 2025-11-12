@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import TopGlassBar from '@/components/TopGlassBar'
@@ -13,10 +13,12 @@ import SuccessSheet from '@/components/SuccessSheet'
 import { formatUSDT } from '@/lib/money'
 import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
+import { useTransactSheet } from '@/store/useTransactSheet'
 
 export default function ProfilePage() {
   const router = useRouter()
   const activityCount = useActivityStore((s) => s.items.length)
+  const { setOnSelect } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -28,6 +30,7 @@ export default function ProfilePage() {
   const [sendAmountUSDT, setSendAmountUSDT] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
+  const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -54,7 +57,7 @@ export default function ProfilePage() {
   }, [])
 
   const handleAmountSubmit = useCallback((amountZAR: number) => {
-    if (amountMode === 'send') {
+    if (amountMode === 'send' || flowType === 'transfer') {
       setSendAmountZAR(amountZAR)
       // Calculate USDT amount (using same rate as AmountSheet: 18.1)
       const fxRateZARperUSDT = 18.1
@@ -63,7 +66,30 @@ export default function ProfilePage() {
       
       setTimeout(() => setOpenSendDetails(true), 220)
     }
-  }, [amountMode])
+  }, [amountMode, flowType])
+
+  // Register onSelect handler for global Transact sheet
+  useEffect(() => {
+    setOnSelect((action) => {
+      if (action === 'deposit') {
+        setTimeout(() => setOpenDeposit(true), 220)
+      } else if (action === 'withdraw') {
+        setTimeout(() => setOpenWithdraw(true), 220)
+      } else if (action === 'payment') {
+        setFlowType('payment')
+        setTimeout(() => setOpenDirectPayment(true), 220)
+      } else if (action === 'transfer') {
+        setFlowType('transfer')
+        setAmountMode('send')
+        setSendMethod('brics') // Use GoBankless Handle flow like payment
+        setTimeout(() => setOpenAmount(true), 220)
+      }
+    })
+    
+    return () => {
+      setOnSelect(null) // Cleanup on unmount
+    }
+  }, [setOnSelect])
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -71,7 +97,7 @@ export default function ProfilePage() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/profile" onDollarClick={openDirectPaymentSheet} />
+            <BottomGlassBar currentPath="/profile" />
           </div>
 
           {/* Scrollable content */}
@@ -200,14 +226,15 @@ export default function ProfilePage() {
         open={openAmount}
         onClose={closeAmount}
         mode={amountMode}
+        flowType={flowType}
         balanceZAR={200}
         fxRateZARperUSDT={18.1}
-        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
+        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? (flowType === 'transfer' ? 'Transfer' : 'Send') : 'Continue'}
         onSubmit={amountMode !== 'send' ? ({ amountZAR, amountUSDT }) => {
           setOpenAmount(false)
           console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
         } : undefined}
-        onAmountSubmit={amountMode === 'send' ? handleAmountSubmit : undefined}
+        onAmountSubmit={(amountMode === 'send' || flowType === 'transfer') ? handleAmountSubmit : undefined}
       />
       <SendDetailsSheet
         open={openSendDetails}
@@ -215,6 +242,7 @@ export default function ProfilePage() {
         amountZAR={sendAmountZAR}
         amountUSDT={sendAmountUSDT}
         sendMethod={sendMethod}
+        flowType={flowType}
         onPay={(payload) => {
           console.log('PAY', payload)
           setSendRecipient(payload.to)
@@ -230,6 +258,7 @@ export default function ProfilePage() {
           maximumFractionDigits: 2,
         })}`}
         recipient={sendRecipient}
+        flowType={flowType}
       />
     </div>
   )

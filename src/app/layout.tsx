@@ -7,6 +7,7 @@ import DevNotificationSetup from '@/components/notifications/DevNotificationSetu
 import { WalletModeProvider } from '@/state/walletMode'
 import { WalletAllocProvider } from '@/state/walletAlloc'
 import SplashOnceProvider from '@/providers/SplashOnceProvider'
+import TransactionSheet from '@/components/TransactionSheet'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -51,6 +52,8 @@ export default function RootLayout({
               <TopNotifications />
               <DevNotificationSetup />
               {children}
+              {/* Global Transact Sheet */}
+              <TransactionSheet />
             </WalletAllocProvider>
           </WalletModeProvider>
         </SplashOnceProvider>
