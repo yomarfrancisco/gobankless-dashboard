@@ -35,22 +35,6 @@ export default function ConvertCashSection() {
           markers={[sandtonBranch]}
           styleUrl="mapbox://styles/mapbox/streets-v12"
         />
-
-        {/* Paper/fold overlays as siblings, not children of map container */}
-        <Image
-          src="/assets/fold1.png"
-          alt=""
-          fill
-          className={styles.fold1}
-          priority
-        />
-        <Image
-          src="/assets/fold2.png"
-          alt=""
-          fill
-          className={styles.fold2}
-          priority
-        />
       </div>
     </section>
   )

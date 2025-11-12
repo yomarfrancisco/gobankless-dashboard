@@ -893,3 +893,17 @@ body {
   display: none !important;
 }
 
+/* Ensure markers/route sit above the fold overlay */
+.mapboxgl-marker {
+  z-index: 3 !important;
+}
+
+.mapboxgl-canvas-container {
+  z-index: 0 !important;
+}
+
+/* Controls should remain clickable/visible */
+.mapboxgl-control-container {
+  z-index: 4 !important;
+}
+

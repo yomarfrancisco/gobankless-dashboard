@@ -2,8 +2,8 @@
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: inherit;
-  overflow: hidden;
+  border-radius: 20px;
+  overflow: hidden; /* clip map + overlay to rounded corners */
   z-index: 2;
 }
 

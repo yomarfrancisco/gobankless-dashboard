@@ -70,23 +70,26 @@
   position: absolute;
   inset: 0;
   z-index: 1;
+  border-radius: inherit; /* ensures overlay matches rounding */
+  overflow: hidden; /* clip overlay cleanly */
 }
 
-/* Folds over the live map */
-.fold1,
-.fold2 {
+/* Vertical fold overlay ONLY on the map viewport */
+.mapContainer::after {
+  content: '';
   position: absolute;
   inset: 0;
-  mix-blend-mode: multiply;
-  opacity: 0.22;
-  pointer-events: none;
-  object-fit: cover;
-  z-index: 3; /* Above map */
-}
-
-/* Optional slight variance to mimic mock */
-.fold2 {
-  opacity: 0.18;
+  background-image: url('/assets/fold2.png'); /* vertical texture */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.22; /* tweak if too strong */
+  mix-blend-mode: multiply; /* paper-on-map feel */
+  filter: blur(0.6px); /* soften edges slightly */
+  transform: rotate(90deg) scale(1.001); /* vertical crease */
+  transform-origin: center;
+  pointer-events: none; /* never block map gestures */
+  z-index: 1; /* sit above canvas, below markers */
 }
 
 /* Respect safe areas and keep consistent gutters */
