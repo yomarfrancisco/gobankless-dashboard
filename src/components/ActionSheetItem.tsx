@@ -12,9 +12,18 @@ type Props = {
   caption?: string
   onClick?: () => void
   ariaLabel?: string
+  trailing?: ReactNode // Custom trailing element (replaces chevron)
 }
 
-export default function ActionSheetItem({ iconSrc, icon, title, caption, onClick, ariaLabel }: Props) {
+export default function ActionSheetItem({
+  iconSrc,
+  icon,
+  title,
+  caption,
+  onClick,
+  ariaLabel,
+  trailing,
+}: Props) {
   return (
     <button className="asi" onClick={onClick} aria-label={ariaLabel || title}>
       <div className="asi-left">
@@ -26,7 +35,7 @@ export default function ActionSheetItem({ iconSrc, icon, title, caption, onClick
           {caption && <div className="asi-caption">{caption}</div>}
         </div>
       </div>
-      <Image src="/assets/next_ui.svg" alt="" width={24} height={24} className={styles.chevron} />
+      {trailing || <Image src="/assets/next_ui.svg" alt="" width={24} height={24} className={styles.chevron} />}
     </button>
   )
 }
