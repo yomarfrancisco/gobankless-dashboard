@@ -1,6 +1,6 @@
 'use client'
 
-import { HandCoins, BanknoteArrowUp, BanknoteArrowDown, ArrowLeftRight } from 'lucide-react'
+import { HandCoins, BanknoteArrowUp, BanknoteArrowDown, ReplaceAll } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 
@@ -38,7 +38,7 @@ export default function TransactionSheet({ open, onClose, onSelect }: Props) {
         onClick={() => handleSelect('payment')}
       />
       <ActionSheetItem
-        icon={<ArrowLeftRight size={22} strokeWidth={2} />}
+        icon={<ReplaceAll size={22} strokeWidth={2} />}
         title="Transfer"
         caption="Transfer funds between your fiat and crypto wallets"
         onClick={() => handleSelect('transfer')}
