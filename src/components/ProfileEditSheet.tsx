@@ -38,10 +38,17 @@ export default function ProfileEditSheet() {
   }
 
   // Avatar icon component for Profile Picture tile
+  // This will be rendered inside the asi-icon container (56px circle with gray background)
   const AvatarIcon = () => {
-    // For now, use default avatar - we'll enhance this when userProfile store is available
     return (
-      <div style={{ width: 56, height: 56, borderRadius: 28, overflow: 'hidden', position: 'relative' }}>
+      <div style={{ 
+        width: '100%', 
+        height: '100%', 
+        borderRadius: '50%', 
+        overflow: 'hidden', 
+        position: 'relative',
+        background: '#1a1a1a',
+      }}>
         <Image
           src="/assets/avatar-profile.png"
           alt="Profile avatar"
@@ -55,14 +62,15 @@ export default function ProfileEditSheet() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: 300,
             color: '#f5f5f5',
             textShadow: '0 1px 2px rgba(0,0,0,0.35)',
             pointerEvents: 'none',
+            zIndex: 1,
           }}
         >
-          {getInitial(profile?.fullName, profile?.email, profile?.handle)}
+          {getInitial(profile.fullName, profile.email, profile.handle)}
         </span>
       </div>
     )
