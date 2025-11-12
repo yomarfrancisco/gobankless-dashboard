@@ -40,7 +40,7 @@ export default function MapboxMap({
   initialZoom = 14,
   markers = [],
   fitToMarkers = true,
-  styleUrl = 'mapbox://styles/mapbox/light-v11',
+  styleUrl = 'mapbox://styles/mapbox/streets-v12',
   showDebug = DEBUG_MAP,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -141,6 +141,13 @@ export default function MapboxMap({
       })
 
       map.addControl(geolocate, 'top-right')
+
+      // Add branch marker (Sandton City)
+      const branchLngLat: [number, number] = [28.054167, -26.108333]
+      const branchEl = document.createElement('div')
+      branchEl.className = styles.branchMarker
+      new mapboxgl.Marker(branchEl).setLngLat(branchLngLat).addTo(map)
+      log(`branch marker added at [${branchLngLat[0]}, ${branchLngLat[1]}]`)
 
       // Helper to (re)place custom user marker
       function upsertUserMarker(lng: number, lat: number) {

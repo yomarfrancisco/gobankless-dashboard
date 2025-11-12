@@ -108,3 +108,39 @@
   }
 }
 
+/* Branch marker (blue pin) */
+.branchMarker {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+
+.branchMarker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: #3b82f6; /* blue color */
+  border-radius: 50% 50% 50% 0;
+  transform: translateX(-50%) rotate(-45deg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.branchMarker::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px #3b82f6;
+}
+

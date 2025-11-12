@@ -33,7 +33,7 @@ export default function ConvertCashSection() {
         <MapboxMap
           containerId="mapbox-container"
           markers={[sandtonBranch]}
-          styleUrl="mapbox://styles/mapbox/light-v11"
+          styleUrl="mapbox://styles/mapbox/streets-v12"
         />
 
         {/* Paper/fold overlays as siblings, not children of map container */}
