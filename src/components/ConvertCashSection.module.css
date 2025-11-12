@@ -70,6 +70,8 @@
   position: absolute;
   inset: 0;
   z-index: 1;
+  overflow: hidden; /* clip overlays to the rounded card */
+  border-radius: 24px;
 }
 
 /* Folds over the live map */
@@ -78,15 +80,27 @@
   position: absolute;
   inset: 0;
   mix-blend-mode: multiply;
-  opacity: 0.22;
   pointer-events: none;
-  object-fit: cover;
   z-index: 3; /* Above map */
 }
 
-/* Optional slight variance to mimic mock */
+/* Horizontal fold - keep as is */
+.fold1 {
+  opacity: 0.22;
+  object-fit: cover;
+}
+
+/* Vertical fold - positioned on right edge, fits height */
 .fold2 {
   opacity: 0.18;
+  object-fit: contain; /* maintain aspect ratio */
+  object-position: right center; /* align to right edge, center vertically */
+  /* Position it on the right side */
+  left: auto;
+  right: 0;
+  width: auto;
+  /* Let it fill height naturally based on aspect ratio */
+  max-width: 30%; /* prevent it from being too wide */
 }
 
 /* Respect safe areas and keep consistent gutters */
@@ -96,4 +110,5 @@
     padding-right: max(16px, env(safe-area-inset-right));
   }
 }
+
 
