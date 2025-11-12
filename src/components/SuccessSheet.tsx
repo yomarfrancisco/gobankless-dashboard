@@ -12,6 +12,7 @@ type SuccessSheetProps = {
   recipient?: string // email or phone (optional for deposit)
   autoDownloadReceipt?: boolean // default true
   kind?: 'send' | 'deposit' // default 'send'
+  flowType?: 'payment' | 'transfer' // default 'payment'
 }
 
 export default function SuccessSheet({
@@ -21,6 +22,7 @@ export default function SuccessSheet({
   recipient,
   autoDownloadReceipt = true,
   kind = 'send',
+  flowType = 'payment',
 }: SuccessSheetProps) {
   const pushNotification = useNotificationStore((state) => state.pushNotification)
 
@@ -39,7 +41,7 @@ export default function SuccessSheet({
     }
   }, [open, autoDownloadReceipt])
 
-  // Emit payment notification when success sheet opens
+  // Emit payment/transfer notification when success sheet opens
   useEffect(() => {
     if (!open) return
 
@@ -49,22 +51,41 @@ export default function SuccessSheet({
       const numericAmount = amountMatch ? parseFloat(amountMatch[0].replace(/,/g, '')) : 0
       const isUSDT = amountZAR.includes('USDT')
       
-      pushNotification({
-        kind: 'payment_sent',
-        title: 'Payment sent',
-        body: recipient.includes('@') || recipient.includes('.')
-          ? `You sent R${numericAmount.toFixed(2)} to ${recipient}.`
-          : `You sent ${amountZAR} to ${recipient}.`,
-        amount: {
-          currency: isUSDT ? 'USDT' : 'ZAR',
-          value: -numericAmount,
-        },
-        direction: 'down',
-        actor: {
-          type: 'user',
-        },
-        routeOnTap: '/transactions',
-      })
+      if (flowType === 'transfer') {
+        pushNotification({
+          kind: 'transfer',
+          title: 'Transfer completed',
+          body: recipient.includes('@')
+            ? `You transferred R${numericAmount.toFixed(2)} to ${recipient}.`
+            : `You transferred ${amountZAR} to ${recipient}.`,
+          amount: {
+            currency: isUSDT ? 'USDT' : 'ZAR',
+            value: -numericAmount,
+          },
+          direction: 'down',
+          actor: {
+            type: 'user',
+          },
+          routeOnTap: '/transactions',
+        })
+      } else {
+        pushNotification({
+          kind: 'payment_sent',
+          title: 'Payment sent',
+          body: recipient.includes('@') || recipient.includes('.')
+            ? `You sent R${numericAmount.toFixed(2)} to ${recipient}.`
+            : `You sent ${amountZAR} to ${recipient}.`,
+          amount: {
+            currency: isUSDT ? 'USDT' : 'ZAR',
+            value: -numericAmount,
+          },
+          direction: 'down',
+          actor: {
+            type: 'user',
+          },
+          routeOnTap: '/transactions',
+        })
+      }
     } else if (kind === 'deposit') {
       const amountMatch = amountZAR.match(/[\d,]+\.?\d*/)
       const numericAmount = amountMatch ? parseFloat(amountMatch[0].replace(/,/g, '')) : 0
@@ -84,7 +105,7 @@ export default function SuccessSheet({
         routeOnTap: '/transactions',
       })
     }
-  }, [open, kind, recipient, amountZAR, pushNotification])
+  }, [open, kind, recipient, amountZAR, flowType, pushNotification])
 
   return (
     <ActionSheet open={open} onClose={onClose} title="" className="send-success">
@@ -107,7 +128,9 @@ export default function SuccessSheet({
           ) : (
             <>
               <p id="success-title" className="success-headline" aria-live="polite">
-                You sent {amountZAR} to
+                {flowType === 'transfer' 
+                  ? `You transferred ${amountZAR} to`
+                  : `You sent ${amountZAR} to`}
               </p>
               <p className="success-target">{recipient}</p>
             </>

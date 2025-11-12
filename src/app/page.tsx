@@ -36,6 +36,7 @@ export default function Home() {
   const [sendAmountUSDT, setSendAmountUSDT] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
+  const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
   const [depositAmountZAR, setDepositAmountZAR] = useState(0)
 
   const openTransactionSheet = useCallback(() => setOpenTransaction(true), [])
@@ -53,6 +54,7 @@ export default function Home() {
     setSendRecipient('')
     setSendAmountZAR(0)
     setSendAmountUSDT(0)
+    setFlowType('payment') // Reset to default
   }, [])
   const closeDepositSuccess = useCallback(() => {
     setOpenDepositSuccess(false)
@@ -72,7 +74,7 @@ export default function Home() {
   }, [])
 
   const handleAmountSubmit = useCallback((amountZAR: number) => {
-    if (amountMode === 'send') {
+    if (amountMode === 'send' || flowType === 'transfer') {
       setSendAmountZAR(amountZAR)
       // Calculate USDT amount (using same rate as AmountSheet: 18.1)
       const fxRateZARperUSDT = 18.1
@@ -81,7 +83,7 @@ export default function Home() {
       
       setTimeout(() => setOpenSendDetails(true), 220)
     }
-  }, [amountMode])
+  }, [amountMode, flowType])
 
   // Get wallet allocation for funds available display
   const { alloc, getCash, getEth, getPepe, setCash, setEth, setPepe } = useWalletAlloc()
@@ -175,7 +177,13 @@ export default function Home() {
           } else if (action === 'withdraw') {
             setTimeout(() => setOpenWithdraw(true), 220)
           } else if (action === 'payment') {
+            setFlowType('payment')
             setTimeout(() => setOpenDirectPayment(true), 220)
+          } else if (action === 'transfer') {
+            setFlowType('transfer')
+            setAmountMode('send')
+            setSendMethod('brics') // Use GoBankless Handle flow like payment
+            setTimeout(() => setOpenAmount(true), 220)
           }
         }}
       />
@@ -215,9 +223,10 @@ export default function Home() {
         open={openAmount}
         onClose={closeAmount}
         mode={amountMode}
+        flowType={flowType}
         balanceZAR={200}
         fxRateZARperUSDT={18.1}
-        ctaLabel={amountMode === 'depositCard' ? 'Deposit' : amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
+        ctaLabel={amountMode === 'depositCard' ? 'Deposit' : amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? (flowType === 'transfer' ? 'Transfer' : 'Send') : 'Continue'}
         onSubmit={amountMode === 'depositCard' ? ({ amountZAR }) => {
           setDepositAmountZAR(amountZAR)
           setOpenAmount(false)
@@ -226,7 +235,7 @@ export default function Home() {
           setOpenAmount(false)
           console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
         } : undefined}
-        onAmountSubmit={amountMode === 'send' ? handleAmountSubmit : undefined}
+        onAmountSubmit={(amountMode === 'send' || flowType === 'transfer') ? handleAmountSubmit : undefined}
       />
       <SendDetailsSheet
         open={openSendDetails}
@@ -234,6 +243,7 @@ export default function Home() {
         amountZAR={sendAmountZAR}
         amountUSDT={sendAmountUSDT}
         sendMethod={sendMethod}
+        flowType={flowType}
         onPay={(payload) => {
           console.log('PAY', payload)
           setSendRecipient(payload.to)
@@ -251,6 +261,7 @@ export default function Home() {
         })}`}
         recipient={sendRecipient}
         kind="send"
+        flowType={flowType}
       />
       <SuccessSheet
         open={openDepositSuccess}

@@ -11,6 +11,7 @@ type AmountSheetProps = {
   open: boolean
   onClose: () => void
   mode: 'deposit' | 'withdraw' | 'send' | 'depositCard' // for header text (e.g., "Buy", "Withdraw")
+  flowType?: 'payment' | 'transfer' // default 'payment'
   balanceZAR?: number // show at top small "R200.00 balance"
   fxRateZARperUSDT?: number // default 18.10 if undefined
   ctaLabel?: string // default "Transfer USDT"
@@ -19,13 +20,14 @@ type AmountSheetProps = {
     amountUSDT?: number
     mode?: 'deposit' | 'withdraw' | 'send' | 'depositCard'
   }) => void
-  onAmountSubmit?: (amountZAR: number) => void // simpler callback for send flow
+  onAmountSubmit?: (amountZAR: number) => void // simpler callback for send/transfer flow
 }
 
 export default function AmountSheet({
   open,
   onClose,
   mode,
+  flowType = 'payment',
   balanceZAR = 200,
   fxRateZARperUSDT = 18.1,
   ctaLabel,
@@ -78,7 +80,7 @@ export default function AmountSheet({
   }
 
   const handleSubmit = () => {
-    if (onAmountSubmit && mode === 'send') {
+    if (onAmountSubmit && (mode === 'send' || flowType === 'transfer')) {
       onAmountSubmit(amountZAR)
     } else if (onSubmit) {
       onSubmit({
@@ -89,7 +91,13 @@ export default function AmountSheet({
     }
   }
 
-  const modeLabel = mode === 'deposit' || mode === 'depositCard' ? 'Buy' : mode === 'withdraw' ? 'Withdraw' : 'Send'
+  const modeLabel = flowType === 'transfer' 
+    ? 'Transfer' 
+    : mode === 'deposit' || mode === 'depositCard' 
+    ? 'Buy' 
+    : mode === 'withdraw' 
+    ? 'Withdraw' 
+    : 'Send'
   const defaultCtaLabel = mode === 'depositCard' ? 'Deposit' : mode === 'send' ? 'Send' : 'Transfer USDT'
   const finalCtaLabel = ctaLabel || defaultCtaLabel
   const isPositive = amountZAR > 0
