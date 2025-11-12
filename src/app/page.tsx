@@ -106,6 +106,28 @@ export default function Home() {
     setPepe,
   }, mode === 'autonomous')
 
+  // Manual mode titles per card
+  const MANUAL_TITLES: Record<'pepe' | 'savings' | 'yield' | 'mzn', { title: string; subtitle: string }> = {
+    savings: { title: 'ZAR wallet', subtitle: 'South African business account' },
+    mzn: { title: 'MZN wallet', subtitle: 'Mozambique business account' },
+    pepe: { title: 'PEPE wallet', subtitle: 'PEPE investment account' },
+    yield: { title: 'ETH wallet', subtitle: 'ETH investment account' },
+  }
+
+  // Get title and subtitle based on mode and current top card
+  const getHeadings = () => {
+    if (mode === 'manual') {
+      return MANUAL_TITLES[topCardType]
+    }
+    // autonomous (existing behavior)
+    return {
+      title: 'Autonomous wallet',
+      subtitle: `R${formattedFunds.major}.${formattedFunds.cents} available`,
+    }
+  }
+
+  const { title, subtitle } = getHeadings()
+
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -122,12 +144,10 @@ export default function Home() {
               <div className="card-switch">
                 <div className="frame-parent">
                   <div className="wallet-header">
-                    <h1 className="wallet-title">Autonomous wallet</h1>
+                    <h1 className="wallet-title">{title}</h1>
                     <div className="help-icon">?</div>
                   </div>
-                  <p className="wallet-subtitle">
-                    R{formattedFunds.major}.{formattedFunds.cents} available
-                  </p>
+                  <p className="wallet-subtitle">{subtitle}</p>
                 </div>
 
                 {/* Card Stack */}
