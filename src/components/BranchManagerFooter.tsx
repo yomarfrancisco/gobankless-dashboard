@@ -15,18 +15,21 @@ export default function BranchManagerFooter({ onWhatsAppClick }: BranchManagerFo
       window.open('https://wa.me/27823306256', '_blank')
     }
   }
-  const handleWhatsAppClick = () => {
-    if (onWhatsAppClick) {
-      onWhatsAppClick()
-    } else {
-      // Fallback to direct WhatsApp if no handler provided
-      if (typeof window === 'undefined') return
-      window.open('https://wa.me/27823306256', '_blank')
-    }
-  }
 
   return (
-    <div className={styles.footer}>
+    <div
+      className={styles.footer}
+      role="button"
+      onClick={handleFooterClick}
+      aria-label="Talk to an agent"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleFooterClick()
+        }
+      }}
+    >
       <div className={styles.leftSection}>
         <div className={styles.avatarsWrapper}>
           <div className={`${styles.avatarContainer} ${styles.avatar1}`}>
@@ -71,12 +74,7 @@ export default function BranchManagerFooter({ onWhatsAppClick }: BranchManagerFo
           <span className={styles.label}>cash agents nearby</span>
         </div>
       </div>
-      <button
-        className={styles.whatsappButton}
-        onClick={handleWhatsAppClick}
-        aria-label="Contact via WhatsApp"
-        type="button"
-      >
+      <div className={styles.whatsappIconWrapper}>
         <Image
           src="/assets/WhatsApp_Balck.png"
           alt="WhatsApp"
@@ -84,7 +82,7 @@ export default function BranchManagerFooter({ onWhatsAppClick }: BranchManagerFo
           height={27}
           className={styles.whatsappIcon}
         />
-      </button>
+      </div>
     </div>
   )
 }
