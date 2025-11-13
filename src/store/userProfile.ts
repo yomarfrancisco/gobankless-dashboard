@@ -8,6 +8,8 @@ export interface UserProfile {
   userHandle: string // Always starts with @
   avatarUrl: string | null
   email?: string
+  instagramUrl?: string
+  linkedinUrl?: string
 }
 
 interface UserProfileState {
@@ -21,6 +23,8 @@ const defaultProfile: UserProfile = {
   userHandle: '@samakoyo',
   avatarUrl: null,
   email: 'samakoyo@example.com',
+  instagramUrl: undefined,
+  linkedinUrl: undefined,
 }
 
 export const useUserProfileStore = create<UserProfileState>()(

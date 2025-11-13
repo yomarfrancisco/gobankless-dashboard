@@ -8,6 +8,7 @@ import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useNameHandleSheet } from '@/store/useNameHandleSheet'
+import { useSocialLinksSheet } from '@/store/useSocialLinksSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { useWalletMode } from '@/state/walletMode'
 import { uploadAvatar, removeAvatar } from '@/lib/profile'
@@ -19,6 +20,7 @@ export default function ProfileEditSheet() {
   const router = useRouter()
   const { isOpen, close } = useProfileEditSheet()
   const { open: openNameHandle } = useNameHandleSheet()
+  const { open: openSocialLinks } = useSocialLinksSheet()
   const { profile, setProfile } = useUserProfileStore()
   const { setMode } = useWalletMode()
   const pushNotification = useNotificationStore((state) => state.pushNotification)
@@ -205,7 +207,7 @@ export default function ProfileEditSheet() {
 
   const handleSocialLinks = () => {
     close()
-    console.log('Edit social links')
+    openSocialLinks()
   }
 
   const handleLogout = () => {
@@ -346,7 +348,7 @@ export default function ProfileEditSheet() {
         <ActionSheetItem
           icon={<Share2 size={22} strokeWidth={2} style={{ color: '#111' }} />}
           title="Social Links"
-          caption="Add or update your Instagram, LinkedIn, and TikTok links"
+          caption="Add or update your email, Instagram or LinkedIn links"
           onClick={handleSocialLinks}
         />
         <ActionSheetItem
