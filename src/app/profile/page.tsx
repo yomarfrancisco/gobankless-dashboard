@@ -131,8 +131,7 @@ export default function ProfilePage() {
 
                 {/* Bio */}
                 <p className="profile-bio">
-                  A skilled entrepreneur experienced in manufacturing and construction across Africa.
-                  Let&rsquo;s do business, DMs are open.
+                  {profile.description || 'A skilled entrepreneur experienced in manufacturing and construction across Africa. Let\'s do business, DMs are open.'}
                 </p>
 
                 {/* Meta row */}
