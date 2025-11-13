@@ -254,6 +254,7 @@ export default function ProfilePage() {
 
               {/* Settings section */}
               <div className="profile-settings">
+                <h2 className="profile-settings-heading">Settings</h2>
                 <div className="profile-settings-card">
                   <button
                     className="profile-settings-row"
@@ -266,7 +267,7 @@ export default function ProfilePage() {
                       </div>
                       <span className="profile-settings-label">Linked cards</span>
                     </div>
-                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
                   </button>
                   <button
                     className="profile-settings-row"
@@ -279,7 +280,7 @@ export default function ProfilePage() {
                       </div>
                       <span className="profile-settings-label">Linked wallets</span>
                     </div>
-                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
                   </button>
                   <button
                     className="profile-settings-row"
@@ -292,7 +293,7 @@ export default function ProfilePage() {
                       </div>
                       <span className="profile-settings-label">Help and support</span>
                     </div>
-                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
                   </button>
                   <button
                     className="profile-settings-row"
@@ -305,7 +306,7 @@ export default function ProfilePage() {
                       </div>
                       <span className="profile-settings-label">Log out</span>
                     </div>
-                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
                   </button>
                 </div>
               </div>

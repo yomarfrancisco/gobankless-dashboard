@@ -806,8 +806,17 @@ body {
 
 /* Settings section */
 .profile-settings {
-  margin: 16px auto 0;
+  margin: 32px auto 0;
   width: 382px;
+}
+
+.profile-settings-heading {
+  font-weight: 300;
+  font-size: 15px;
+  opacity: 0.5;
+  color: #000;
+  margin: 0 0 12px 0;
+  text-align: center;
 }
 
 .profile-settings-card {
@@ -818,6 +827,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-top: 8px;
 }
 
 .profile-settings-row {
@@ -861,8 +871,8 @@ body {
 }
 
 .profile-settings-label {
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: 16px;
   line-height: 1.25;
   color: #000;
 }
