@@ -3,10 +3,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NextImage from 'next/image'
-import { UserCircle2, Share2, LogOut } from 'lucide-react'
+import { UserCircle2, Share2, LogOut, Trash2 } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
-import AvatarActionSheet from './AvatarActionSheet'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useNameHandleSheet } from '@/store/useNameHandleSheet'
 import { useUserProfileStore } from '@/store/userProfile'
@@ -25,58 +24,48 @@ export default function ProfileEditSheet() {
   const pushNotification = useNotificationStore((state) => state.pushNotification)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(profile.avatarUrl)
   const [isUploading, setIsUploading] = useState(false)
-  const [avatarSheetOpen, setAvatarSheetOpen] = useState(false)
-  const fileInputLibraryRef = useRef<HTMLInputElement>(null)
-  const fileInputCameraRef = useRef<HTMLInputElement>(null)
-  const fileInputFileRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Sync avatarUrl from store when profile changes
   useEffect(() => {
     setAvatarUrl(profile.avatarUrl)
   }, [profile.avatarUrl])
 
-  const handleProfilePicture = () => {
-    setAvatarSheetOpen(true)
+  // Derive hasCustomAvatar from avatarUrl
+  const hasCustomAvatar = avatarUrl !== null
+
+  const clearAvatar = async () => {
+    setIsUploading(true)
+    const previousAvatarUrl = avatarUrl
+
+    try {
+      await removeAvatar()
+      setAvatarUrl(null)
+      setProfile({ avatarUrl: null })
+    } catch (err) {
+      console.error('Failed to remove avatar:', err)
+      // Revert on error
+      setAvatarUrl(previousAvatarUrl)
+      pushNotification({
+        kind: 'payment_failed',
+        title: 'Remove failed',
+        body: 'Could not remove photo. Please try again.',
+        actor: { type: 'user' },
+      })
+    } finally {
+      setIsUploading(false)
+    }
   }
 
-  const handleAvatarAction = async (action: 'library' | 'camera' | 'file' | 'remove') => {
+  const handleAvatarRowPress = () => {
     if (typeof window === 'undefined') return
 
-    // Close sheet immediately
-    setAvatarSheetOpen(false)
-
-    if (action === 'remove') {
-      // Remove photo
-      setIsUploading(true)
-      const previousAvatarUrl = avatarUrl
-
-      try {
-        await removeAvatar()
-        setAvatarUrl(null)
-        setProfile({ avatarUrl: null })
-      } catch (err) {
-        console.error('Failed to remove avatar:', err)
-        // Revert on error
-        setAvatarUrl(previousAvatarUrl)
-        pushNotification({
-          kind: 'payment_failed',
-          title: 'Remove failed',
-          body: 'Could not remove photo. Please try again.',
-          actor: { type: 'user' },
-        })
-      } finally {
-        setIsUploading(false)
-      }
-      return
-    }
-
-    // Trigger the appropriate file input
-    if (action === 'library' && fileInputLibraryRef.current) {
-      fileInputLibraryRef.current.click()
-    } else if (action === 'camera' && fileInputCameraRef.current) {
-      fileInputCameraRef.current.click()
-    } else if (action === 'file' && fileInputFileRef.current) {
-      fileInputFileRef.current.click()
+    if (!hasCustomAvatar) {
+      // No custom avatar → open native file picker
+      fileInputRef.current?.click()
+    } else {
+      // Custom avatar exists → clear it
+      clearAvatar()
     }
   }
 
@@ -331,33 +320,21 @@ export default function ProfileEditSheet() {
           icon={<AvatarIcon />}
           title="Profile picture"
           caption="Update your photo"
-          onClick={handleProfilePicture}
+          onClick={handleAvatarRowPress}
           trailing={
-            <button
-              className={styles.addIconButton}
-              onClick={(e) => {
-                e.stopPropagation()
-                handleProfilePicture()
-              }}
-              aria-label="Change profile photo"
-              type="button"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className={styles.addIconSvg}
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 9.34784 20.9464 6.8043 19.0711 4.92893C17.1957 3.05357 14.6522 2 12 2ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 14.1217 19.1571 16.1566 17.6569 17.6569C16.1566 19.1571 14.1217 20 12 20ZM13 11H15.5C15.7761 11 16 11.2239 16 11.5V12.5C16 12.7761 15.7761 13 15.5 13H13V15.5C13 15.7761 12.7761 16 12.5 16H11.5C11.2239 16 11 15.7761 11 15.5V13H8.5C8.22386 13 8 12.7761 8 12.5V11.5C8 11.2239 8.22386 11 8.5 11H11V8.5C11 8.22386 11.2239 8 11.5 8H12.5C12.7761 8 13 8.22386 13 8.5V11Z"
-                  fill="currentColor"
+            <div className={styles.addIconButton} aria-label={hasCustomAvatar ? 'Remove profile photo' : 'Change profile photo'}>
+              {hasCustomAvatar ? (
+                <Trash2 size={24} className={styles.addIconSvg} style={{ color: '#121212' }} />
+              ) : (
+                <NextImage
+                  src="/assets/profile/add_circle_outlined.svg"
+                  alt="Add photo"
+                  width={24}
+                  height={24}
+                  className={styles.addIconSvg}
                 />
-              </svg>
-            </button>
+              )}
+            </div>
           }
         />
         <ActionSheetItem
@@ -380,31 +357,9 @@ export default function ProfileEditSheet() {
         />
       </ActionSheet>
 
-      {/* Avatar Action Sheet (inline, appears over Edit Profile) */}
-      <AvatarActionSheet
-        open={avatarSheetOpen}
-        onClose={() => setAvatarSheetOpen(false)}
-        onSelect={handleAvatarAction}
-      />
-
-      {/* Hidden file inputs for different actions */}
+      {/* Hidden file input */}
       <input
-        ref={fileInputLibraryRef}
-        type="file"
-        accept="image/*"
-        className={styles.fileInput}
-        onChange={handleFileChange}
-      />
-      <input
-        ref={fileInputCameraRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className={styles.fileInput}
-        onChange={handleFileChange}
-      />
-      <input
-        ref={fileInputFileRef}
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         className={styles.fileInput}
