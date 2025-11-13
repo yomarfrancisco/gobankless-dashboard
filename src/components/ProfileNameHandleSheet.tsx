@@ -4,17 +4,11 @@ import { useState, useEffect, useRef } from 'react'
 import ActionSheet from './ActionSheet'
 import Image from 'next/image'
 import { useUserProfileStore } from '@/store/userProfile'
+import { useNameHandleSheet } from '@/store/useNameHandleSheet'
 import '@/styles/send-details-sheet.css'
 
-type ProfileNameHandleSheetProps = {
-  open: boolean
-  onClose: () => void
-}
-
-export default function ProfileNameHandleSheet({
-  open,
-  onClose,
-}: ProfileNameHandleSheetProps) {
+export default function ProfileNameHandleSheet() {
+  const { isOpen, close } = useNameHandleSheet()
   const { profile, setProfile } = useUserProfileStore()
   const [fullName, setFullName] = useState(profile.fullName)
   const [userHandle, setUserHandle] = useState(profile.userHandle)
@@ -25,16 +19,16 @@ export default function ProfileNameHandleSheet({
 
   // Initialize from store when sheet opens
   useEffect(() => {
-    if (isOpen) {
-      setFullName(profile.fullName)
-      setUserHandle(profile.userHandle)
-      setFullNameError('')
-      setHandleError('')
-      // Focus first field after a brief delay
-      setTimeout(() => {
-        fullNameRef.current?.focus()
-      }, 100)
-    }
+    if (!isOpen) return
+
+    setFullName(profile.fullName)
+    setUserHandle(profile.userHandle)
+    setFullNameError('')
+    setHandleError('')
+    // Focus first field after a brief delay
+    setTimeout(() => {
+      fullNameRef.current?.focus()
+    }, 100)
   }, [isOpen, profile.fullName, profile.userHandle])
 
   const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
