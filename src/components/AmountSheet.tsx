@@ -106,7 +106,7 @@ export default function AmountSheet({
   const displayAmount = amount === '0' ? '0' : amount.replace(/^0+(?=\d)/, '')
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="" className="amount">
+    <ActionSheet open={open} onClose={onClose} title="" className="amount" size="tall">
       <div className="amount-sheet amount-sheet-wrapper">
         <div className="amount-sheet__header" style={{ height: 'var(--hdr-h, 118px)' }}>
           <div className="amount-sheet__balance">

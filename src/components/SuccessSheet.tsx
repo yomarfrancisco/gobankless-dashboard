@@ -108,7 +108,7 @@ export default function SuccessSheet({
   }, [open, kind, recipient, amountZAR, flowType, pushNotification])
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="" className="send-success">
+    <ActionSheet open={open} onClose={onClose} title="" className="send-success" size="tall">
       <div className="success-sheet" role="dialog" aria-labelledby="success-title">
         <div className="success-header">
           <img

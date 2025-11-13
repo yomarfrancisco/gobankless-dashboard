@@ -36,7 +36,7 @@ export default function BankTransferDetailsSheet({
   }
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="" className="bank-transfer-details">
+    <ActionSheet open={open} onClose={onClose} title="" className="bank-transfer-details" size="tall">
       <div className="bank-transfer-details-sheet">
         <div className="bank-transfer-content">
           <div className="bank-transfer-reference-pill">

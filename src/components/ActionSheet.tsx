@@ -5,15 +5,18 @@ import ReactDOM from 'react-dom'
 import Image from 'next/image'
 import '@/styles/action-sheet.css'
 
+type SheetSize = 'compact' | 'tall'
+
 type Props = {
   open: boolean
   title: string
   onClose: () => void
   children: React.ReactNode
   className?: string
+  size?: SheetSize // default 'compact'
 }
 
-export default function ActionSheet({ open, title, onClose, children, className }: Props) {
+export default function ActionSheet({ open, title, onClose, children, className, size = 'compact' }: Props) {
   const sheetRef = useRef<HTMLDivElement>(null)
 
   // lock background scroll while open
@@ -44,7 +47,7 @@ export default function ActionSheet({ open, title, onClose, children, className 
   return ReactDOM.createPortal(
     <div className="as-root" aria-modal="true" role="dialog">
       <button className="as-overlay" aria-label="Close" onClick={onClose} />
-      <div className={`as-sheet ${className || ''}`} ref={sheetRef}>
+      <div className={`as-sheet as-sheet-${size} ${className || ''}`} ref={sheetRef}>
         <div className="as-header">
           <h3 className="as-title">{title}</h3>
           <button className="as-close" onClick={onClose} aria-label="Close">
