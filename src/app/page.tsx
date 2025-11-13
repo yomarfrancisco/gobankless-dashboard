@@ -18,6 +18,7 @@ import { formatZAR } from '@/lib/formatCurrency'
 import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
 import ConvertCashSection from '@/components/ConvertCashSection'
 import BranchManagerFooter from '@/components/BranchManagerFooter'
+import AgentListSheet from '@/components/AgentListSheet'
 import { useWalletMode } from '@/state/walletMode'
 
 export default function Home() {
@@ -39,6 +40,7 @@ export default function Home() {
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
   const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
   const [depositAmountZAR, setDepositAmountZAR] = useState(0)
+  const [isAgentSheetOpen, setIsAgentSheetOpen] = useState(false)
 
   // Register onSelect handler for global Transact sheet
   useEffect(() => {
@@ -180,7 +182,7 @@ export default function Home() {
               {/* Convert cash to crypto section */}
               <div className="convertCashSpacing">
                 <ConvertCashSection />
-                <BranchManagerFooter />
+                <BranchManagerFooter onWhatsAppClick={() => setIsAgentSheetOpen(true)} />
               </div>
 
             </div>

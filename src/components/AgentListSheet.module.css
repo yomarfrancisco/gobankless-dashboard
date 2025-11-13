@@ -1,0 +1,169 @@
+.content {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Fee row */
+.feeRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  margin-top: 8px;
+}
+
+.feeInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.feeDot {
+  color: #34c759;
+  font-size: 8px;
+  line-height: 1;
+}
+
+.feeText {
+  font-size: 13px;
+  font-weight: 400;
+  color: #000;
+  letter-spacing: -0.09px;
+}
+
+.depositTime {
+  font-size: 13px;
+  font-weight: 400;
+  color: #007aff;
+  letter-spacing: -0.09px;
+}
+
+/* Agent grid */
+.agentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 0 24px 24px;
+}
+
+.agentCard {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.agentCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.agentCard:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.agentAvatar {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #f5f5f5;
+  position: relative;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.agentInfo {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.usernameRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  line-height: 1.25;
+}
+
+.verifiedBadge {
+  flex-shrink: 0;
+}
+
+.insuredRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.insuredText {
+  font-size: 13px;
+  font-weight: 400;
+  color: #666;
+  letter-spacing: -0.09px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: #e5e5e5;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #34c759;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.ratingRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.ratingValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #000;
+  letter-spacing: -0.09px;
+}
+
+.starIcon {
+  flex-shrink: 0;
+}
+
+.reviewCount {
+  font-size: 13px;
+  font-weight: 400;
+  color: #666;
+  letter-spacing: -0.09px;
+}
+

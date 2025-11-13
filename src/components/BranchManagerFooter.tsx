@@ -3,10 +3,19 @@
 import Image from 'next/image'
 import styles from './BranchManagerFooter.module.css'
 
-export default function BranchManagerFooter() {
+type BranchManagerFooterProps = {
+  onWhatsAppClick?: () => void
+}
+
+export default function BranchManagerFooter({ onWhatsAppClick }: BranchManagerFooterProps) {
   const handleWhatsAppClick = () => {
-    if (typeof window === 'undefined') return
-    window.open('https://wa.me/27823306256', '_blank')
+    if (onWhatsAppClick) {
+      onWhatsAppClick()
+    } else {
+      // Fallback to direct WhatsApp if no handler provided
+      if (typeof window === 'undefined') return
+      window.open('https://wa.me/27823306256', '_blank')
+    }
   }
 
   return (
