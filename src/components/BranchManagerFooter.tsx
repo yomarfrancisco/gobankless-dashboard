@@ -8,6 +8,13 @@ type BranchManagerFooterProps = {
 }
 
 export default function BranchManagerFooter({ onWhatsAppClick }: BranchManagerFooterProps) {
+  const handleFooterClick = () => {
+    if (onWhatsAppClick) {
+      onWhatsAppClick()
+    } else if (typeof window !== 'undefined') {
+      window.open('https://wa.me/27823306256', '_blank')
+    }
+  }
   const handleWhatsAppClick = () => {
     if (onWhatsAppClick) {
       onWhatsAppClick()
