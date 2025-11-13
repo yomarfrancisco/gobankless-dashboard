@@ -60,7 +60,7 @@ type AgentListSheetProps = {
 
 export default function AgentListSheet({ open, onClose }: AgentListSheetProps) {
   return (
-    <ActionSheet open={open} onClose={onClose} title="Select an agent nearby" size="tall">
+    <ActionSheet open={open} onClose={onClose} title="Select an agent nearby" size="tall" className={styles.agentListSheet}>
       <div className={styles.content}>
         {/* Fee row */}
         <div className={styles.feeRow}>
