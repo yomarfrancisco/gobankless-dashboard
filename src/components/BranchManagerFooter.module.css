@@ -23,16 +23,44 @@
   align-items: center;
 }
 
-.avatar {
-  width: 24px;
-  height: 24px;
+.avatarContainer {
+  width: 28px;
+  height: 28px;
   border-radius: 9999px;
-  object-fit: cover;
-  margin-left: -4px; /* Overlap avatars */
+  border: 2.5px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -6px; /* Overlap avatars with borders */
+  overflow: hidden;
+  background: #fff;
 }
 
-.avatar:first-child {
+.avatarContainer:first-child {
   margin-left: 0;
+}
+
+.avatar1 {
+  opacity: 1;
+}
+
+.avatar2 {
+  opacity: 0.9;
+}
+
+.avatar3 {
+  opacity: 0.8;
+}
+
+.avatar4 {
+  opacity: 0.7;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  object-fit: cover;
 }
 
 .textContainer {
@@ -79,8 +107,8 @@
 }
 
 .whatsappIcon {
-  width: 24px;
-  height: 24px;
+  width: 27px;
+  height: 27px;
   object-fit: contain;
 }
 

@@ -13,38 +13,46 @@ export default function BranchManagerFooter() {
     <div className={styles.footer}>
       <div className={styles.leftSection}>
         <div className={styles.avatarsWrapper}>
-          <Image
-            src="/assets/avatar_agent1.png"
-            alt="Agent 1"
-            width={24}
-            height={24}
-            className={styles.avatar}
-          />
-          <Image
-            src="/assets/avatar_agent2.png"
-            alt="Agent 2"
-            width={24}
-            height={24}
-            className={styles.avatar}
-          />
-          <Image
-            src="/assets/avatar_agent3.png"
-            alt="Agent 3"
-            width={24}
-            height={24}
-            className={styles.avatar}
-          />
-          <Image
-            src="/assets/avatar_agent4.png"
-            alt="Agent 4"
-            width={24}
-            height={24}
-            className={styles.avatar}
-          />
+          <div className={`${styles.avatarContainer} ${styles.avatar1}`}>
+            <Image
+              src="/assets/avatar_agent1.png"
+              alt="Agent 1"
+              width={28}
+              height={28}
+              className={styles.avatar}
+            />
+          </div>
+          <div className={`${styles.avatarContainer} ${styles.avatar2}`}>
+            <Image
+              src="/assets/avatar_agent2.png"
+              alt="Agent 2"
+              width={28}
+              height={28}
+              className={styles.avatar}
+            />
+          </div>
+          <div className={`${styles.avatarContainer} ${styles.avatar3}`}>
+            <Image
+              src="/assets/avatar_agent3.png"
+              alt="Agent 3"
+              width={28}
+              height={28}
+              className={styles.avatar}
+            />
+          </div>
+          <div className={`${styles.avatarContainer} ${styles.avatar4}`}>
+            <Image
+              src="/assets/avatar_agent4.png"
+              alt="Agent 4"
+              width={28}
+              height={28}
+              className={styles.avatar}
+            />
+          </div>
         </div>
         <div className={styles.textContainer}>
-          <span className={styles.count}>39</span>
-          <span className={styles.label}>dealers within 5km</span>
+          <span className={styles.count}>4</span>
+          <span className={styles.label}>cash agents nearby</span>
         </div>
       </div>
       <button
@@ -56,8 +64,8 @@ export default function BranchManagerFooter() {
         <Image
           src="/assets/WhatsApp_Balck.png"
           alt="WhatsApp"
-          width={24}
-          height={24}
+          width={27}
+          height={27}
           className={styles.whatsappIcon}
         />
       </button>
