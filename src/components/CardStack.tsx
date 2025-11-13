@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
 import type React from 'react'
 import type { StaticImageData } from 'next/image'
-import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
 import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
 import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
 import { FLIP_MS } from '@/lib/animations/useAiActionCycle'
@@ -53,7 +52,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'yield',
-    image: gobCardImage,
+    image: '/assets/cards/card-ETH.jpg',
     alt: 'Yield Card',
     width: 310,
     height: 193,
