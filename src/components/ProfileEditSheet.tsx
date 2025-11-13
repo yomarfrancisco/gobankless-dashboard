@@ -1,32 +1,35 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import NextImage from 'next/image'
 import { UserCircle2, Share2, LogOut } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
+import { useNameHandleSheet } from '@/store/useNameHandleSheet'
+import { useUserProfileStore } from '@/store/userProfile'
+import { useWalletMode } from '@/state/walletMode'
 import { uploadAvatar } from '@/lib/profile'
 import { resizeImage } from '@/lib/imageResize'
 import { useNotificationStore } from '@/store/notifications'
 import styles from './ProfileEditSheet.module.css'
 
-// Temporary profile data - will use store when available
-const defaultProfile = {
-  fullName: 'Samuel Akoyo',
-  email: 'samakoyo@example.com',
-  handle: '$samakoyo',
-  avatarUrl: null as string | null,
-}
-
 export default function ProfileEditSheet() {
+  const router = useRouter()
   const { isOpen, close } = useProfileEditSheet()
+  const { open: openNameHandle } = useNameHandleSheet()
+  const { profile, setProfile } = useUserProfileStore()
+  const { setMode } = useWalletMode()
   const pushNotification = useNotificationStore((state) => state.pushNotification)
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(defaultProfile.avatarUrl)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(profile.avatarUrl)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  // TODO: Use useUserProfileStore when available
-  const profile = { ...defaultProfile, avatarUrl }
+
+  // Sync avatarUrl from store when profile changes
+  useEffect(() => {
+    setAvatarUrl(profile.avatarUrl)
+  }, [profile.avatarUrl])
 
   const handleProfilePicture = () => {
     if (typeof window === 'undefined') return
@@ -144,8 +147,8 @@ export default function ProfileEditSheet() {
       URL.revokeObjectURL(previewUrl)
       setAvatarUrl(url)
 
-      // TODO: Update profile store
-      // updateProfile({ avatarUrl: url })
+      // Update profile store
+      setProfile({ avatarUrl: url })
 
       // No success notification - avatar updates immediately (optimistic UI)
     } catch (err) {
@@ -166,7 +169,7 @@ export default function ProfileEditSheet() {
 
   const handleNameHandle = () => {
     close()
-    console.log('Edit name/handle')
+    openNameHandle()
   }
 
   const handleSocialLinks = () => {
@@ -176,13 +179,29 @@ export default function ProfileEditSheet() {
 
   const handleLogout = () => {
     close()
-    console.log('Logout')
+
+    // Clear session/splash flag so intro shows again
+    try {
+      sessionStorage.removeItem('gob_splash_shown')
+    } catch {
+      // Ignore sessionStorage errors
+    }
+
+    // Reset wallet mode to Manual
+    setMode('manual')
+
+    // Clear profile state (optional - depends on requirements)
+    // For now, we'll keep profile data but could reset if needed
+    // useUserProfileStore.getState().reset()
+
+    // Navigate to home
+    router.push('/')
   }
 
   // Avatar icon component for Profile Picture tile
   const AvatarIcon = () => {
     const showDefault = !avatarUrl
-    const initial = getInitial(profile.fullName, profile.email, profile.handle)
+    const initial = getInitial(profile.fullName, profile.email, profile.userHandle)
 
     return (
       <div
@@ -259,7 +278,7 @@ export default function ProfileEditSheet() {
   }
 
   function getInitial(fullName?: string, email?: string, handle?: string): string {
-    const initial = fullName?.[0] || email?.[0] || handle?.replace('$', '')[0] || '?'
+    const initial = fullName?.[0] || email?.[0] || handle?.replace(/^[@$]/, '')[0] || '?'
     return initial.toUpperCase()
   }
 

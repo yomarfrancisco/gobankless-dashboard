@@ -15,6 +15,7 @@ import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useTransactSheet } from '@/store/useTransactSheet'
+import { useUserProfileStore } from '@/store/userProfile'
 import Avatar from '@/components/Avatar'
 
 export default function ProfilePage() {
@@ -22,6 +23,7 @@ export default function ProfilePage() {
   const activityCount = useActivityStore((s) => s.items.length)
   const { open: openProfileEdit } = useProfileEditSheet()
   const { setOnSelect, open } = useTransactSheet()
+  const { profile } = useUserProfileStore()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -109,13 +111,15 @@ export default function ProfilePage() {
               {/* Avatar + name + handle */}
               <div className="profile-header">
                 <Avatar
-                  name="Samuel Akoyo"
+                  name={profile.fullName}
+                  email={profile.email}
+                  avatarUrl={profile.avatarUrl}
                   size={96}
                   rounded={24}
                   className="profile-avatar"
                 />
-                <h1 className="profile-name">Samuel Akoyo</h1>
-                <div className="profile-handle">$samakoyo</div>
+                <h1 className="profile-name">{profile.fullName}</h1>
+                <div className="profile-handle">{profile.userHandle}</div>
 
                 {/* Autonomous mode toggle */}
                 <div style={{ marginTop: 8, marginBottom: 12, display: 'flex', justifyContent: 'center' }}>

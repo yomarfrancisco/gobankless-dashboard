@@ -10,6 +10,7 @@ import SplashOnceProvider from '@/providers/SplashOnceProvider'
 import TransactionSheet from '@/components/TransactionSheet'
 import ProfileEditSheet from '@/components/ProfileEditSheet'
 import AvatarEditSheet from '@/components/AvatarEditSheet'
+import ProfileNameHandleSheet from '@/components/ProfileNameHandleSheet'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -60,6 +61,8 @@ export default function RootLayout({
               <ProfileEditSheet />
               {/* Global Avatar Edit Sheet */}
               <AvatarEditSheet />
+              {/* Global Name & Handle Sheet */}
+              <ProfileNameHandleSheet />
             </WalletAllocProvider>
           </WalletModeProvider>
         </SplashOnceProvider>
