@@ -5,7 +5,6 @@ import NextImage from 'next/image'
 import { UserCircle2, Share2, LogOut } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
-import AvatarActionSheet from './AvatarActionSheet'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { uploadAvatar } from '@/lib/profile'
 import { resizeImage } from '@/lib/imageResize'
@@ -23,32 +22,16 @@ const defaultProfile = {
 export default function ProfileEditSheet() {
   const { isOpen, close } = useProfileEditSheet()
   const pushNotification = useNotificationStore((state) => state.pushNotification)
-  const [avatarSheetOpen, setAvatarSheetOpen] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(defaultProfile.avatarUrl)
   const [isUploading, setIsUploading] = useState(false)
-  const fileInputLibraryRef = useRef<HTMLInputElement>(null)
-  const fileInputCameraRef = useRef<HTMLInputElement>(null)
-  const fileInputFileRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   // TODO: Use useUserProfileStore when available
   const profile = { ...defaultProfile, avatarUrl }
 
   const handleProfilePicture = () => {
-    setAvatarSheetOpen(true)
-  }
-
-  const handleAvatarAction = async (action: 'library' | 'camera' | 'file') => {
     if (typeof window === 'undefined') return
-
-    // Close sheet immediately
-    setAvatarSheetOpen(false)
-
-    // Trigger the appropriate file input
-    if (action === 'library' && fileInputLibraryRef.current) {
-      fileInputLibraryRef.current.click()
-    } else if (action === 'camera' && fileInputCameraRef.current) {
-      fileInputCameraRef.current.click()
-    } else if (action === 'file' && fileInputFileRef.current) {
-      fileInputFileRef.current.click()
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
     }
   }
 
@@ -164,12 +147,7 @@ export default function ProfileEditSheet() {
       // TODO: Update profile store
       // updateProfile({ avatarUrl: url })
 
-      pushNotification({
-        kind: 'payment_sent',
-        title: 'Profile photo updated',
-        body: 'Your profile picture has been updated successfully.',
-        actor: { type: 'user' },
-      })
+      // No success notification - avatar updates immediately (optimistic UI)
     } catch (err) {
       console.error('Failed to upload avatar:', err)
       // Revert to previous avatar on error
@@ -341,38 +319,13 @@ export default function ProfileEditSheet() {
         />
       </ActionSheet>
 
-      {/* Avatar Action Sheet (opens on top of Edit Profile) */}
-      <AvatarActionSheet
-        open={avatarSheetOpen}
-        onClose={() => setAvatarSheetOpen(false)}
-        onSelect={handleAvatarAction}
-      />
-
-      {/* Hidden file inputs for different actions */}
+      {/* Hidden file input */}
       <input
-        ref={fileInputLibraryRef}
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         className={styles.fileInput}
         onChange={handleFileChange}
-        data-mode="library"
-      />
-      <input
-        ref={fileInputCameraRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className={styles.fileInput}
-        onChange={handleFileChange}
-        data-mode="camera"
-      />
-      <input
-        ref={fileInputFileRef}
-        type="file"
-        accept="image/*"
-        className={styles.fileInput}
-        onChange={handleFileChange}
-        data-mode="file"
       />
     </>
   )
