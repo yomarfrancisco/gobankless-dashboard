@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import ActionSheet from './ActionSheet'
-import ActionSheetItem from './ActionSheetItem'
 import styles from './AgentListSheet.module.css'
 
 type Agent = {
