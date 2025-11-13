@@ -2,196 +2,70 @@
   text-align: center !important;
 }
 
-.agentListSheet :global(.as-header) {
-  padding-bottom: 8px;
-}
-
 .content {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
-/* Fee row */
-.feeRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px 24px 16px;
-  margin-top: 4px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.feeInfo {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.feeDot {
-  color: #34c759;
-  font-size: 8px;
-  line-height: 1;
-}
-
-.feeText {
+.subtitle {
   font-size: 13px;
-  font-weight: 400;
-  color: #000;
-  letter-spacing: -0.09px;
-}
-
-.depositTime {
-  font-size: 13px;
-  font-weight: 400;
-  color: #007aff;
-  letter-spacing: -0.09px;
-}
-
-/* Agent grid */
-.agentGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px 16px;
-  row-gap: 24px;
-  padding: 24px 24px 24px;
-  margin-top: 8px;
-}
-
-.agentCard {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 0;
-  padding: 0;
-  text-align: center;
-  position: relative;
-}
-
-.agentCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.agentCard:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.agentAvatar {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 0;
-  margin-top: -16px;
-  position: relative;
-  z-index: 2;
-}
-
-.avatarImage {
-  width: 70%;
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.agentInfo {
-  padding: 16px 12px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-}
-
-.usernameRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.username {
-  font-size: 16px;
-  font-weight: 500;
-  color: #000;
-  line-height: 1.25;
-}
-
-.verifiedBadge {
-  flex-shrink: 0;
-}
-
-.insuredRow {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: center;
-  width: 100%;
-}
-
-.insuredText {
-  font-size: 13px;
-  font-weight: 400;
+  font-weight: 300;
   color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin: 0 24px 16px;
   letter-spacing: -0.09px;
+  line-height: 1.35;
 }
 
-.progressBar {
-  width: 100%;
-  max-width: 80px;
-  height: 4px;
-  background: #e5e5e5;
-  border-radius: 2px;
+.divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 24px 8px;
+}
+
+.avatarWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 34px;
+  background: #E9E9EB;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
   overflow: hidden;
 }
 
-.progressFill {
-  height: 100%;
-  background: #34c759;
-  border-radius: 2px;
-  transition: width 0.3s ease;
+.avatar {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 34px;
 }
 
-.ratingRow {
+.whatsappButton {
+  width: 32px;
+  height: 32px;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-}
-
-.ratingValue {
-  font-size: 13px;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.5);
-  letter-spacing: -0.09px;
-}
-
-.starIcon {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
   flex-shrink: 0;
+}
+
+.whatsappButton:hover {
+  opacity: 0.7;
+}
+
+.whatsappButton:active {
   opacity: 0.5;
 }
 
-.reviewCount {
-  font-size: 13px;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.5);
-  letter-spacing: -0.09px;
+.whatsappIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
-
