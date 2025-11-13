@@ -41,7 +41,7 @@ export default function SupportSheet() {
       <ActionSheetItem
         icon={
           <Image
-            src="/assets/WhatsApp_Green.png"
+            src="/assets/WhatsApp_Balck.png"
             alt="WhatsApp"
             width={22}
             height={22}
