@@ -17,8 +17,8 @@ export default function BranchManagerFooter() {
             <Image
               src="/assets/avatar_agent1.png"
               alt="Agent 1"
-              width={28}
-              height={28}
+              width={31}
+              height={31}
               className={styles.avatar}
             />
           </div>
@@ -26,8 +26,8 @@ export default function BranchManagerFooter() {
             <Image
               src="/assets/avatar_agent2.png"
               alt="Agent 2"
-              width={28}
-              height={28}
+              width={31}
+              height={31}
               className={styles.avatar}
             />
           </div>
@@ -35,8 +35,8 @@ export default function BranchManagerFooter() {
             <Image
               src="/assets/avatar_agent3.png"
               alt="Agent 3"
-              width={28}
-              height={28}
+              width={31}
+              height={31}
               className={styles.avatar}
             />
           </div>
@@ -44,8 +44,8 @@ export default function BranchManagerFooter() {
             <Image
               src="/assets/avatar_agent4.png"
               alt="Agent 4"
-              width={28}
-              height={28}
+              width={31}
+              height={31}
               className={styles.avatar}
             />
           </div>
