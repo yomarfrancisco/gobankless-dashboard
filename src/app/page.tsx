@@ -281,6 +281,10 @@ export default function Home() {
         open={openBankTransferDetails}
         onClose={closeBankTransferDetails}
       />
+      <AgentListSheet
+        open={isAgentSheetOpen}
+        onClose={() => setIsAgentSheetOpen(false)}
+      />
     </div>
   )
 }
