@@ -17,6 +17,7 @@ import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
 import { formatZAR } from '@/lib/formatCurrency'
 import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
 import ConvertCashSection from '@/components/ConvertCashSection'
+import BranchManagerFooter from '@/components/BranchManagerFooter'
 import { useWalletMode } from '@/state/walletMode'
 
 export default function Home() {
@@ -179,6 +180,7 @@ export default function Home() {
               {/* Convert cash to crypto section */}
               <div className="convertCashSpacing">
                 <ConvertCashSection />
+                <BranchManagerFooter />
               </div>
 
             </div>
