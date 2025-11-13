@@ -89,6 +89,7 @@ export default function AgentListSheet({ open, onClose }: AgentListSheetProps) {
                   width={120}
                   height={120}
                   className={styles.avatarImage}
+                  style={{ aspectRatio: '1 / 1' }}
                 />
               </div>
               <div className={styles.agentInfo}>

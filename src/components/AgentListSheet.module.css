@@ -101,6 +101,7 @@
 
 .avatarImage {
   width: 70%;
+  height: auto;
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 32px;
