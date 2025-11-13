@@ -3,12 +3,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NextImage from 'next/image'
-import { UserCircle2, Share2, LogOut, Trash2 } from 'lucide-react'
+import { UserCircle2, Share2, UserPen, Trash2 } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useNameHandleSheet } from '@/store/useNameHandleSheet'
 import { useSocialLinksSheet } from '@/store/useSocialLinksSheet'
+import { useProfileDescriptionSheet } from '@/store/useProfileDescriptionSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { useWalletMode } from '@/state/walletMode'
 import { uploadAvatar, removeAvatar } from '@/lib/profile'
@@ -21,6 +22,7 @@ export default function ProfileEditSheet() {
   const { isOpen, close } = useProfileEditSheet()
   const { open: openNameHandle } = useNameHandleSheet()
   const { open: openSocialLinks } = useSocialLinksSheet()
+  const { open: openProfileDescription } = useProfileDescriptionSheet()
   const { profile, setProfile } = useUserProfileStore()
   const { setMode } = useWalletMode()
   const pushNotification = useNotificationStore((state) => state.pushNotification)
@@ -210,25 +212,9 @@ export default function ProfileEditSheet() {
     openSocialLinks()
   }
 
-  const handleLogout = () => {
+  const handleProfileDescription = () => {
     close()
-
-    // Clear session/splash flag so intro shows again
-    try {
-      sessionStorage.removeItem('gob_splash_shown')
-    } catch {
-      // Ignore sessionStorage errors
-    }
-
-    // Reset wallet mode to Manual
-    setMode('manual')
-
-    // Clear profile state (optional - depends on requirements)
-    // For now, we'll keep profile data but could reset if needed
-    // useUserProfileStore.getState().reset()
-
-    // Navigate to home
-    router.push('/')
+    openProfileDescription()
   }
 
   // Avatar icon component for Profile Picture tile
@@ -352,10 +338,10 @@ export default function ProfileEditSheet() {
           onClick={handleSocialLinks}
         />
         <ActionSheetItem
-          icon={<LogOut size={22} strokeWidth={2} style={{ color: '#111' }} />}
-          title="Log Out"
-          caption="Sign out of your account securely"
-          onClick={handleLogout}
+          icon={<UserPen size={22} strokeWidth={2} style={{ color: '#111' }} />}
+          title="Profile Description"
+          caption="Add a short bio to help others know who they're transacting with."
+          onClick={handleProfileDescription}
         />
       </ActionSheet>
 

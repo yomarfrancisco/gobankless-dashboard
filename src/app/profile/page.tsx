@@ -16,6 +16,7 @@ import { useActivityStore } from '@/store/activity'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import { useUserProfileStore } from '@/store/userProfile'
+import { useWalletMode } from '@/state/walletMode'
 import { CreditCard, WalletCards, Phone, LogOut } from 'lucide-react'
 import Avatar from '@/components/Avatar'
 
@@ -25,6 +26,7 @@ export default function ProfilePage() {
   const { open: openProfileEdit } = useProfileEditSheet()
   const { setOnSelect, open } = useTransactSheet()
   const { profile } = useUserProfileStore()
+  const { setMode } = useWalletMode()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -297,7 +299,24 @@ export default function ProfilePage() {
                   </button>
                   <button
                     className="profile-settings-row"
-                    onClick={() => console.log('Log out')}
+                    onClick={() => {
+                      // Clear session/splash flag so intro shows again
+                      try {
+                        sessionStorage.removeItem('gob_splash_shown')
+                      } catch {
+                        // Ignore sessionStorage errors
+                      }
+
+                      // Reset wallet mode to Manual
+                      setMode('manual')
+
+                      // Clear profile state (optional - depends on requirements)
+                      // For now, we'll keep profile data but could reset if needed
+                      // useUserProfileStore.getState().reset()
+
+                      // Navigate to home
+                      router.push('/')
+                    }}
                     type="button"
                   >
                     <div className="profile-settings-left">

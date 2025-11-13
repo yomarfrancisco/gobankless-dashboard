@@ -10,6 +10,7 @@ export interface UserProfile {
   email?: string
   instagramUrl?: string
   linkedinUrl?: string
+  description?: string
 }
 
 interface UserProfileState {
@@ -25,6 +26,7 @@ const defaultProfile: UserProfile = {
   email: 'samakoyo@example.com',
   instagramUrl: undefined,
   linkedinUrl: undefined,
+  description: undefined,
 }
 
 export const useUserProfileStore = create<UserProfileState>()(

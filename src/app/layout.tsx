@@ -12,6 +12,7 @@ import ProfileEditSheet from '@/components/ProfileEditSheet'
 import AvatarEditSheet from '@/components/AvatarEditSheet'
 import ProfileNameHandleSheet from '@/components/ProfileNameHandleSheet'
 import SocialLinksSheet from '@/components/SocialLinksSheet'
+import ProfileDescriptionSheet from '@/components/ProfileDescriptionSheet'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -66,6 +67,8 @@ export default function RootLayout({
               <ProfileNameHandleSheet />
               {/* Global Social Links Sheet */}
               <SocialLinksSheet />
+              {/* Global Profile Description Sheet */}
+              <ProfileDescriptionSheet />
             </WalletAllocProvider>
           </WalletModeProvider>
         </SplashOnceProvider>
