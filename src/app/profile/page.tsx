@@ -17,6 +17,7 @@ import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { useWalletMode } from '@/state/walletMode'
+import { useSupportSheet } from '@/store/useSupportSheet'
 import { CreditCard, WalletCards, Phone, LogOut } from 'lucide-react'
 import Avatar from '@/components/Avatar'
 
@@ -27,6 +28,7 @@ export default function ProfilePage() {
   const { setOnSelect, open } = useTransactSheet()
   const { profile } = useUserProfileStore()
   const { setMode } = useWalletMode()
+  const { open: openSupport } = useSupportSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -285,7 +287,7 @@ export default function ProfilePage() {
                   </button>
                   <button
                     className="profile-settings-row"
-                    onClick={() => console.log('Help and support')}
+                    onClick={openSupport}
                     type="button"
                   >
                     <div className="profile-settings-left">
