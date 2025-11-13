@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import NextImage from 'next/image'
 import { UserCircle2, Share2, UserPen, Trash2 } from 'lucide-react'
 import ActionSheet from './ActionSheet'
@@ -11,20 +10,17 @@ import { useNameHandleSheet } from '@/store/useNameHandleSheet'
 import { useSocialLinksSheet } from '@/store/useSocialLinksSheet'
 import { useProfileDescriptionSheet } from '@/store/useProfileDescriptionSheet'
 import { useUserProfileStore } from '@/store/userProfile'
-import { useWalletMode } from '@/state/walletMode'
 import { uploadAvatar, removeAvatar } from '@/lib/profile'
 import { resizeImage } from '@/lib/imageResize'
 import { useNotificationStore } from '@/store/notifications'
 import styles from './ProfileEditSheet.module.css'
 
 export default function ProfileEditSheet() {
-  const router = useRouter()
   const { isOpen, close } = useProfileEditSheet()
   const { open: openNameHandle } = useNameHandleSheet()
   const { open: openSocialLinks } = useSocialLinksSheet()
   const { open: openProfileDescription } = useProfileDescriptionSheet()
   const { profile, setProfile } = useUserProfileStore()
-  const { setMode } = useWalletMode()
   const pushNotification = useNotificationStore((state) => state.pushNotification)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(profile.avatarUrl)
   const [isUploading, setIsUploading] = useState(false)
