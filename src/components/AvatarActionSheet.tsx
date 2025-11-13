@@ -2,12 +2,12 @@
 
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
-import { Image as ImageIcon, Camera, FileText } from 'lucide-react'
+import { Image as ImageIcon, Camera, FileText, Trash2 } from 'lucide-react'
 
 type AvatarActionSheetProps = {
   open: boolean
   onClose: () => void
-  onSelect: (action: 'library' | 'camera' | 'file') => void
+  onSelect: (action: 'library' | 'camera' | 'file' | 'remove') => void
 }
 
 export default function AvatarActionSheet({
@@ -15,7 +15,7 @@ export default function AvatarActionSheet({
   onClose,
   onSelect,
 }: AvatarActionSheetProps) {
-  const handleSelect = (action: 'library' | 'camera' | 'file') => {
+  const handleSelect = (action: 'library' | 'camera' | 'file' | 'remove') => {
     onSelect(action)
     onClose()
   }
@@ -36,6 +36,11 @@ export default function AvatarActionSheet({
         icon={<FileText size={22} strokeWidth={2} style={{ color: '#111' }} />}
         title="Choose File"
         onClick={() => handleSelect('file')}
+      />
+      <ActionSheetItem
+        icon={<Trash2 size={22} strokeWidth={2} style={{ color: '#111' }} />}
+        title="Remove Photo"
+        onClick={() => handleSelect('remove')}
       />
       <ActionSheetItem
         title="Cancel"

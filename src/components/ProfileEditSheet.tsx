@@ -6,11 +6,12 @@ import NextImage from 'next/image'
 import { UserCircle2, Share2, LogOut } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
+import AvatarActionSheet from './AvatarActionSheet'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useNameHandleSheet } from '@/store/useNameHandleSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { useWalletMode } from '@/state/walletMode'
-import { uploadAvatar } from '@/lib/profile'
+import { uploadAvatar, removeAvatar } from '@/lib/profile'
 import { resizeImage } from '@/lib/imageResize'
 import { useNotificationStore } from '@/store/notifications'
 import styles from './ProfileEditSheet.module.css'
@@ -24,7 +25,10 @@ export default function ProfileEditSheet() {
   const pushNotification = useNotificationStore((state) => state.pushNotification)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(profile.avatarUrl)
   const [isUploading, setIsUploading] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [avatarSheetOpen, setAvatarSheetOpen] = useState(false)
+  const fileInputLibraryRef = useRef<HTMLInputElement>(null)
+  const fileInputCameraRef = useRef<HTMLInputElement>(null)
+  const fileInputFileRef = useRef<HTMLInputElement>(null)
 
   // Sync avatarUrl from store when profile changes
   useEffect(() => {
@@ -32,9 +36,47 @@ export default function ProfileEditSheet() {
   }, [profile.avatarUrl])
 
   const handleProfilePicture = () => {
+    setAvatarSheetOpen(true)
+  }
+
+  const handleAvatarAction = async (action: 'library' | 'camera' | 'file' | 'remove') => {
     if (typeof window === 'undefined') return
-    if (fileInputRef.current) {
-      fileInputRef.current.click()
+
+    // Close sheet immediately
+    setAvatarSheetOpen(false)
+
+    if (action === 'remove') {
+      // Remove photo
+      setIsUploading(true)
+      const previousAvatarUrl = avatarUrl
+
+      try {
+        await removeAvatar()
+        setAvatarUrl(null)
+        setProfile({ avatarUrl: null })
+      } catch (err) {
+        console.error('Failed to remove avatar:', err)
+        // Revert on error
+        setAvatarUrl(previousAvatarUrl)
+        pushNotification({
+          kind: 'payment_failed',
+          title: 'Remove failed',
+          body: 'Could not remove photo. Please try again.',
+          actor: { type: 'user' },
+        })
+      } finally {
+        setIsUploading(false)
+      }
+      return
+    }
+
+    // Trigger the appropriate file input
+    if (action === 'library' && fileInputLibraryRef.current) {
+      fileInputLibraryRef.current.click()
+    } else if (action === 'camera' && fileInputCameraRef.current) {
+      fileInputCameraRef.current.click()
+    } else if (action === 'file' && fileInputFileRef.current) {
+      fileInputFileRef.current.click()
     }
   }
 
@@ -338,9 +380,31 @@ export default function ProfileEditSheet() {
         />
       </ActionSheet>
 
-      {/* Hidden file input */}
+      {/* Avatar Action Sheet (inline, appears over Edit Profile) */}
+      <AvatarActionSheet
+        open={avatarSheetOpen}
+        onClose={() => setAvatarSheetOpen(false)}
+        onSelect={handleAvatarAction}
+      />
+
+      {/* Hidden file inputs for different actions */}
       <input
-        ref={fileInputRef}
+        ref={fileInputLibraryRef}
+        type="file"
+        accept="image/*"
+        className={styles.fileInput}
+        onChange={handleFileChange}
+      />
+      <input
+        ref={fileInputCameraRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className={styles.fileInput}
+        onChange={handleFileChange}
+      />
+      <input
+        ref={fileInputFileRef}
         type="file"
         accept="image/*"
         className={styles.fileInput}
