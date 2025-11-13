@@ -804,6 +804,69 @@ body {
   background: #ff1a42;
 }
 
+/* Settings section */
+.profile-settings {
+  margin: 16px auto 0;
+  width: 382px;
+}
+
+.profile-settings-card {
+  border-radius: 32px;
+  background: rgba(127, 127, 127, 0.1);
+  backdrop-filter: blur(50px);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.profile-settings-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: background 150ms ease;
+  text-align: left;
+  gap: 12px;
+}
+
+.profile-settings-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.profile-settings-row:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.profile-settings-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-settings-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: #E9E9EB;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.profile-settings-label {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.25;
+  color: #000;
+}
+
 /* Transactions page */
 .transactions-header {
   margin-top: 24px;

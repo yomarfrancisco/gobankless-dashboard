@@ -16,6 +16,7 @@ import { useActivityStore } from '@/store/activity'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import { useUserProfileStore } from '@/store/userProfile'
+import { CreditCard, WalletCards, Phone, LogOut } from 'lucide-react'
 import Avatar from '@/components/Avatar'
 
 export default function ProfilePage() {
@@ -249,6 +250,64 @@ export default function ProfilePage() {
                 >
                   Transactions
                 </button>
+              </div>
+
+              {/* Settings section */}
+              <div className="profile-settings">
+                <div className="profile-settings-card">
+                  <button
+                    className="profile-settings-row"
+                    onClick={() => console.log('Linked cards')}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <CreditCard size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Linked cards</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                  </button>
+                  <button
+                    className="profile-settings-row"
+                    onClick={() => console.log('Linked wallets')}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <WalletCards size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Linked wallets</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                  </button>
+                  <button
+                    className="profile-settings-row"
+                    onClick={() => console.log('Help and support')}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <Phone size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Help and support</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                  </button>
+                  <button
+                    className="profile-settings-row"
+                    onClick={() => console.log('Log out')}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <LogOut size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Log out</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={24} height={24} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
