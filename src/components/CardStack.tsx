@@ -342,7 +342,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
 
   // Calculate dynamic minHeight to accommodate all cards with overlap
   // Add padding-top to prevent clipping of top card's rounded corners during/after animation
-  const TOP_PADDING_PX = 8 // Space above top card to prevent border-radius clipping
+  const TOP_PADDING_PX = 16 // Space above top card to prevent border-radius clipping (increased from 8 to prevent upward shift clipping)
   const BOTTOM_BUFFER_PX = 20 // Buffer at bottom for deeper card peeks
   const stackMinHeight = BASE_HEIGHT_PX + (total - 1) * Y_STEP_PX + TOP_PADDING_PX + BOTTOM_BUFFER_PX
 
@@ -355,7 +355,9 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
         minHeight: stackMinHeight,
         paddingTop: TOP_PADDING_PX, // Prevent top card border-radius clipping
         paddingBottom: 0,
-        marginTop: 8, // Reduced from 16 - smaller gap to wallet header
+        marginTop: 0, // Zero to override CSS and prevent upward shift
+        marginLeft: 'auto', // Maintain horizontal centering
+        marginRight: 'auto', // Maintain horizontal centering
       }}
     >
       {order.map((cardIdx, depth) => {
