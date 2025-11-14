@@ -365,13 +365,23 @@ export default function CardStackCard({
       <div className="card-label">{CARD_LABELS[card.type]}</div>
 
       {/* Bottom-left allocation pill */}
-      <div className="card-allocation-pill">
-        <span
-          className={clsx('card-allocation-pill__text', {
-            'card-allocation-pill__text--visible': showAllocationValue,
-          })}
-        >
-          {animatedAllocationPct.toFixed(0)}%
+      <div
+        className={clsx('card-allocation-pill', {
+          'card-allocation-pill--visible': showAllocationValue,
+        })}
+      >
+        <span className="card-allocation-pill__inner">
+          <Image
+            src="/assets/play_up.png"
+            alt="allocation change"
+            width={10}
+            height={10}
+            className="card-allocation-pill__arrow"
+            unoptimized
+          />
+          <span className="card-allocation-pill__text">
+            {animatedAllocationPct.toFixed(0)}%
+          </span>
         </span>
       </div>
 

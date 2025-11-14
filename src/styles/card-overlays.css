@@ -25,12 +25,32 @@
   align-items: center;
   justify-content: center;
   height: 28px;
-  padding: 0 12px;
+  padding: 0 10px; /* Slightly reduced to accommodate icon */
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.25);
   pointer-events: none;
   z-index: 3;
+  opacity: 0.7;
+  transition: opacity 160ms ease-out;
+}
+
+.card-allocation-pill--visible {
+  opacity: 1;
+}
+
+.card-allocation-pill__inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* Space between arrow and percentage text */
+}
+
+.card-allocation-pill__arrow {
+  display: block;
+  width: 10px;
+  height: 10px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .card-allocation-pill__text {
@@ -38,16 +58,10 @@
   font-weight: 700;
   color: rgba(255, 255, 255, 0.92);
   letter-spacing: -0.09px;
-  opacity: 0.7;
-  transition: opacity 160ms ease-out;
-}
-
-.card-allocation-pill__text--visible {
-  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card-allocation-pill__text {
+  .card-allocation-pill {
     transition: none;
   }
 }
