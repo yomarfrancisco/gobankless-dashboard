@@ -183,7 +183,7 @@ export default function Home() {
               {/* Convert cash to crypto section */}
               <div 
                 className="convertCashSpacing"
-                style={{ marginTop: '8px' }}
+                style={{ marginTop: '4px' }}
               >
                 <ConvertCashSection />
                 <BranchManagerFooter onWhatsAppClick={() => setIsAgentSheetOpen(true)} />

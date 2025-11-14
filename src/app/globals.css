@@ -951,7 +951,7 @@ body {
 
 /* HARD OVERRIDE: spacing between card stack and convert section */
 .convertCashSpacing {
-  margin-top: 8px !important; /* was much larger via clamp(...) - force tight gap below cards */
+  margin-top: 4px !important; /* Reduced to 4px for 80% total gap reduction */
 }
 
 /* Remove heading margin inside .convertCashSpacing */
