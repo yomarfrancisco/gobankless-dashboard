@@ -574,11 +574,14 @@ body {
   object-fit: contain;
 }
 
-.chat-avatar-image {
-  width: 78px; /* 30% larger than 60px (60 × 1.3 = 78) */
-  height: 78px;
-  object-fit: cover; /* Use cover for avatar to fill circle nicely */
+/* Override for avatar image - must be more specific than .dollar-sign-contained img */
+.dollar-sign-contained .chat-avatar-image {
+  width: 78px !important; /* 30% larger than 60px (60 × 1.3 = 78) */
+  height: 78px !important;
+  object-fit: cover !important; /* Use cover for avatar to fill circle nicely */
   border-radius: 50%; /* Ensure circular crop */
+  max-width: none !important; /* Prevent Next.js Image from constraining */
+  max-height: none !important;
 }
 
 /* White background for avatar button in autonomous mode */
