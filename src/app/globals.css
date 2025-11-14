@@ -611,17 +611,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px; /* slightly more space between avatar and text */
   padding: 0 16px;
   position: relative;
 }
 
 .profile-avatar {
-  width: 104px;
-  height: 104px;
-  border-radius: 32px;
-  object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  flex-shrink: 0;
+  /* Remove object-fit and border as they're handled by Avatar component */
   margin-bottom: 4px;
 }
 
@@ -804,6 +804,79 @@ body {
   background: #ff1a42;
 }
 
+/* Settings section */
+.profile-settings {
+  margin: 32px auto 0;
+  width: 382px;
+}
+
+.profile-settings-heading {
+  font-weight: 300;
+  font-size: 16px;
+  opacity: 1;
+  color: #000;
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.profile-settings-card {
+  border-radius: 32px;
+  background: rgba(127, 127, 127, 0.1);
+  backdrop-filter: blur(50px);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.profile-settings-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: background 150ms ease;
+  text-align: left;
+  gap: 12px;
+}
+
+.profile-settings-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.profile-settings-row:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.profile-settings-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-settings-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: #E9E9EB;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.profile-settings-label {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.25;
+  color: #000;
+}
+
 /* Transactions page */
 .transactions-header {
   margin-top: 24px;
@@ -873,7 +946,17 @@ body {
 
 /* Spacing above Convert cash to crypto to give the cards some air */
 .convertCashSpacing {
-  margin-top: clamp(24px, 5vh, 56px);
+  margin-top: clamp(4px, 1.2vh, 12px); /* Tightened by 40-50% - reduced gap between card stack and map section */
+}
+
+/* HARD OVERRIDE: spacing between card stack and convert section */
+.convertCashSpacing {
+  margin-top: 4px !important; /* Reduced to 4px for 80% total gap reduction */
+}
+
+/* Remove heading margin inside .convertCashSpacing */
+.convertCashSpacing h2 {
+  margin-top: 0 !important; /* eliminate any extra top margin on the heading itself */
 }
 
 /* TEST ONLY: move Mapbox logo off-screen (avoid CSS Modules purity issues) */

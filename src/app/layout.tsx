@@ -7,6 +7,14 @@ import DevNotificationSetup from '@/components/notifications/DevNotificationSetu
 import { WalletModeProvider } from '@/state/walletMode'
 import { WalletAllocProvider } from '@/state/walletAlloc'
 import SplashOnceProvider from '@/providers/SplashOnceProvider'
+import TransactionSheet from '@/components/TransactionSheet'
+import ProfileEditSheet from '@/components/ProfileEditSheet'
+import AvatarEditSheet from '@/components/AvatarEditSheet'
+import ProfileNameHandleSheet from '@/components/ProfileNameHandleSheet'
+import SocialLinksSheet from '@/components/SocialLinksSheet'
+import ProfileDescriptionSheet from '@/components/ProfileDescriptionSheet'
+import SupportSheet from '@/components/SupportSheet'
+import ShareProfileSheet from '@/components/ShareProfileSheet'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -36,10 +44,10 @@ export default function RootLayout({
             __html: `
 (function(){
   try {
-    var m = localStorage.getItem('gb.walletMode') || 'autonomous';
+    var m = localStorage.getItem('gb.walletMode') || 'manual';
     document.documentElement.dataset.walletMode = m;
   } catch(_) { 
-    document.documentElement.dataset.walletMode = 'autonomous'; 
+    document.documentElement.dataset.walletMode = 'manual'; 
   }
 })();`,
           }}
@@ -51,6 +59,22 @@ export default function RootLayout({
               <TopNotifications />
               <DevNotificationSetup />
               {children}
+              {/* Global Transact Sheet */}
+              <TransactionSheet />
+              {/* Global Profile Edit Sheet */}
+              <ProfileEditSheet />
+              {/* Global Avatar Edit Sheet */}
+              <AvatarEditSheet />
+              {/* Global Name & Handle Sheet */}
+              <ProfileNameHandleSheet />
+              {/* Global Social Links Sheet */}
+              <SocialLinksSheet />
+              {/* Global Profile Description Sheet */}
+              <ProfileDescriptionSheet />
+              {/* Global Support Sheet */}
+              <SupportSheet />
+              {/* Global Share Profile Sheet */}
+              <ShareProfileSheet />
             </WalletAllocProvider>
           </WalletModeProvider>
         </SplashOnceProvider>

@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
 import type React from 'react'
 import type { StaticImageData } from 'next/image'
-import gobCardImage from '../../public/assets/cards/card-GOB3.jpg'
 import { CARD_FLIP_CLASSES } from '@/lib/animations/cardFlipClassNames'
 import { DEV_CARD_FLIP_DEBUG } from '@/lib/flags'
 import { FLIP_MS } from '@/lib/animations/useAiActionCycle'
@@ -24,9 +23,10 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
   pepe: { level: 'fragile', percent: 25 },
   yield: { level: 'moderate', percent: 60 },
   mzn: { level: 'good', percent: 100 },
+  btc: { level: 'moderate', percent: 15 },
 }
 
-type CardType = 'pepe' | 'savings' | 'yield' | 'mzn'
+type CardType = 'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'
 
 interface CardData {
   type: CardType
@@ -53,7 +53,7 @@ const cardsData: CardData[] = [
   },
   {
     type: 'yield',
-    image: gobCardImage,
+    image: '/assets/cards/card-ETH.jpg',
     alt: 'Yield Card',
     width: 310,
     height: 193,
@@ -65,30 +65,40 @@ const cardsData: CardData[] = [
     width: 342,
     height: 213,
   },
+  {
+    type: 'btc',
+    image: '/assets/cards/card-BTC.jpg',
+    alt: 'BTC Card',
+    width: 342,
+    height: 213,
+  },
 ]
 
 // Card labels mapping
 const CARD_LABELS: Record<CardType, string> = {
   savings: 'CASH CARD',
-  pepe: 'PEPE CARD',
-  yield: 'ETH CARD',
+  pepe: 'CASH CARD',
+  yield: 'CASH CARD',
   mzn: 'CASH CARD',
+  btc: 'CASH CARD',
 }
 
 // Map card type to allocation key
-const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents'> = {
+const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents' | 'btcCents'> = {
   savings: 'cashCents',
   pepe: 'pepeCents',
   yield: 'ethCents',
   mzn: 'mznCents',
+  btc: 'btcCents',
 }
 
 // Map card type to portfolio symbol
-const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN'> = {
+const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN' | 'BTC'> = {
   savings: 'CASH',
   pepe: 'PEPE',
   yield: 'ETH',
   mzn: 'MZN',
+  btc: 'BTC',
 }
 
 interface CardStackProps {
@@ -120,6 +130,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     pepe: null,
     yield: null,
     mzn: null,
+    btc: null,
   })
   // Track previous values to compute direction
   const prevValuesRef = useRef<Record<CardType, number>>({
@@ -127,6 +138,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     pepe: alloc.pepeCents / 100,
     yield: alloc.ethCents / 100,
     mzn: (alloc as any).mznCents ? (alloc as any).mznCents / 100 : 0,
+    btc: (alloc as any).btcCents ? (alloc as any).btcCents / 100 : 0,
   })
 
   // Compute flash direction when values change
@@ -136,6 +148,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
       pepe: alloc.pepeCents / 100,
       yield: alloc.ethCents / 100,
       mzn: (alloc as any).mznCents ? (alloc as any).mznCents / 100 : 0,
+      btc: (alloc as any).btcCents ? (alloc as any).btcCents / 100 : 0,
     }
 
     const newFlashDirection: Record<CardType, 'up' | 'down' | null> = {
@@ -143,10 +156,11 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
       pepe: null,
       yield: null,
       mzn: null,
+      btc: null,
     }
 
     // Compute direction for each card
-    ;(['savings', 'pepe', 'yield', 'mzn'] as CardType[]).forEach((cardType) => {
+    ;(['savings', 'pepe', 'yield', 'mzn', 'btc'] as CardType[]).forEach((cardType) => {
       const prev = prevValuesRef.current[cardType]
       const current = currentValues[cardType]
       const delta = current - prev
@@ -168,7 +182,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     // Update flash direction state (this triggers re-render with flash classes)
     setFlashDirection(newFlashDirection)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents, (alloc as any).mznCents])
+  }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents, (alloc as any).mznCents, (alloc as any).btcCents])
 
   // Notify parent of top card change
   useEffect(() => {
@@ -312,6 +326,8 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   }, [])
 
   const total = cardsData.length
+  const BASE_HEIGHT_PX = 238 // top card height
+  const Y_STEP_PX = 44 // vertical offset per depth (from getStackStyle)
 
   // Debug: log computed styles on first render
   useEffect(() => {
@@ -324,16 +340,31 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     }
   }, [total])
 
+  // Calculate dynamic minHeight to accommodate all cards with overlap
+  const BOTTOM_BUFFER_PX = 0 // Reduced from 20 to 0 to close gap to map section (80% total reduction - removed buffer entirely)
+  const stackMinHeight = BASE_HEIGHT_PX + (total - 1) * Y_STEP_PX + BOTTOM_BUFFER_PX
+
   return (
-    <div className={CARD_FLIP_CLASSES.stack}>
+    <div 
+      className={CARD_FLIP_CLASSES.stack}
+      style={{
+        position: 'relative',
+        overflow: 'visible', // Changed from 'hidden' to prevent card border-radius clipping
+        minHeight: stackMinHeight,
+      }}
+    >
       {order.map((cardIdx, depth) => {
         const card = cardsData[cardIdx]
         const isTop = depth === 0
         const stackStyle = getStackStyle(depth, total)
 
         // During animation, adjust depth for smooth transitions
+        // IMPORTANT: Never adjust depth for top card (depth === 0) to prevent clipping
         const effectiveDepth = phase === 'animating' && depth > 0 ? depth - 1 : depth
         const effectiveStyle = phase === 'animating' && depth > 0 ? getStackStyle(effectiveDepth, total) : stackStyle
+        
+        // Ensure top card (depth 0) always has consistent top position, even during animation
+        const finalTop = depth === 0 ? stackStyle.top : effectiveStyle.top
 
         if (DEV_CARD_FLIP_DEBUG && isTop) {
           console.debug('[CardFlip]', `CardStack-${cardIdx}`, 'top card rendered')
@@ -345,6 +376,8 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
             card={card}
             index={cardIdx}
             position={depth}
+            depth={depth}
+            total={total}
             isTop={isTop}
             className={getCardClasses(cardIdx, depth)}
             onClick={() => handleCardClick(cardIdx)}
@@ -355,7 +388,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
               width: effectiveStyle.width,
               maxWidth: `${effectiveStyle.maxWidth}px`,
               height: `${effectiveStyle.height}px`,
-              top: `${effectiveStyle.top}px`,
+              top: `${finalTop}px`, // Use finalTop to ensure depth 0 never moves up
               left: `${effectiveStyle.left}px`,
               zIndex: effectiveStyle.zIndex,
               pointerEvents: isTop ? 'auto' : 'none',

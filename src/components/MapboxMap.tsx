@@ -40,7 +40,7 @@ export default function MapboxMap({
   initialZoom = 14,
   markers = [],
   fitToMarkers = true,
-  styleUrl = 'mapbox://styles/mapbox/light-v11',
+  styleUrl = 'mapbox://styles/mapbox/streets-v12',
   showDebug = DEBUG_MAP,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -115,7 +115,7 @@ export default function MapboxMap({
     log('construct map')
     const map = new mapboxgl.Map({
       container: container,
-      style: styleUrl,
+      style: 'mapbox://styles/mapbox/navigation-day-v1',
       center: initialCenter,
       zoom: initialZoom,
       attributionControl: false,
@@ -142,6 +142,13 @@ export default function MapboxMap({
 
       map.addControl(geolocate, 'top-right')
 
+      // Add branch marker (Sandton City)
+      const branchLngLat: [number, number] = [28.054167, -26.108333]
+      const branchEl = document.createElement('div')
+      branchEl.className = styles.branchMarker
+      new mapboxgl.Marker(branchEl).setLngLat(branchLngLat).addTo(map)
+      log(`branch marker added at [${branchLngLat[0]}, ${branchLngLat[1]}]`)
+
       // Helper to (re)place custom user marker
       function upsertUserMarker(lng: number, lat: number) {
         // create DOM element once
@@ -151,6 +158,7 @@ export default function MapboxMap({
           el.className = styles.userMarker
           // add our PNG as <img> to preserve sharpness on retina
           const img = document.createElement('img')
+          img.className = styles.userImg
           img.alt = 'You are here'
           // Use static import if available, else fall back to public path:
           const userIconUrl = (userIcon as any)?.src ?? '/assets/character.png'
@@ -168,11 +176,6 @@ export default function MapboxMap({
           img.loading = 'eager'
           img.referrerPolicy = 'no-referrer'
           el.appendChild(img)
-          // Keep a visible fallback if it still fails
-          if (!img.complete) {
-            el.style.background =
-              'radial-gradient(circle at center, rgba(20,161,91,.35), rgba(20,161,91,0))'
-          }
           userMarkerRef.current = new mapboxgl.Marker({
             element: el,
             anchor: 'center',

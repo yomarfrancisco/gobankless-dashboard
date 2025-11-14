@@ -35,8 +35,6 @@
     0 20px 60px rgba(0, 0, 0, 0.35);
   outline: 1px solid rgba(255, 255, 255, 0.06);
   transform: translateX(-50%) translateY(0);
-  max-height: var(--sheet-max-h, 520px);
-  min-height: 56vh;
   display: flex;
   flex-direction: column;
   will-change: transform;
@@ -45,9 +43,21 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Amount sheet container */
+/* Compact sheets (default) - for Edit Profile, Name & Handle, Social Links, Help & Support, etc. */
+.as-sheet-compact {
+  max-height: 65vh;
+  min-height: auto;
+}
+
+/* Tall sheets - for Amount keypad, Success/confirmation, Bank deposit details */
+.as-sheet-tall {
+  max-height: 85vh;
+  min-height: auto;
+}
+
+/* Amount sheet container - ensure it uses tall variant */
 .as-sheet.amount {
-  max-height: var(--sheet-max-h);
+  max-height: 85vh;
 }
 
 @keyframes slideUp {

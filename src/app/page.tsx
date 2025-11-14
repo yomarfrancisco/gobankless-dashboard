@@ -6,7 +6,7 @@ import TopGlassBar from '@/components/TopGlassBar'
 import BottomGlassBar from '@/components/BottomGlassBar'
 import DepositSheet from '@/components/DepositSheet'
 import WithdrawSheet from '@/components/WithdrawSheet'
-import TransactionSheet from '@/components/TransactionSheet'
+import { useTransactSheet } from '@/store/useTransactSheet'
 import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
@@ -17,15 +17,24 @@ import { useAiActionCycle } from '@/lib/animations/useAiActionCycle'
 import { formatZAR } from '@/lib/formatCurrency'
 import { initPortfolioFromAlloc } from '@/lib/portfolio/initPortfolio'
 import ConvertCashSection from '@/components/ConvertCashSection'
+import BranchManagerFooter from '@/components/BranchManagerFooter'
+import AgentListSheet from '@/components/AgentListSheet'
+import { useWalletMode } from '@/state/walletMode'
+import { ScanOverlay } from '@/components/ScanOverlay'
+import { ScanQrSheet } from '@/components/ScanQrSheet'
+
+// Toggle flag to compare both scanner implementations
+const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
 
 export default function Home() {
-  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
+  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'>('savings')
   const cardStackRef = useRef<CardStackHandle>(null)
-  const [openTransaction, setOpenTransaction] = useState(false)
+  const { setOnSelect, open } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
   const [openDirectPayment, setOpenDirectPayment] = useState(false)
+  const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [openSendDetails, setOpenSendDetails] = useState(false)
   const [openSendSuccess, setOpenSendSuccess] = useState(false)
   const [openDepositSuccess, setOpenDepositSuccess] = useState(false)
@@ -35,10 +44,32 @@ export default function Home() {
   const [sendAmountUSDT, setSendAmountUSDT] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
+  const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
   const [depositAmountZAR, setDepositAmountZAR] = useState(0)
+  const [isAgentSheetOpen, setIsAgentSheetOpen] = useState(false)
 
-  const openTransactionSheet = useCallback(() => setOpenTransaction(true), [])
-  const closeTransaction = useCallback(() => setOpenTransaction(false), [])
+  // Register onSelect handler for global Transact sheet
+  useEffect(() => {
+    setOnSelect((action) => {
+      if (action === 'deposit') {
+        setTimeout(() => setOpenDeposit(true), 220)
+      } else if (action === 'withdraw') {
+        setTimeout(() => setOpenWithdraw(true), 220)
+      } else if (action === 'payment') {
+        setFlowType('payment')
+        setTimeout(() => setOpenDirectPayment(true), 220)
+      } else if (action === 'transfer') {
+        setFlowType('transfer')
+        setAmountMode('send')
+        setSendMethod('brics') // Use GoBankless Handle flow like payment
+        setTimeout(() => setOpenAmount(true), 220)
+      }
+    })
+    
+    return () => {
+      setOnSelect(null) // Cleanup on unmount
+    }
+  }, [setOnSelect])
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
   const closeDirectPayment = useCallback(() => setOpenDirectPayment(false), [])
@@ -52,6 +83,7 @@ export default function Home() {
     setSendRecipient('')
     setSendAmountZAR(0)
     setSendAmountUSDT(0)
+    setFlowType('payment') // Reset to default
   }, [])
   const closeDepositSuccess = useCallback(() => {
     setOpenDepositSuccess(false)
@@ -71,7 +103,7 @@ export default function Home() {
   }, [])
 
   const handleAmountSubmit = useCallback((amountZAR: number) => {
-    if (amountMode === 'send') {
+    if (amountMode === 'send' || flowType === 'transfer') {
       setSendAmountZAR(amountZAR)
       // Calculate USDT amount (using same rate as AmountSheet: 18.1)
       const fxRateZARperUSDT = 18.1
@@ -80,19 +112,22 @@ export default function Home() {
       
       setTimeout(() => setOpenSendDetails(true), 220)
     }
-  }, [amountMode])
+  }, [amountMode, flowType])
 
   // Get wallet allocation for funds available display
   const { alloc, getCash, getEth, getPepe, setCash, setEth, setPepe } = useWalletAlloc()
   const fundsAvailableZAR = alloc.totalCents / 100
   const formattedFunds = formatZAR(fundsAvailableZAR)
 
+  // Get wallet mode to gate animations
+  const { mode } = useWalletMode()
+
   // Initialize portfolio store from wallet allocation
   useEffect(() => {
     initPortfolioFromAlloc(alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents)
   }, [alloc.cashCents, alloc.ethCents, alloc.pepeCents, alloc.totalCents])
 
-  // Initialize AI action cycle
+  // Initialize AI action cycle - only run in autonomous mode
   useAiActionCycle(cardStackRef, {
     getCash,
     getEth,
@@ -100,17 +135,47 @@ export default function Home() {
     setCash,
     setEth,
     setPepe,
-  })
+  }, mode === 'autonomous')
+
+  // Manual mode titles per card
+  const MANUAL_TITLES: Record<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc', { title: string; subtitle: string }> = {
+    savings: { title: 'ZAR wallet', subtitle: 'South African business account' },
+    mzn: { title: 'MZN wallet', subtitle: 'Mozambique business account' },
+    pepe: { title: 'PEPE wallet', subtitle: 'PEPE investment account' },
+    yield: { title: 'ETH wallet', subtitle: 'ETH investment account' },
+    btc: { title: 'BTC wallet', subtitle: 'BTC investment account' },
+  }
+
+  // Get title and subtitle based on mode and current top card
+  const getHeadings = () => {
+    if (mode === 'manual') {
+      return MANUAL_TITLES[topCardType]
+    }
+    // autonomous (existing behavior)
+    return {
+      title: 'Autonomous wallet',
+      subtitle: `R${formattedFunds.major}.${formattedFunds.cents} available`,
+    }
+  }
+
+  const { title, subtitle } = getHeadings()
 
   return (
     <div className="app-shell">
       <div className="mobile-frame">
-        <div className="dashboard-container">
+        <div className="dashboard-container" style={{ position: 'relative' }}>
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
-            <TopGlassBar />
-            <BottomGlassBar currentPath="/" onDollarClick={openTransactionSheet} />
+            <TopGlassBar onScanClick={() => setIsScannerOpen(true)} />
+            <BottomGlassBar currentPath="/" onDollarClick={() => open()} />
           </div>
+
+          {/* Scanner - toggle between overlay and sheet implementations */}
+          {USE_MODAL_SCANNER ? (
+            <ScanQrSheet isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
+          ) : (
+            <ScanOverlay isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
+          )}
 
           {/* Scrollable content */}
           <div className="scroll-content">
@@ -118,12 +183,10 @@ export default function Home() {
               <div className="card-switch">
                 <div className="frame-parent">
                   <div className="wallet-header">
-                    <h1 className="wallet-title">Autonomous wallet</h1>
+                    <h1 className="wallet-title">{title}</h1>
                     <div className="help-icon">?</div>
                   </div>
-                  <p className="wallet-subtitle">
-                    R{formattedFunds.major}.{formattedFunds.cents} available
-                  </p>
+                  <p className="wallet-subtitle">{subtitle}</p>
                 </div>
 
                 {/* Card Stack */}
@@ -131,8 +194,12 @@ export default function Home() {
               </div>
 
               {/* Convert cash to crypto section */}
-              <div className="convertCashSpacing">
+              <div 
+                className="convertCashSpacing"
+                style={{ marginTop: '4px' }}
+              >
                 <ConvertCashSection />
+                <BranchManagerFooter onWhatsAppClick={() => setIsAgentSheetOpen(true)} />
               </div>
 
             </div>
@@ -141,20 +208,6 @@ export default function Home() {
       </div>
 
       {/* Sheets */}
-      <TransactionSheet
-        open={openTransaction}
-        onClose={closeTransaction}
-        onSelect={(action) => {
-          setOpenTransaction(false)
-          if (action === 'deposit') {
-            setTimeout(() => setOpenDeposit(true), 220)
-          } else if (action === 'withdraw') {
-            setTimeout(() => setOpenWithdraw(true), 220)
-          } else if (action === 'payment') {
-            setTimeout(() => setOpenDirectPayment(true), 220)
-          }
-        }}
-      />
       <DepositSheet
         open={openDirectPayment}
         onClose={closeDirectPayment}
@@ -191,9 +244,10 @@ export default function Home() {
         open={openAmount}
         onClose={closeAmount}
         mode={amountMode}
+        flowType={flowType}
         balanceZAR={200}
         fxRateZARperUSDT={18.1}
-        ctaLabel={amountMode === 'depositCard' ? 'Deposit' : amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
+        ctaLabel={amountMode === 'depositCard' ? 'Deposit' : amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? (flowType === 'transfer' ? 'Transfer' : 'Send') : 'Continue'}
         onSubmit={amountMode === 'depositCard' ? ({ amountZAR }) => {
           setDepositAmountZAR(amountZAR)
           setOpenAmount(false)
@@ -202,7 +256,7 @@ export default function Home() {
           setOpenAmount(false)
           console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
         } : undefined}
-        onAmountSubmit={amountMode === 'send' ? handleAmountSubmit : undefined}
+        onAmountSubmit={(amountMode === 'send' || flowType === 'transfer') ? handleAmountSubmit : undefined}
       />
       <SendDetailsSheet
         open={openSendDetails}
@@ -210,6 +264,7 @@ export default function Home() {
         amountZAR={sendAmountZAR}
         amountUSDT={sendAmountUSDT}
         sendMethod={sendMethod}
+        flowType={flowType}
         onPay={(payload) => {
           console.log('PAY', payload)
           setSendRecipient(payload.to)
@@ -227,6 +282,7 @@ export default function Home() {
         })}`}
         recipient={sendRecipient}
         kind="send"
+        flowType={flowType}
       />
       <SuccessSheet
         open={openDepositSuccess}
@@ -241,6 +297,10 @@ export default function Home() {
       <BankTransferDetailsSheet
         open={openBankTransferDetails}
         onClose={closeBankTransferDetails}
+      />
+      <AgentListSheet
+        open={isAgentSheetOpen}
+        onClose={() => setIsAgentSheetOpen(false)}
       />
     </div>
   )

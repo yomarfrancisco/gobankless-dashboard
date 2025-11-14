@@ -17,7 +17,7 @@
   width: 100%;
   max-width: 398px;
   height: 320px; /* Increased to accommodate 4 cards: depth 3 at top 150px + height 168px = 318px */
-  margin: 16px auto;
+  margin: 16px auto; /* Restore original top margin for spacing to wallet header */
   box-sizing: border-box;
   overflow: visible; /* Allow cards to extend slightly if needed, but width calc prevents overflow */
 }
@@ -81,4 +81,5 @@
     transition: none;
   }
 }
+
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import TopGlassBar from '@/components/TopGlassBar'
@@ -13,10 +13,22 @@ import SuccessSheet from '@/components/SuccessSheet'
 import { formatUSDT } from '@/lib/money'
 import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
+import { useProfileEditSheet } from '@/store/useProfileEditSheet'
+import { useTransactSheet } from '@/store/useTransactSheet'
+import { useUserProfileStore } from '@/store/userProfile'
+import { useWalletMode } from '@/state/walletMode'
+import { useSupportSheet } from '@/store/useSupportSheet'
+import { CreditCard, WalletCards, Phone, LogOut } from 'lucide-react'
+import Avatar from '@/components/Avatar'
 
 export default function ProfilePage() {
   const router = useRouter()
   const activityCount = useActivityStore((s) => s.items.length)
+  const { open: openProfileEdit } = useProfileEditSheet()
+  const { setOnSelect, open } = useTransactSheet()
+  const { profile } = useUserProfileStore()
+  const { setMode } = useWalletMode()
+  const { open: openSupport } = useSupportSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -28,6 +40,7 @@ export default function ProfilePage() {
   const [sendAmountUSDT, setSendAmountUSDT] = useState(0)
   const [sendRecipient, setSendRecipient] = useState('')
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
+  const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -54,7 +67,7 @@ export default function ProfilePage() {
   }, [])
 
   const handleAmountSubmit = useCallback((amountZAR: number) => {
-    if (amountMode === 'send') {
+    if (amountMode === 'send' || flowType === 'transfer') {
       setSendAmountZAR(amountZAR)
       // Calculate USDT amount (using same rate as AmountSheet: 18.1)
       const fxRateZARperUSDT = 18.1
@@ -63,7 +76,30 @@ export default function ProfilePage() {
       
       setTimeout(() => setOpenSendDetails(true), 220)
     }
-  }, [amountMode])
+  }, [amountMode, flowType])
+
+  // Register onSelect handler for global Transact sheet
+  useEffect(() => {
+    setOnSelect((action) => {
+      if (action === 'deposit') {
+        setTimeout(() => setOpenDeposit(true), 220)
+      } else if (action === 'withdraw') {
+        setTimeout(() => setOpenWithdraw(true), 220)
+      } else if (action === 'payment') {
+        setFlowType('payment')
+        setTimeout(() => setOpenDirectPayment(true), 220)
+      } else if (action === 'transfer') {
+        setFlowType('transfer')
+        setAmountMode('send')
+        setSendMethod('brics') // Use GoBankless Handle flow like payment
+        setTimeout(() => setOpenAmount(true), 220)
+      }
+    })
+    
+    return () => {
+      setOnSelect(null) // Cleanup on unmount
+    }
+  }, [setOnSelect])
   return (
     <div className="app-shell">
       <div className="mobile-frame">
@@ -71,7 +107,7 @@ export default function ProfilePage() {
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
             <TopGlassBar />
-            <BottomGlassBar currentPath="/profile" onDollarClick={openDirectPaymentSheet} />
+            <BottomGlassBar currentPath="/profile" onDollarClick={() => open()} />
           </div>
 
           {/* Scrollable content */}
@@ -79,16 +115,16 @@ export default function ProfilePage() {
             <div className="content" style={{ background: '#fff' }}>
               {/* Avatar + name + handle */}
               <div className="profile-header">
-                <Image
-                  src="/assets/profile/headshot.png"
-                  alt="Profile"
+                <Avatar
+                  name={profile.fullName}
+                  email={profile.email}
+                  avatarUrl={profile.avatarUrl}
+                  size={96}
+                  rounded={24}
                   className="profile-avatar"
-                  width={104}
-                  height={104}
-                  unoptimized
                 />
-                <h1 className="profile-name">Samuel Akoyo</h1>
-                <div className="profile-handle">$samakoyo</div>
+                <h1 className="profile-name">{profile.fullName}</h1>
+                <div className="profile-handle">{profile.userHandle}</div>
 
                 {/* Autonomous mode toggle */}
                 <div style={{ marginTop: 8, marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
@@ -97,8 +133,7 @@ export default function ProfilePage() {
 
                 {/* Bio */}
                 <p className="profile-bio">
-                  A skilled entrepreneur experienced in manufacturing and construction across Africa.
-                  Let&rsquo;s do business, DMs are open.
+                  {profile.description || 'A skilled entrepreneur experienced in manufacturing and construction across Africa. Let\'s do business, DMs are open.'}
                 </p>
 
                 {/* Meta row */}
@@ -146,16 +181,70 @@ export default function ProfilePage() {
 
               {/* Social row */}
               <div className="profile-social">
-                <Image src="/assets/profile/email_outlined.svg" alt="Email" width={20} height={20} />
+                {profile.email ? (
+                  <a
+                    href={`mailto:${profile.email}`}
+                    style={{ display: 'inline-flex', alignItems: 'center' }}
+                    aria-label="Email"
+                  >
+                    <Image src="/assets/profile/email_outlined.svg" alt="Email" width={20} height={20} />
+                  </a>
+                ) : (
+                  <Image
+                    src="/assets/profile/email_outlined.svg"
+                    alt="Email"
+                    width={20}
+                    height={20}
+                    style={{ opacity: 0.3, pointerEvents: 'none' }}
+                  />
+                )}
                 <Image src="/assets/profile/dot.svg" alt="" width={3} height={3} />
-                <Image src="/assets/profile/instagram.svg" alt="Instagram" width={20} height={20} />
+                {profile.instagramUrl ? (
+                  <a
+                    href={profile.instagramUrl.startsWith('http') ? profile.instagramUrl : `https://instagram.com/${profile.instagramUrl.replace(/^@/, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: 'inline-flex', alignItems: 'center' }}
+                    aria-label="Instagram"
+                  >
+                    <Image src="/assets/profile/instagram.svg" alt="Instagram" width={20} height={20} />
+                  </a>
+                ) : (
+                  <Image
+                    src="/assets/profile/instagram.svg"
+                    alt="Instagram"
+                    width={20}
+                    height={20}
+                    style={{ opacity: 0.3, pointerEvents: 'none' }}
+                  />
+                )}
                 <Image src="/assets/profile/dot.svg" alt="" width={3} height={3} />
-                <Image src="/assets/profile/linkedin.svg" alt="LinkedIn" width={20} height={20} />
+                {profile.linkedinUrl ? (
+                  <a
+                    href={profile.linkedinUrl.startsWith('http') ? profile.linkedinUrl : `https://linkedin.com/in/${profile.linkedinUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: 'inline-flex', alignItems: 'center' }}
+                    aria-label="LinkedIn"
+                  >
+                    <Image src="/assets/profile/linkedin.svg" alt="LinkedIn" width={20} height={20} />
+                  </a>
+                ) : (
+                  <Image
+                    src="/assets/profile/linkedin.svg"
+                    alt="LinkedIn"
+                    width={20}
+                    height={20}
+                    style={{ opacity: 0.3, pointerEvents: 'none' }}
+                  />
+                )}
               </div>
 
               {/* Buttons */}
               <div className="profile-actions">
-                <button className="btn profile-edit">Edit profile</button>
+                <button className="btn profile-edit" onClick={openProfileEdit}>
+                  Edit profile
+                </button>
                 <button
                   className={`btn profile-inbox ${activityCount === 0 ? 'disabled' : ''}`}
                   onClick={() => activityCount > 0 && router.push('/activity')}
@@ -164,6 +253,82 @@ export default function ProfilePage() {
                 >
                   Transactions
                 </button>
+              </div>
+
+              {/* Settings section */}
+              <div className="profile-settings">
+                <h2 className="profile-settings-heading">Settings</h2>
+                <div className="profile-settings-card">
+                  <button
+                    className="profile-settings-row"
+                    onClick={() => console.log('Linked cards')}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <CreditCard size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Linked cards</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
+                  </button>
+                  <button
+                    className="profile-settings-row"
+                    onClick={() => console.log('Linked wallets')}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <WalletCards size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Linked wallets</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
+                  </button>
+                  <button
+                    className="profile-settings-row"
+                    onClick={openSupport}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <Phone size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Help and support</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
+                  </button>
+                  <button
+                    className="profile-settings-row"
+                    onClick={() => {
+                      // Clear session/splash flag so intro shows again
+                      try {
+                        sessionStorage.removeItem('gob_splash_shown')
+                      } catch {
+                        // Ignore sessionStorage errors
+                      }
+
+                      // Reset wallet mode to Manual
+                      setMode('manual')
+
+                      // Clear profile state (optional - depends on requirements)
+                      // For now, we'll keep profile data but could reset if needed
+                      // useUserProfileStore.getState().reset()
+
+                      // Navigate to home
+                      router.push('/')
+                    }}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <LogOut size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Log out</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -200,14 +365,15 @@ export default function ProfilePage() {
         open={openAmount}
         onClose={closeAmount}
         mode={amountMode}
+        flowType={flowType}
         balanceZAR={200}
         fxRateZARperUSDT={18.1}
-        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? 'Send' : 'Continue'}
+        ctaLabel={amountMode === 'deposit' ? 'Transfer USDT' : amountMode === 'send' ? (flowType === 'transfer' ? 'Transfer' : 'Send') : 'Continue'}
         onSubmit={amountMode !== 'send' ? ({ amountZAR, amountUSDT }) => {
           setOpenAmount(false)
           console.log('Amount chosen', { amountZAR, amountUSDT, mode: amountMode })
         } : undefined}
-        onAmountSubmit={amountMode === 'send' ? handleAmountSubmit : undefined}
+        onAmountSubmit={(amountMode === 'send' || flowType === 'transfer') ? handleAmountSubmit : undefined}
       />
       <SendDetailsSheet
         open={openSendDetails}
@@ -215,6 +381,7 @@ export default function ProfilePage() {
         amountZAR={sendAmountZAR}
         amountUSDT={sendAmountUSDT}
         sendMethod={sendMethod}
+        flowType={flowType}
         onPay={(payload) => {
           console.log('PAY', payload)
           setSendRecipient(payload.to)
@@ -230,6 +397,7 @@ export default function ProfilePage() {
           maximumFractionDigits: 2,
         })}`}
         recipient={sendRecipient}
+        flowType={flowType}
       />
     </div>
   )

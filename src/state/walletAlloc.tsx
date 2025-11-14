@@ -7,6 +7,8 @@ export type WalletAlloc = {
   cashCents: number
   ethCents: number
   pepeCents: number
+  mznCents?: number
+  btcCents?: number
 }
 
 type AllocState = {
@@ -37,6 +39,8 @@ const initial: WalletAlloc = {
   cashCents: 549270, // 90% of total
   ethCents: 18309, // 3% of total
   pepeCents: 42721, // 7% of total
+  mznCents: 0,
+  btcCents: 0,
 }
 
 export function WalletAllocProvider({ children }: { children: ReactNode }) {

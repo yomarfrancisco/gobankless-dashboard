@@ -13,6 +13,7 @@ type SendDetailsSheetProps = {
   amountZAR: number // from AmountSheet
   amountUSDT?: number // from AmountSheet
   sendMethod?: 'email' | 'wallet' | 'brics' | null
+  flowType?: 'payment' | 'transfer' // default 'payment'
   onPay?: (payload: { to: string; note?: string; amountZAR: number }) => void
 }
 
@@ -22,6 +23,7 @@ export default function SendDetailsSheet({
   amountZAR,
   amountUSDT,
   sendMethod,
+  flowType = 'payment',
   onPay
 }: SendDetailsSheetProps) {
   const [to, setTo] = useState('')
@@ -82,13 +84,17 @@ export default function SendDetailsSheet({
           </button>
           {sendMethod === 'wallet' ? (
             <div>
-              <h3 className="send-details-title">Send</h3>
+              <h3 className="send-details-title">{flowType === 'transfer' ? 'Transfer' : 'Send'}</h3>
               {amountUSDT !== undefined && (
                 <p className="send-details-subtitle">{formatUSDT(amountUSDT)}</p>
               )}
             </div>
           ) : (
-            <h3 className="send-details-title">{`Send R${formattedAmount}`}</h3>
+            <h3 className="send-details-title">
+              {flowType === 'transfer' 
+                ? `Transfer R${formattedAmount}` 
+                : `Send R${formattedAmount}`}
+            </h3>
           )}
           <button
             className="send-details-pay"
@@ -96,7 +102,7 @@ export default function SendDetailsSheet({
             onClick={handlePay}
             type="button"
           >
-            Pay
+            {flowType === 'transfer' ? 'Transfer' : 'Pay'}
           </button>
         </div>
         <div className="send-details-fields">

@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
+import { useNotificationStore } from '@/store/notifications'
 
 export type WalletMode = 'autonomous' | 'manual'
 
@@ -14,13 +15,20 @@ interface WalletModeContextType {
 const WalletModeContext = createContext<WalletModeContextType | undefined>(undefined)
 
 export function WalletModeProvider({ children }: { children: ReactNode }) {
-  // Initialize from localStorage synchronously
+  const pushNotification = useNotificationStore((state) => state.pushNotification)
+
+  // Initialize from localStorage synchronously - default to 'manual'
   const [mode, setModeState] = useState<WalletMode>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(STORAGE_KEY)
-      return stored === 'manual' || stored === 'autonomous' ? stored : 'autonomous'
+      if (stored === 'manual' || stored === 'autonomous') {
+        return stored
+      }
+      // Default to 'manual' if no stored value
+      localStorage.setItem(STORAGE_KEY, 'manual')
+      return 'manual'
     }
-    return 'autonomous'
+    return 'manual'
   })
 
   // Update DOM dataset whenever mode changes (for CSS)
@@ -30,18 +38,37 @@ export function WalletModeProvider({ children }: { children: ReactNode }) {
     }
   }, [mode])
 
-  // Persist to localStorage and update DOM dataset
-  const setMode = useCallback((newMode: WalletMode) => {
-    setModeState(newMode)
-    try {
-      localStorage.setItem(STORAGE_KEY, newMode)
-      if (typeof window !== 'undefined') {
-        document.documentElement.dataset.walletMode = newMode
+  // Persist to localStorage and update DOM dataset, trigger notification
+  const setMode = useCallback(
+    (newMode: WalletMode) => {
+      const oldMode = mode
+      setModeState(newMode)
+      try {
+        localStorage.setItem(STORAGE_KEY, newMode)
+        if (typeof window !== 'undefined') {
+          document.documentElement.dataset.walletMode = newMode
+        }
+
+        // Fire integrated notification when mode changes
+        if (oldMode !== newMode) {
+          pushNotification({
+            kind: 'mode-change',
+            title: newMode === 'manual' ? 'Manual mode enabled' : 'Autonomous mode enabled',
+            body:
+              newMode === 'manual'
+                ? 'Cards will only animate when you interact.'
+                : 'Cards may animate automatically.',
+            actor: {
+              type: 'user',
+            },
+          })
+        }
+      } catch {
+        // Ignore localStorage errors
       }
-    } catch {
-      // Ignore localStorage errors
-    }
-  }, [])
+    },
+    [mode, pushNotification]
+  )
 
   // Listen for storage events (cross-tab sync)
   useEffect(() => {

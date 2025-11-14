@@ -3,14 +3,18 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useWalletMode } from '@/state/walletMode'
+import { useTransactSheet } from '@/store/useTransactSheet'
 import '@/styles/bottom-glass.css'
 
 interface BottomGlassBarProps {
   currentPath?: string
-  onDollarClick?: () => void
+  onDollarClick?: () => void // Keep for backward compatibility, but will use store if not provided
 }
 
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
+  const { open } = useTransactSheet()
+  
+  const handleDollarClick = onDollarClick ?? (() => open())
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile' || currentPath === '/transactions' || currentPath === '/activity'
   const { mode } = useWalletMode()
@@ -43,9 +47,9 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
           <div className="dollar-sign-container">
             <button
               className={`dollar-sign-contained fab-dollar ${mode === 'manual' ? 'is-manual' : 'is-autonomous'}`}
-              aria-label={`Direct payment (${mode} mode)`}
-              onClick={onDollarClick}
-              onTouchStart={onDollarClick}
+              aria-label={`Transact (${mode} mode)`}
+              onClick={handleDollarClick}
+              onTouchStart={handleDollarClick}
               type="button"
             >
               <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={60} height={60} unoptimized />

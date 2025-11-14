@@ -1,24 +1,22 @@
 'use client'
 
-import { HandCoins, BanknoteArrowUp, BanknoteArrowDown } from 'lucide-react'
+import { HandCoins, BanknoteArrowUp, BanknoteArrowDown, ArrowLeftRight } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
+import { useTransactSheet } from '@/store/useTransactSheet'
 
-type Props = {
-  open: boolean
-  onClose: () => void
-  onSelect?: (action: 'deposit' | 'withdraw' | 'payment') => void
-}
-
-export default function TransactionSheet({ open, onClose, onSelect }: Props) {
-  const handleSelect = (action: 'deposit' | 'withdraw' | 'payment') => {
+export default function TransactionSheet() {
+  const { isOpen, close, onSelect } = useTransactSheet()
+  
+  const handleSelect = (action: 'deposit' | 'withdraw' | 'payment' | 'transfer') => {
+    close()
     if (onSelect) {
       onSelect(action)
     }
   }
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="Transact">
+    <ActionSheet open={isOpen} onClose={close} title="Transact">
       <ActionSheetItem
         icon={<BanknoteArrowUp size={22} strokeWidth={2} />}
         title="Deposit"
@@ -36,6 +34,13 @@ export default function TransactionSheet({ open, onClose, onSelect }: Props) {
         title="Payment"
         caption="Pay anyone via email, handle, or wallet"
         onClick={() => handleSelect('payment')}
+      />
+      <ActionSheetItem
+        icon={<ArrowLeftRight size={22} strokeWidth={2} />}
+        title="Transfer"
+        caption="Transfer funds between your fiat and crypto wallets"
+        onClick={() => handleSelect('transfer')}
+        ariaLabel="Transfer funds between wallets"
       />
     </ActionSheet>
   )

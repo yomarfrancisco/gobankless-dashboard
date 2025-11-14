@@ -13,7 +13,7 @@ import clsx from 'clsx'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
-type CardType = 'pepe' | 'savings' | 'yield' | 'mzn'
+type CardType = 'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'
 
 type HealthLevel = 'good' | 'moderate' | 'fragile'
 
@@ -22,27 +22,31 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
   pepe: { level: 'fragile', percent: 25 },
   yield: { level: 'moderate', percent: 60 },
   mzn: { level: 'good', percent: 100 },
+  btc: { level: 'moderate', percent: 15 },
 }
 
 const CARD_LABELS: Record<CardType, string> = {
   savings: 'CASH CARD',
-  pepe: 'PEPE CARD',
-  yield: 'ETH CARD',
+  pepe: 'CASH CARD',
+  yield: 'CASH CARD',
   mzn: 'CASH CARD',
+  btc: 'CASH CARD',
 }
 
-const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents'> = {
+const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents' | 'btcCents'> = {
   savings: 'cashCents',
   pepe: 'pepeCents',
   yield: 'ethCents',
   mzn: 'mznCents',
+  btc: 'btcCents',
 }
 
-const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN'> = {
+const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN' | 'BTC'> = {
   savings: 'CASH',
   pepe: 'PEPE',
   yield: 'ETH',
   mzn: 'MZN',
+  btc: 'BTC',
 }
 
 // Flag mapping by currency
@@ -51,17 +55,26 @@ const FLAG_BY_CCY: Record<string, { src: string; id: string }> = {
   MZN: { src: '/assets/mozambique.svg', id: 'flag-mz' },
 }
 
+// Coin mapping for crypto cards
+const COIN_BY_CARD: Record<CardType, { src: string; id: string; label: string } | null> = {
+  savings: null, // Uses flag
+  pepe: { src: '/assets/pepe_coin.png', id: 'coin-pepe', label: 'PEPE' },
+  yield: { src: '/assets/eth_coin.png', id: 'coin-eth', label: 'ETH' },
+  mzn: null, // Uses flag
+  btc: { src: '/assets/Bitcoin-Logo.png', id: 'coin-btc', label: 'BTC' },
+}
+
 // Currency label mapping
 const CURRENCY_LABEL: Record<string, string> = {
   ZAR: 'ZAR',
   MZN: 'MZN',
 }
 
-// Determine currency for card type
+// Determine currency for card type (for flags)
 const getCardCurrency = (cardType: CardType): string | null => {
   if (cardType === 'savings') return 'ZAR'
   if (cardType === 'mzn') return 'MZN'
-  return null // PEPE and ETH don't show currency chips
+  return null // PEPE and ETH use coin badges instead
 }
 
 type CardStackCardProps = {
@@ -74,6 +87,8 @@ type CardStackCardProps = {
   }
   index: number
   position: number
+  depth: number
+  total: number
   isTop: boolean
   className: string
   onClick: () => void
@@ -88,6 +103,8 @@ export default function CardStackCard({
   card,
   index,
   position,
+  depth,
+  total,
   isTop,
   className,
   onClick,
@@ -259,64 +276,90 @@ export default function CardStackCard({
         />
       )}
 
-      {/* Currency chip at top-left (no badge background) - only for ZAR and MZN cards */}
+      {/* Currency/Coin badge at top-left - flags for ZAR/MZN, coins for ETH/PEPE */}
       {(() => {
+        // Check for currency (flags) first
         const currency = getCardCurrency(card.type)
-        if (!currency) return null
+        if (currency) {
+          const flagInfo = FLAG_BY_CCY[currency]
+          if (flagInfo) {
+            return (
+              <div className="card-currency-chip" aria-hidden>
+                <span className="flag-wrap">
+                  <img
+                    id={flagInfo.id}
+                    src={flagInfo.src}
+                    alt={currency === 'ZAR' ? 'South Africa flag' : 'Mozambique flag'}
+                    className="flag-icon"
+                    draggable={false}
+                    decoding="async"
+                    loading="eager"
+                  />
+                  <span className="currency-code">{CURRENCY_LABEL[currency]}</span>
+                </span>
+              </div>
+            )
+          }
+        }
         
-        const flagInfo = FLAG_BY_CCY[currency]
-        if (!flagInfo) return null
+        // Check for coin badge (ETH/PEPE)
+        const coinInfo = COIN_BY_CARD[card.type]
+        if (coinInfo) {
+          return (
+            <div className="card-currency-chip" aria-hidden>
+              <span className="flag-wrap">
+                <img
+                  id={coinInfo.id}
+                  src={coinInfo.src}
+                  alt={card.type === 'yield' ? 'ETH coin' : card.type === 'btc' ? 'BTC coin' : 'PEPE coin'}
+                  className="flag-icon"
+                  draggable={false}
+                  decoding="async"
+                  loading="eager"
+                />
+                <span className="currency-code">{coinInfo.label}</span>
+              </span>
+            </div>
+          )
+        }
         
-        return (
-          <div className="card-currency-chip" aria-hidden>
-            <span className="flag-wrap">
-              <img
-                id={flagInfo.id}
-                src={flagInfo.src}
-                alt={currency === 'ZAR' ? 'South Africa flag' : 'Mozambique flag'}
-                className="flag-icon"
-                draggable={false}
-                decoding="async"
-                loading="eager"
-              />
-              <span className="currency-code">{CURRENCY_LABEL[currency]}</span>
-            </span>
-          </div>
-        )
+        return null
       })()}
 
-      {/* Amount display with SlotCounter (shifted down) */}
-      <div className={`card-amounts card-amounts--${card.type} card-amounts--shifted`}>
-        <div
-          className={clsx('card-amounts__zar amount-headline amount-topline', {
-            'flash-up': flashDirection === 'up',
-            'flash-down': flashDirection === 'down',
-          })}
-          aria-label={`${zar.toFixed(2)} rand`}
-          onAnimationEnd={onFlashEnd}
-        >
-          <SlotCounter
-            value={zar}
-            format={formatZAR}
-            durationMs={700}
-            className="card-amounts__zar-value"
-            onStart={() => {
-              // Flash direction is already computed and set
-            }}
-            renderMajor={(major) => <span className="amt-int card-amounts__whole">{major}</span>}
-            renderCents={(cents) => (
-              <>
-                <span className="amt-dot card-amounts__dot">.</span>
-                <span className="amt-cents card-amounts__cents">{cents}</span>
-              </>
-            )}
-          />
+      {/* Amount display with SlotCounter (shifted down) - only show for top card */}
+      {depth === 0 && (
+        <div className={`card-amounts card-amounts--${card.type} card-amounts--shifted`}>
+          <div
+            className={clsx('card-amounts__zar amount-headline amount-topline', {
+              'flash-up': flashDirection === 'up',
+              'flash-down': flashDirection === 'down',
+            })}
+            aria-label={`${zar.toFixed(2)} rand`}
+            onAnimationEnd={onFlashEnd}
+          >
+            <SlotCounter
+              value={zar}
+              format={formatZAR}
+              durationMs={700}
+              className="card-amounts__zar-value"
+              onStart={() => {
+                // Flash direction is already computed and set
+              }}
+              renderMajor={(major) => <span className="amt-int card-amounts__whole">{major}</span>}
+              renderCents={(cents) => (
+                <>
+                  <span className="amt-dot card-amounts__dot">.</span>
+                  <span className="amt-cents card-amounts__cents">{cents}</span>
+                </>
+              )}
+            />
+          </div>
+          <div className="card-amounts__usdt" aria-label={`${usdt.toFixed(2)} USDT`}>
+            <SlotCounter value={usdt} format={formatUSDT} durationMs={700} className="card-amounts__usdt-value" />
+            <span style={{ marginLeft: '4px' }}>USDT</span>
+          </div>
         </div>
-        <div className="card-amounts__usdt" aria-label={`${usdt.toFixed(2)} USDT`}>
-          <SlotCounter value={usdt} format={formatUSDT} durationMs={700} className="card-amounts__usdt-value" />
-          <span style={{ marginLeft: '4px' }}>USDT</span>
-        </div>
-      </div>
+      )}
 
       {/* Top-right card label */}
       <div className="card-label">{CARD_LABELS[card.type]}</div>

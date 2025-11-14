@@ -2,10 +2,16 @@
 
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { useShareProfileSheet } from '@/store/useShareProfileSheet'
 
-export default function TopGlassBar() {
+type TopGlassBarProps = {
+  onScanClick?: () => void
+}
+
+export default function TopGlassBar({ onScanClick }: TopGlassBarProps = {}) {
   const pathname = usePathname()
   const isActivityPage = pathname === '/activity'
+  const { open } = useShareProfileSheet()
 
   return (
     <div className="page-title-gobankless">
@@ -51,8 +57,24 @@ export default function TopGlassBar() {
       )}
       <div className="icons">
         <div className="icon-group">
-          <Image src="/assets/core/scan.svg" alt="Scan" className="icon" width={24} height={24} />
-          <Image src="/assets/core/export.svg" alt="Share" className="icon" width={24} height={24} />
+          <button
+            onClick={onScanClick}
+            className="icon-button"
+            aria-label="Scan QR code"
+            type="button"
+            style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer' }}
+          >
+            <Image src="/assets/core/scan.svg" alt="Scan" className="icon" width={24} height={24} />
+          </button>
+          <button
+            onClick={open}
+            className="icon-button"
+            aria-label="Share profile"
+            type="button"
+            style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer' }}
+          >
+            <Image src="/assets/core/export.svg" alt="Share" className="icon" width={24} height={24} />
+          </button>
         </div>
       </div>
     </div>
