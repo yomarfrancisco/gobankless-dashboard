@@ -3,7 +3,7 @@
 }
 
 .content {
-  padding: 24px 20px 32px;
+  padding: 16px 20px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,15 +41,15 @@
   font-weight: 400;
 }
 
-/* User Handle Text */
+/* User Handle Text - acts as primary title */
 .handleText {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 1.2;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.25;
   color: #000000;
   text-align: center;
-  margin: 0 0 24px;
+  margin: 16px 0 16px;
   letter-spacing: -0.02em;
 }
 

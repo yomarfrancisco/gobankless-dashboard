@@ -70,17 +70,16 @@ export async function generateQRCodeWithLogo(
     const logoX = (qrSize - logoSize) / 2
     const logoY = (qrSize - logoSize) / 2
 
-    // Draw white circular background for logo
-    const logoBgSize = 64
-    const logoBgX = (qrSize - logoBgSize) / 2
-    const logoBgY = (qrSize - logoBgSize) / 2
+    // Draw white square backing for logo with padding
+    const padding = logoSize * 0.15 // 15% padding around logo
+    const backingSize = logoSize + padding * 2
+    const backingX = (qrSize - backingSize) / 2
+    const backingY = (qrSize - backingSize) / 2
 
     ctx.fillStyle = '#FFFFFF'
-    ctx.beginPath()
-    ctx.arc(qrSize / 2, qrSize / 2, logoBgSize / 2, 0, 2 * Math.PI)
-    ctx.fill()
+    ctx.fillRect(backingX, backingY, backingSize, backingSize)
 
-    // Draw logo
+    // Draw logo on top of white backing
     ctx.drawImage(logo, logoX, logoY, logoSize, logoSize)
 
     return canvas.toDataURL('image/png')

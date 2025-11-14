@@ -105,7 +105,7 @@ export default function ShareProfileSheet() {
   const displayHandle = profile.userHandle || '@samakoyo'
 
   return (
-    <ActionSheet open={isOpen} onClose={close} title="Share Profile" size="compact" className={styles.shareSheet}>
+    <ActionSheet open={isOpen} onClose={close} title="" size="compact" className={styles.shareSheet}>
       <div className={styles.content}>
         {/* QR Block */}
         <div className={styles.qrContainer}>
@@ -116,7 +116,7 @@ export default function ShareProfileSheet() {
           )}
         </div>
 
-        {/* User Handle */}
+        {/* User Handle - now acts as primary title */}
         <div className={styles.handleText}>{displayHandle}</div>
 
         {/* Divider */}
