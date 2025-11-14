@@ -165,8 +165,12 @@ export default function Home() {
             <BottomGlassBar currentPath="/" onDollarClick={() => open()} />
           </div>
 
-          {/* Scanner overlay - positioned relative to dashboard-container */}
-          <ScanOverlay isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
+          {/* Scanner - toggle between overlay and sheet implementations */}
+          {USE_MODAL_SCANNER ? (
+            <ScanQrSheet isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
+          ) : (
+            <ScanOverlay isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
+          )}
 
           {/* Scrollable content */}
           <div className="scroll-content">
