@@ -326,38 +326,40 @@ export default function CardStackCard({
         return null
       })()}
 
-      {/* Amount display with SlotCounter (shifted down) */}
-      <div className={`card-amounts card-amounts--${card.type} card-amounts--shifted`}>
-        <div
-          className={clsx('card-amounts__zar amount-headline amount-topline', {
-            'flash-up': flashDirection === 'up',
-            'flash-down': flashDirection === 'down',
-          })}
-          aria-label={`${zar.toFixed(2)} rand`}
-          onAnimationEnd={onFlashEnd}
-        >
-          <SlotCounter
-            value={zar}
-            format={formatZAR}
-            durationMs={700}
-            className="card-amounts__zar-value"
-            onStart={() => {
-              // Flash direction is already computed and set
-            }}
-            renderMajor={(major) => <span className="amt-int card-amounts__whole">{major}</span>}
-            renderCents={(cents) => (
-              <>
-                <span className="amt-dot card-amounts__dot">.</span>
-                <span className="amt-cents card-amounts__cents">{cents}</span>
-              </>
-            )}
-          />
+      {/* Amount display with SlotCounter (shifted down) - only show for top card */}
+      {depth === 0 && (
+        <div className={`card-amounts card-amounts--${card.type} card-amounts--shifted`}>
+          <div
+            className={clsx('card-amounts__zar amount-headline amount-topline', {
+              'flash-up': flashDirection === 'up',
+              'flash-down': flashDirection === 'down',
+            })}
+            aria-label={`${zar.toFixed(2)} rand`}
+            onAnimationEnd={onFlashEnd}
+          >
+            <SlotCounter
+              value={zar}
+              format={formatZAR}
+              durationMs={700}
+              className="card-amounts__zar-value"
+              onStart={() => {
+                // Flash direction is already computed and set
+              }}
+              renderMajor={(major) => <span className="amt-int card-amounts__whole">{major}</span>}
+              renderCents={(cents) => (
+                <>
+                  <span className="amt-dot card-amounts__dot">.</span>
+                  <span className="amt-cents card-amounts__cents">{cents}</span>
+                </>
+              )}
+            />
+          </div>
+          <div className="card-amounts__usdt" aria-label={`${usdt.toFixed(2)} USDT`}>
+            <SlotCounter value={usdt} format={formatUSDT} durationMs={700} className="card-amounts__usdt-value" />
+            <span style={{ marginLeft: '4px' }}>USDT</span>
+          </div>
         </div>
-        <div className="card-amounts__usdt" aria-label={`${usdt.toFixed(2)} USDT`}>
-          <SlotCounter value={usdt} format={formatUSDT} durationMs={700} className="card-amounts__usdt-value" />
-          <span style={{ marginLeft: '4px' }}>USDT</span>
-        </div>
-      </div>
+      )}
 
       {/* Top-right card label */}
       <div className="card-label">{CARD_LABELS[card.type]}</div>
