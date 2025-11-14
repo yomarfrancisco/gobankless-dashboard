@@ -69,8 +69,8 @@ const cardsData: CardData[] = [
 // Card labels mapping
 const CARD_LABELS: Record<CardType, string> = {
   savings: 'CASH CARD',
-  pepe: 'PEPE CARD',
-  yield: 'ETH CARD',
+  pepe: 'CASH CARD',
+  yield: 'CASH CARD',
   mzn: 'CASH CARD',
 }
 

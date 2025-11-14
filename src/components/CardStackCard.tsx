@@ -26,8 +26,8 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
 
 const CARD_LABELS: Record<CardType, string> = {
   savings: 'CASH CARD',
-  pepe: 'PEPE CARD',
-  yield: 'ETH CARD',
+  pepe: 'CASH CARD',
+  yield: 'CASH CARD',
   mzn: 'CASH CARD',
 }
 
@@ -54,8 +54,8 @@ const FLAG_BY_CCY: Record<string, { src: string; id: string }> = {
 // Coin mapping for crypto cards
 const COIN_BY_CARD: Record<CardType, { src: string; id: string; label: string } | null> = {
   savings: null, // Uses flag
-  pepe: { src: '/assets/pepe_coin.png', id: 'coin-pepe', label: '$PEPE' },
-  yield: { src: '/assets/eth_coin.png', id: 'coin-eth', label: '$ETH' },
+  pepe: { src: '/assets/pepe_coin.png', id: 'coin-pepe', label: 'PEPE' },
+  yield: { src: '/assets/eth_coin.png', id: 'coin-eth', label: 'ETH' },
   mzn: null, // Uses flag
 }
 
