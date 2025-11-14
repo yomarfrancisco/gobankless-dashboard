@@ -326,6 +326,8 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   }, [])
 
   const total = cardsData.length
+  const BASE_HEIGHT_PX = 238 // top card height
+  const Y_STEP_PX = 44 // vertical offset per depth (from getStackStyle)
 
   // Debug: log computed styles on first render
   useEffect(() => {
@@ -338,13 +340,17 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     }
   }, [total])
 
+  // Calculate dynamic minHeight to accommodate all cards with overlap
+  const stackMinHeight = BASE_HEIGHT_PX + (total - 1) * Y_STEP_PX + 20 // buffer for breathing room
+
   return (
     <div 
       className={CARD_FLIP_CLASSES.stack}
       style={{
         position: 'relative',
         overflow: 'hidden',
-        minHeight: 260,
+        minHeight: stackMinHeight,
+        marginTop: 16, // Add breathing room below wallet header
       }}
     >
       {order.map((cardIdx, depth) => {
@@ -366,6 +372,8 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
             card={card}
             index={cardIdx}
             position={depth}
+            depth={depth}
+            total={total}
             isTop={isTop}
             className={getCardClasses(cardIdx, depth)}
             onClick={() => handleCardClick(cardIdx)}

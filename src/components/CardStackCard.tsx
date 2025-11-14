@@ -87,6 +87,8 @@ type CardStackCardProps = {
   }
   index: number
   position: number
+  depth: number
+  total: number
   isTop: boolean
   className: string
   onClick: () => void
@@ -101,6 +103,8 @@ export default function CardStackCard({
   card,
   index,
   position,
+  depth,
+  total,
   isTop,
   className,
   onClick,
