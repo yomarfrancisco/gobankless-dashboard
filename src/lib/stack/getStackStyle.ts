@@ -28,13 +28,16 @@ const Y_STEP_PX = 44; // Reduced from 50 to 44 to accommodate 5 cards within vie
 const X_STEP_PX = 16;
 
 export function getStackStyle(depth: number, total: number): StackStyle {
+  // Clamp depth to prevent negative values from animation (prevents cards moving above container top)
+  const safeDepth = Math.max(depth, 0);
+  
   return {
-    width: `calc(100% - ${depth * WIDTH_STEP_PX}px)`,
-    maxWidth: BASE_WIDTH_PX - WIDTH_STEP_PX * depth,
-    height: BASE_HEIGHT_PX - HEIGHT_STEP_PX * depth,
-    top: Y_STEP_PX * depth,
-    left: X_STEP_PX * depth,
-    zIndex: total - depth,
+    width: `calc(100% - ${safeDepth * WIDTH_STEP_PX}px)`,
+    maxWidth: BASE_WIDTH_PX - WIDTH_STEP_PX * safeDepth,
+    height: BASE_HEIGHT_PX - HEIGHT_STEP_PX * safeDepth,
+    top: Y_STEP_PX * safeDepth, // Clamped to never be negative
+    left: X_STEP_PX * safeDepth,
+    zIndex: total - safeDepth,
   };
 }
 
