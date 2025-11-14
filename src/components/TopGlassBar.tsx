@@ -77,7 +77,6 @@ export default function TopGlassBar({ onScanClick }: TopGlassBarProps = {}) {
           </button>
         </div>
       </div>
-      <ScanOverlay isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
     </div>
   )
 }

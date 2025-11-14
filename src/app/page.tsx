@@ -34,6 +34,7 @@ export default function Home() {
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
   const [openDirectPayment, setOpenDirectPayment] = useState(false)
+  const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [openSendDetails, setOpenSendDetails] = useState(false)
   const [openSendSuccess, setOpenSendSuccess] = useState(false)
   const [openDepositSuccess, setOpenDepositSuccess] = useState(false)
