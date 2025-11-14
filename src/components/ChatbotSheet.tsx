@@ -16,7 +16,7 @@ export function ChatbotSheet({ open, onClose }: ChatbotSheetProps) {
       onClose={onClose}
       title="" // Empty title - Chatbase handles its own header
       size="tall"
-      className={styles.sheet}
+      className={`${styles.sheet} chatbot-sheet`}
     >
       <div className={styles.sheetBody}>
         <div className={styles.frameContainer}>

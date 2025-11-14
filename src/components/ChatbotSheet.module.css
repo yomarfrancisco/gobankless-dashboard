@@ -1,6 +1,14 @@
+/* Ensure sheet has rounded top corners and no bottom gap */
+.sheet :global(.as-sheet) {
+  border-radius: 24px 24px 0 0; /* Rounded top corners */
+  padding-bottom: 0; /* Remove default bottom padding to eliminate white gap */
+  margin-bottom: 0;
+}
+
 .sheet :global(.as-body) {
   padding: 0; /* Remove default padding for full-width iframe */
   height: 100%; /* Ensure body fills available space */
+  margin: 0;
 }
 
 .sheetBody {
@@ -21,6 +29,8 @@
   overflow: hidden;
   position: relative;
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .iframe {
@@ -28,5 +38,7 @@
   height: 100%;
   border: none;
   display: block;
+  margin: 0;
+  padding: 0;
 }
 

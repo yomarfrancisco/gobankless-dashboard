@@ -43,6 +43,13 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* Chatbot sheet specific: no bottom padding, flush with bottom */
+.as-sheet.chatbot-sheet {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  border-radius: 24px 24px 0 0;
+  background: #000; /* Match Chatbase dark theme */
+}
+
 /* Compact sheets (default) - for Edit Profile, Name & Handle, Social Links, Help & Support, etc. */
 .as-sheet-compact {
   max-height: 65vh;
