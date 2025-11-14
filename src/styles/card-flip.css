@@ -17,7 +17,7 @@
   width: 100%;
   max-width: 398px;
   height: 320px; /* Increased to accommodate 4 cards: depth 3 at top 150px + height 168px = 318px */
-  margin: 0 auto; /* Zero vertical margin to prevent upward shift, horizontal centering maintained via inline styles */
+  margin: 16px auto; /* Restore original top margin for spacing, horizontal centering maintained via inline styles */
   box-sizing: border-box;
   overflow: visible; /* Allow cards to extend slightly if needed, but width calc prevents overflow */
 }

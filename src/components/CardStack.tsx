@@ -355,7 +355,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
         minHeight: stackMinHeight,
         paddingTop: TOP_PADDING_PX, // Prevent top card border-radius clipping
         paddingBottom: 0,
-        marginTop: 0, // Zero to override CSS and prevent upward shift
+        marginTop: 16, // Restore original spacing to wallet header
         marginLeft: 'auto', // Maintain horizontal centering
         marginRight: 'auto', // Maintain horizontal centering
       }}
