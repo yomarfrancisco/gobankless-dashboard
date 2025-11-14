@@ -38,7 +38,7 @@ export default function ShareProfileSheet() {
     }
 
     generateQR()
-  }, [isOpen, profile.userHandle])
+  }, [isOpen, profile.userHandle, pushNotification])
 
   const handleShare = async () => {
     const handle = profile.userHandle || '@samakoyo'
