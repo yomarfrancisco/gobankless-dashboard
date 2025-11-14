@@ -10,8 +10,8 @@ import { usePortfolioStore } from '@/store/portfolio'
 import { useTweenNumber } from '@/lib/animations/useTweenNumber'
 import { useTwoStageTween } from '@/lib/animations/useTwoStageTween'
 import clsx from 'clsx'
-import { ArrowUp } from './icons/ArrowUp'
-import { ArrowDown } from './icons/ArrowDown'
+import { TriangleUp } from './icons/TriangleUp'
+import { TriangleDown } from './icons/TriangleDown'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
@@ -396,8 +396,8 @@ export default function CardStackCard({
         })}
       >
         <span className="card-allocation-pill__inner">
-          {arrowDirection === 'up' && <ArrowUp size={22} color="#29ff63" />}
-          {arrowDirection === 'down' && <ArrowDown size={22} color="#ff4d4d" />}
+          {arrowDirection === 'up' && <TriangleUp size={22} color="#29ff63" />}
+          {arrowDirection === 'down' && <TriangleDown size={22} color="#ff4d4d" />}
           {arrowDirection === 'none' && <div className="card-allocation-pill__neutral-dot" />}
           <span className="card-allocation-pill__text">
             {animatedAllocationPct.toFixed(0)}%
