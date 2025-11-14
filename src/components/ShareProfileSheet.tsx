@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Share2, Copy, Download, ChevronRight } from 'lucide-react'
+import { Share2, Copy, Download } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 import { useShareProfileSheet } from '@/store/useShareProfileSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { generateQRCodeWithLogo, downloadQRCode } from '@/lib/qr'
-import { pushNotification } from '@/store/notifications'
+import { useNotificationStore } from '@/store/notifications'
 import styles from './ShareProfileSheet.module.css'
 
 export default function ShareProfileSheet() {
   const { isOpen, close } = useShareProfileSheet()
   const { profile } = useUserProfileStore()
+  const pushNotification = useNotificationStore((state) => state.pushNotification)
   const [qrDataURL, setQrDataURL] = useState<string | null>(null)
 
   // Generate QR code when sheet opens
@@ -29,7 +30,7 @@ export default function ShareProfileSheet() {
       } catch (error) {
         console.error('Failed to generate QR code:', error)
         pushNotification({
-          type: 'error',
+          kind: 'payment_failed',
           title: 'Error',
           body: 'Failed to generate QR code',
         })
@@ -67,14 +68,14 @@ export default function ShareProfileSheet() {
     try {
       await navigator.clipboard.writeText(paymentUrl)
       pushNotification({
-        type: 'success',
+        kind: 'payment_sent',
         title: 'Copied!',
         body: 'Payment link copied to clipboard',
       })
     } catch (error) {
       console.error('Failed to copy:', error)
       pushNotification({
-        type: 'error',
+        kind: 'payment_failed',
         title: 'Error',
         body: 'Failed to copy link',
       })
@@ -84,7 +85,7 @@ export default function ShareProfileSheet() {
   const handleDownload = () => {
     if (!qrDataURL) {
       pushNotification({
-        type: 'error',
+        kind: 'payment_failed',
         title: 'Error',
         body: 'QR code not ready yet',
       })
@@ -95,7 +96,7 @@ export default function ShareProfileSheet() {
     const filename = `gobankless-qr-${handle.replace('@', '')}.png`
     downloadQRCode(qrDataURL, filename)
     pushNotification({
-      type: 'success',
+      kind: 'payment_received',
       title: 'Downloaded!',
       body: 'QR code saved to your device',
     })
