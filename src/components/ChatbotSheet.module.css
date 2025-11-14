@@ -1,5 +1,6 @@
 .sheet :global(.as-body) {
   padding: 0; /* Remove default padding for full-width iframe */
+  height: 100%; /* Ensure body fills available space */
 }
 
 .sheetBody {
@@ -11,6 +12,7 @@
   width: 100%;
   padding: 0;
   margin: 0;
+  height: clamp(420px, 65vh, 640px); /* Big enough for full chat */
 }
 
 .frameContainer {
@@ -18,6 +20,7 @@
   width: 100%;
   overflow: hidden;
   position: relative;
+  height: 100%;
 }
 
 .iframe {

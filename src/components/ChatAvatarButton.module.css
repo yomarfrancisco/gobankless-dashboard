@@ -1,8 +1,8 @@
 .fab {
-  position: fixed;
+  position: absolute;
   right: 16px;
   bottom: 24px;
-  z-index: 60; /* above content but below nav overlays if needed */
+  z-index: 40; /* above content but below nav overlays if needed */
   border: none;
   background: transparent;
   padding: 0;

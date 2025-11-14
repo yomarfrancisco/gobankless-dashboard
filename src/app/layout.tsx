@@ -15,7 +15,6 @@ import SocialLinksSheet from '@/components/SocialLinksSheet'
 import ProfileDescriptionSheet from '@/components/ProfileDescriptionSheet'
 import SupportSheet from '@/components/SupportSheet'
 import ShareProfileSheet from '@/components/ShareProfileSheet'
-import { ChatAvatarButton } from '@/components/ChatAvatarButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -79,8 +78,6 @@ export default function RootLayout({
             </WalletAllocProvider>
           </WalletModeProvider>
         </SplashOnceProvider>
-        {/* Global Chatbot Avatar Button */}
-        <ChatAvatarButton />
       </body>
     </html>
   )
