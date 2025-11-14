@@ -21,6 +21,10 @@ import BranchManagerFooter from '@/components/BranchManagerFooter'
 import AgentListSheet from '@/components/AgentListSheet'
 import { useWalletMode } from '@/state/walletMode'
 import { ScanOverlay } from '@/components/ScanOverlay'
+import { ScanQrSheet } from '@/components/ScanQrSheet'
+
+// Toggle flag to compare both scanner implementations
+const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'>('savings')
