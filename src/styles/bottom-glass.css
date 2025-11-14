@@ -2,20 +2,20 @@
 
 /* Dataset-driven default before React mounts */
 html[data-wallet-mode="autonomous"] .fab-dollar {
-  background: #000;
+  background: transparent; /* Avatar image will show, no background needed */
 }
 
 html[data-wallet-mode="manual"] .fab-dollar {
-  background: #f5f5f5;
+  background: #000; /* Inverted: manual mode is now black */
 }
 
 /* Class-driven after React mounts (keeps parity with store) */
 .fab-dollar.is-autonomous {
-  background: #000;
+  background: transparent; /* Avatar image will show, no background needed */
 }
 
 .fab-dollar.is-manual {
-  background: #f5f5f5;
+  background: #000; /* Inverted: manual mode is now black */
 }
 
 /* Keep it crisp; prevent flicker due to transitions on mount */

@@ -574,6 +574,13 @@ body {
   object-fit: contain;
 }
 
+.chat-avatar-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover; /* Use cover for avatar to fill circle nicely */
+  border-radius: 50%; /* Ensure circular crop */
+}
+
 .nav-label {
   font-size: 11px;
   letter-spacing: -0.14px;

@@ -22,7 +22,6 @@ import AgentListSheet from '@/components/AgentListSheet'
 import { useWalletMode } from '@/state/walletMode'
 import { ScanOverlay } from '@/components/ScanOverlay'
 import { ScanQrSheet } from '@/components/ScanQrSheet'
-import { ChatAvatarButton } from '@/components/ChatAvatarButton'
 
 // Toggle flag to compare both scanner implementations
 const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
@@ -177,9 +176,6 @@ export default function Home() {
           ) : (
             <ScanOverlay isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
           )}
-
-          {/* Chat Avatar Button - positioned inside phone-width layout */}
-          <ChatAvatarButton />
 
           {/* Scrollable content */}
           <div className="scroll-content">

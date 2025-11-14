@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useWalletMode } from '@/state/walletMode'
 import { useTransactSheet } from '@/store/useTransactSheet'
+import { ChatbotSheet } from './ChatbotSheet'
 import '@/styles/bottom-glass.css'
 
 interface BottomGlassBarProps {
@@ -13,11 +15,20 @@ interface BottomGlassBarProps {
 
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const { open } = useTransactSheet()
-  
-  const handleDollarClick = onDollarClick ?? (() => open())
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile' || currentPath === '/transactions' || currentPath === '/activity'
   const { mode } = useWalletMode()
+  const isAutonomousMode = mode === 'autonomous'
+  
+  const handleCenterButtonClick = () => {
+    if (isAutonomousMode) {
+      setIsChatOpen(true)
+    } else {
+      const handler = onDollarClick ?? (() => open())
+      handler()
+    }
+  }
 
   return (
     <div className="bottom-menu">
@@ -47,15 +58,27 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
           <div className="dollar-sign-container">
             <button
               className={`dollar-sign-contained fab-dollar ${mode === 'manual' ? 'is-manual' : 'is-autonomous'}`}
-              aria-label={`Transact (${mode} mode)`}
-              onClick={handleDollarClick}
-              onTouchStart={handleDollarClick}
+              aria-label={isAutonomousMode ? 'Open BRICS chat' : `Transact (${mode} mode)`}
+              onClick={handleCenterButtonClick}
+              onTouchStart={handleCenterButtonClick}
               type="button"
             >
-              <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={60} height={60} unoptimized />
+              {isAutonomousMode ? (
+                <Image 
+                  src="/assets/Brics-girl-blue.png" 
+                  alt="$BRICS Diamond" 
+                  width={60} 
+                  height={60} 
+                  className="chat-avatar-image"
+                  unoptimized 
+                />
+              ) : (
+                <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={60} height={60} unoptimized />
+              )}
             </button>
-            <div className="nav-label">Direct payment</div>
+            <div className="nav-label">{isAutonomousMode ? 'BRICS chat' : 'Direct payment'}</div>
           </div>
+          <ChatbotSheet open={isChatOpen} onClose={() => setIsChatOpen(false)} />
           <div className="nav-item">
             <Link href="/profile" aria-label="Profile">
               <Image 
