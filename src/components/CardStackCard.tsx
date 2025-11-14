@@ -396,8 +396,8 @@ export default function CardStackCard({
         })}
       >
         <span className="card-allocation-pill__inner">
-          {arrowDirection === 'up' && <TriangleUp size={22} color="#29ff63" />}
-          {arrowDirection === 'down' && <TriangleDown size={22} color="#ff4d4d" />}
+          {arrowDirection === 'up' && <TriangleUp size={18} color="#29ff63" />}
+          {arrowDirection === 'down' && <TriangleDown size={18} color="#ff4d4d" />}
           {arrowDirection === 'none' && <div className="card-allocation-pill__neutral-dot" />}
           <span className="card-allocation-pill__text">
             {animatedAllocationPct.toFixed(0)}%

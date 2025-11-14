@@ -49,6 +49,12 @@
 .card-allocation-pill__inner svg {
   display: block;
   flex-shrink: 0;
+  opacity: 1 !important;
+}
+
+.card-allocation-pill__inner svg polygon {
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
 }
 
 .card-allocation-pill__neutral-dot {
