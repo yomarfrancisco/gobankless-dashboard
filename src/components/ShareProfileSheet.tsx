@@ -25,7 +25,7 @@ export default function ShareProfileSheet() {
       try {
         const handle = profile.userHandle || '@samakoyo'
         const paymentUrl = `https://gobankless.app/pay/${handle.replace('@', '')}`
-        const qr = await generateQRCodeWithLogo(paymentUrl, '/assets/GO_logo.png', 220, 52)
+        const qr = await generateQRCodeWithLogo(paymentUrl, '/assets/core/dollar-sign.png', 220, 52)
         setQrDataURL(qr)
       } catch (error) {
         console.error('Failed to generate QR code:', error)
