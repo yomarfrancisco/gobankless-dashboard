@@ -137,6 +137,7 @@ export default function Home() {
     mzn: { title: 'MZN wallet', subtitle: 'Mozambique business account' },
     pepe: { title: 'PEPE wallet', subtitle: 'PEPE investment account' },
     yield: { title: 'ETH wallet', subtitle: 'ETH investment account' },
+    btc: { title: 'BTC wallet', subtitle: 'BTC investment account' },
   }
 
   // Get title and subtitle based on mode and current top card
