@@ -45,11 +45,17 @@
   gap: 6px; /* Space between arrow and percentage text */
 }
 
-.card-allocation-pill__arrow {
+.card-allocation-pill__arrow,
+.card-allocation-pill__inner svg {
   display: block;
+  flex-shrink: 0;
+}
+
+.card-allocation-pill__neutral-dot {
   width: 10px;
   height: 10px;
-  object-fit: contain;
+  border-radius: 50%;
+  background: #cccccc;
   flex-shrink: 0;
 }
 
