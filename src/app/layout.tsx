@@ -14,6 +14,7 @@ import ProfileNameHandleSheet from '@/components/ProfileNameHandleSheet'
 import SocialLinksSheet from '@/components/SocialLinksSheet'
 import ProfileDescriptionSheet from '@/components/ProfileDescriptionSheet'
 import SupportSheet from '@/components/SupportSheet'
+import ShareProfileSheet from '@/components/ShareProfileSheet'
 
 const inter = Inter({ subsets: ['latin'] })
 
