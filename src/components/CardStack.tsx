@@ -341,7 +341,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   }, [total])
 
   // Calculate dynamic minHeight to accommodate all cards with overlap
-  const BOTTOM_BUFFER_PX = 20 // Buffer at bottom for deeper card peeks
+  const BOTTOM_BUFFER_PX = 8 // Reduced from 20 to 8 to close gap to map section (40% reduction)
   const stackMinHeight = BASE_HEIGHT_PX + (total - 1) * Y_STEP_PX + BOTTOM_BUFFER_PX
 
   return (
