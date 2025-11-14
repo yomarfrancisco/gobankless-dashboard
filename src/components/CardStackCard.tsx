@@ -13,7 +13,7 @@ import clsx from 'clsx'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
-type CardType = 'pepe' | 'savings' | 'yield' | 'mzn'
+type CardType = 'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'
 
 type HealthLevel = 'good' | 'moderate' | 'fragile'
 
@@ -22,6 +22,7 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
   pepe: { level: 'fragile', percent: 25 },
   yield: { level: 'moderate', percent: 60 },
   mzn: { level: 'good', percent: 100 },
+  btc: { level: 'moderate', percent: 15 },
 }
 
 const CARD_LABELS: Record<CardType, string> = {
@@ -29,20 +30,23 @@ const CARD_LABELS: Record<CardType, string> = {
   pepe: 'CASH CARD',
   yield: 'CASH CARD',
   mzn: 'CASH CARD',
+  btc: 'CASH CARD',
 }
 
-const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents'> = {
+const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents' | 'btcCents'> = {
   savings: 'cashCents',
   pepe: 'pepeCents',
   yield: 'ethCents',
   mzn: 'mznCents',
+  btc: 'btcCents',
 }
 
-const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN'> = {
+const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN' | 'BTC'> = {
   savings: 'CASH',
   pepe: 'PEPE',
   yield: 'ETH',
   mzn: 'MZN',
+  btc: 'BTC',
 }
 
 // Flag mapping by currency
@@ -57,6 +61,7 @@ const COIN_BY_CARD: Record<CardType, { src: string; id: string; label: string } 
   pepe: { src: '/assets/pepe_coin.png', id: 'coin-pepe', label: 'PEPE' },
   yield: { src: '/assets/eth_coin.png', id: 'coin-eth', label: 'ETH' },
   mzn: null, // Uses flag
+  btc: { src: '/assets/Bitcoin-Logo.png', id: 'coin-btc', label: 'BTC' },
 }
 
 // Currency label mapping
@@ -302,7 +307,7 @@ export default function CardStackCard({
                 <img
                   id={coinInfo.id}
                   src={coinInfo.src}
-                  alt={card.type === 'yield' ? 'ETH coin' : 'PEPE coin'}
+                  alt={card.type === 'yield' ? 'ETH coin' : card.type === 'btc' ? 'BTC coin' : 'PEPE coin'}
                   className="flag-icon"
                   draggable={false}
                   decoding="async"

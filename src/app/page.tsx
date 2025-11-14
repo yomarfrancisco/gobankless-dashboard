@@ -22,7 +22,7 @@ import AgentListSheet from '@/components/AgentListSheet'
 import { useWalletMode } from '@/state/walletMode'
 
 export default function Home() {
-  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn'>('savings')
+  const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'>('savings')
   const cardStackRef = useRef<CardStackHandle>(null)
   const { setOnSelect, open } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
@@ -132,7 +132,7 @@ export default function Home() {
   }, mode === 'autonomous')
 
   // Manual mode titles per card
-  const MANUAL_TITLES: Record<'pepe' | 'savings' | 'yield' | 'mzn', { title: string; subtitle: string }> = {
+  const MANUAL_TITLES: Record<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc', { title: string; subtitle: string }> = {
     savings: { title: 'ZAR wallet', subtitle: 'South African business account' },
     mzn: { title: 'MZN wallet', subtitle: 'Mozambique business account' },
     pepe: { title: 'PEPE wallet', subtitle: 'PEPE investment account' },

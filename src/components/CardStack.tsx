@@ -23,9 +23,10 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
   pepe: { level: 'fragile', percent: 25 },
   yield: { level: 'moderate', percent: 60 },
   mzn: { level: 'good', percent: 100 },
+  btc: { level: 'moderate', percent: 15 },
 }
 
-type CardType = 'pepe' | 'savings' | 'yield' | 'mzn'
+type CardType = 'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'
 
 interface CardData {
   type: CardType
@@ -64,6 +65,13 @@ const cardsData: CardData[] = [
     width: 342,
     height: 213,
   },
+  {
+    type: 'btc',
+    image: '/assets/cards/card-BTC.jpg',
+    alt: 'BTC Card',
+    width: 342,
+    height: 213,
+  },
 ]
 
 // Card labels mapping
@@ -72,22 +80,25 @@ const CARD_LABELS: Record<CardType, string> = {
   pepe: 'CASH CARD',
   yield: 'CASH CARD',
   mzn: 'CASH CARD',
+  btc: 'CASH CARD',
 }
 
 // Map card type to allocation key
-const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents'> = {
+const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents' | 'btcCents'> = {
   savings: 'cashCents',
   pepe: 'pepeCents',
   yield: 'ethCents',
   mzn: 'mznCents',
+  btc: 'btcCents',
 }
 
 // Map card type to portfolio symbol
-const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN'> = {
+const CARD_TO_SYMBOL: Record<CardType, 'CASH' | 'ETH' | 'PEPE' | 'MZN' | 'BTC'> = {
   savings: 'CASH',
   pepe: 'PEPE',
   yield: 'ETH',
   mzn: 'MZN',
+  btc: 'BTC',
 }
 
 interface CardStackProps {
@@ -119,6 +130,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     pepe: null,
     yield: null,
     mzn: null,
+    btc: null,
   })
   // Track previous values to compute direction
   const prevValuesRef = useRef<Record<CardType, number>>({
@@ -126,6 +138,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     pepe: alloc.pepeCents / 100,
     yield: alloc.ethCents / 100,
     mzn: (alloc as any).mznCents ? (alloc as any).mznCents / 100 : 0,
+    btc: (alloc as any).btcCents ? (alloc as any).btcCents / 100 : 0,
   })
 
   // Compute flash direction when values change
@@ -135,6 +148,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
       pepe: alloc.pepeCents / 100,
       yield: alloc.ethCents / 100,
       mzn: (alloc as any).mznCents ? (alloc as any).mznCents / 100 : 0,
+      btc: (alloc as any).btcCents ? (alloc as any).btcCents / 100 : 0,
     }
 
     const newFlashDirection: Record<CardType, 'up' | 'down' | null> = {
@@ -142,10 +156,11 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
       pepe: null,
       yield: null,
       mzn: null,
+      btc: null,
     }
 
     // Compute direction for each card
-    ;(['savings', 'pepe', 'yield', 'mzn'] as CardType[]).forEach((cardType) => {
+    ;(['savings', 'pepe', 'yield', 'mzn', 'btc'] as CardType[]).forEach((cardType) => {
       const prev = prevValuesRef.current[cardType]
       const current = currentValues[cardType]
       const delta = current - prev
@@ -167,7 +182,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
     // Update flash direction state (this triggers re-render with flash classes)
     setFlashDirection(newFlashDirection)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents, (alloc as any).mznCents])
+  }, [alloc.cashCents, alloc.pepeCents, alloc.ethCents, (alloc as any).mznCents, (alloc as any).btcCents])
 
   // Notify parent of top card change
   useEffect(() => {
@@ -324,7 +339,14 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   }, [total])
 
   return (
-    <div className={CARD_FLIP_CLASSES.stack}>
+    <div 
+      className={CARD_FLIP_CLASSES.stack}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: 260,
+      }}
+    >
       {order.map((cardIdx, depth) => {
         const card = cardsData[cardIdx]
         const isTop = depth === 0

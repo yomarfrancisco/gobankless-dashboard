@@ -24,7 +24,7 @@ const BASE_WIDTH_PX = 398;
 const WIDTH_STEP_PX = 32;
 const BASE_HEIGHT_PX = 238;
 const HEIGHT_STEP_PX = 25;
-const Y_STEP_PX = 50;
+const Y_STEP_PX = 44; // Reduced from 50 to 44 to accommodate 5 cards within viewport
 const X_STEP_PX = 16;
 
 export function getStackStyle(depth: number, total: number): StackStyle {
