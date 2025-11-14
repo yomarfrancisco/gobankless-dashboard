@@ -72,6 +72,8 @@ export default function RootLayout({
               <ProfileDescriptionSheet />
               {/* Global Support Sheet */}
               <SupportSheet />
+              {/* Global Share Profile Sheet */}
+              <ShareProfileSheet />
             </WalletAllocProvider>
           </WalletModeProvider>
         </SplashOnceProvider>
