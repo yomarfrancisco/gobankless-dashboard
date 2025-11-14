@@ -341,7 +341,10 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
   }, [total])
 
   // Calculate dynamic minHeight to accommodate all cards with overlap
-  const stackMinHeight = BASE_HEIGHT_PX + (total - 1) * Y_STEP_PX + 20 // buffer for breathing room
+  // Add padding-top to prevent clipping of top card's rounded corners during/after animation
+  const TOP_PADDING_PX = 8 // Space above top card to prevent border-radius clipping
+  const BOTTOM_BUFFER_PX = 20 // Buffer at bottom for deeper card peeks
+  const stackMinHeight = BASE_HEIGHT_PX + (total - 1) * Y_STEP_PX + TOP_PADDING_PX + BOTTOM_BUFFER_PX
 
   return (
     <div 
@@ -350,7 +353,9 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
         position: 'relative',
         overflow: 'hidden',
         minHeight: stackMinHeight,
-        marginTop: 16, // Add breathing room below wallet header
+        paddingTop: TOP_PADDING_PX, // Prevent top card border-radius clipping
+        paddingBottom: 0,
+        marginTop: 8, // Reduced from 16 - smaller gap to wallet header
       }}
     >
       {order.map((cardIdx, depth) => {
@@ -359,8 +364,12 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
         const stackStyle = getStackStyle(depth, total)
 
         // During animation, adjust depth for smooth transitions
+        // IMPORTANT: Never adjust depth for top card (depth === 0) to prevent clipping
         const effectiveDepth = phase === 'animating' && depth > 0 ? depth - 1 : depth
         const effectiveStyle = phase === 'animating' && depth > 0 ? getStackStyle(effectiveDepth, total) : stackStyle
+        
+        // Ensure top card (depth 0) always has consistent top position, even during animation
+        const finalTop = depth === 0 ? stackStyle.top : effectiveStyle.top
 
         if (DEV_CARD_FLIP_DEBUG && isTop) {
           console.debug('[CardFlip]', `CardStack-${cardIdx}`, 'top card rendered')
@@ -384,7 +393,7 @@ const CardStack = forwardRef<CardStackHandle, CardStackProps>(function CardStack
               width: effectiveStyle.width,
               maxWidth: `${effectiveStyle.maxWidth}px`,
               height: `${effectiveStyle.height}px`,
-              top: `${effectiveStyle.top}px`,
+              top: `${finalTop}px`, // Use finalTop to ensure depth 0 never moves up
               left: `${effectiveStyle.left}px`,
               zIndex: effectiveStyle.zIndex,
               pointerEvents: isTop ? 'auto' : 'none',
