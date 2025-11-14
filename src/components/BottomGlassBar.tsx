@@ -67,8 +67,8 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
                 <Image 
                   src="/assets/Brics-girl-blue.png" 
                   alt="$BRICS Diamond" 
-                  width={60} 
-                  height={60} 
+                  width={78} 
+                  height={78} 
                   className="chat-avatar-image"
                   unoptimized 
                 />

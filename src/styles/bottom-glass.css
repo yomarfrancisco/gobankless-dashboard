@@ -11,7 +11,7 @@ html[data-wallet-mode="manual"] .fab-dollar {
 
 /* Class-driven after React mounts (keeps parity with store) */
 .fab-dollar.is-autonomous {
-  background: transparent; /* Avatar image will show, no background needed */
+  background: #fff !important; /* White background behind transparent PNG avatar */
 }
 
 .fab-dollar.is-manual {
