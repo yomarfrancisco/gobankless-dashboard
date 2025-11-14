@@ -17,7 +17,7 @@
   width: 100%;
   max-width: 398px;
   height: 320px; /* Increased to accommodate 4 cards: depth 3 at top 150px + height 168px = 318px */
-  margin: 0 auto 4px; /* top 0, sides auto, bottom 4px - reduced bottom margin to tighten gap to map section */
+  margin: 16px auto; /* Restore original top margin for spacing to wallet header */
   box-sizing: border-box;
   overflow: visible; /* Allow cards to extend slightly if needed, but width calc prevents overflow */
 }
@@ -82,8 +82,4 @@
   }
 }
 
-/* HARD OVERRIDE: card stack vertical spacing */
-.stack {
-  margin-bottom: 4px !important; /* was effectively 16px - force tight gap to map section */
-}
 

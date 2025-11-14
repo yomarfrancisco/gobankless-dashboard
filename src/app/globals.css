@@ -949,14 +949,14 @@ body {
   margin-top: clamp(4px, 1.2vh, 12px); /* Tightened by 40-50% - reduced gap between card stack and map section */
 }
 
-/* HARD OVERRIDE: spacing between stack and convert section */
+/* HARD OVERRIDE: spacing between card stack and convert section */
 .convertCashSpacing {
-  margin-top: 4px !important; /* override any clamp() or previous margin - force tight gap */
+  margin-top: 8px !important; /* was much larger via clamp(...) - force tight gap below cards */
 }
 
 /* Remove heading margin inside .convertCashSpacing */
 .convertCashSpacing h2 {
-  margin-top: 0 !important; /* ensure heading doesn't add hidden top margin */
+  margin-top: 0 !important; /* eliminate any extra top margin on the heading itself */
 }
 
 /* TEST ONLY: move Mapbox logo off-screen (avoid CSS Modules purity issues) */
