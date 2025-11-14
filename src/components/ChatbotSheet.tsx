@@ -14,18 +14,20 @@ export function ChatbotSheet({ open, onClose }: ChatbotSheetProps) {
     <ActionSheet
       open={open}
       onClose={onClose}
-      title="Talk to your BRICS fund manager"
+      title="" // Empty title - Chatbase handles its own header
       size="tall"
       className={styles.sheet}
     >
-      <div className={styles.iframeContainer}>
-        <iframe
-          src="https://chat.mystablecoin.app/chatbot-iframe/2wO054pAvier4ISsuZd_X"
-          width="100%"
-          className={styles.iframe}
-          loading="lazy"
-          title="BRICS fund manager chat"
-        />
+      <div className={styles.sheetBody}>
+        <div className={styles.frameContainer}>
+          <iframe
+            src="https://chat.mystablecoin.app/chatbot-iframe/2wO054pAvier4ISsuZd_X"
+            title="$BRICS Diamond"
+            className={styles.iframe}
+            loading="lazy"
+            allow="clipboard-write; microphone; camera"
+          />
+        </div>
       </div>
     </ActionSheet>
   )
