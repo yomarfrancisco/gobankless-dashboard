@@ -20,6 +20,7 @@ import ConvertCashSection from '@/components/ConvertCashSection'
 import BranchManagerFooter from '@/components/BranchManagerFooter'
 import AgentListSheet from '@/components/AgentListSheet'
 import { useWalletMode } from '@/state/walletMode'
+import { ScanOverlay } from '@/components/ScanOverlay'
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'>('savings')
@@ -157,12 +158,15 @@ export default function Home() {
   return (
     <div className="app-shell">
       <div className="mobile-frame">
-        <div className="dashboard-container">
+        <div className="dashboard-container" style={{ position: 'relative' }}>
           {/* Overlay: Glass bars only */}
           <div className="overlay-glass">
-            <TopGlassBar />
+            <TopGlassBar onScanClick={() => setIsScannerOpen(true)} />
             <BottomGlassBar currentPath="/" onDollarClick={() => open()} />
           </div>
+
+          {/* Scanner overlay - positioned relative to dashboard-container */}
+          <ScanOverlay isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} />
 
           {/* Scrollable content */}
           <div className="scroll-content">

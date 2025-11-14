@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useShareProfileSheet } from '@/store/useShareProfileSheet'
-import { ScanOverlay } from './ScanOverlay'
 
-export default function TopGlassBar() {
+type TopGlassBarProps = {
+  onScanClick?: () => void
+}
+
+export default function TopGlassBar({ onScanClick }: TopGlassBarProps = {}) {
   const pathname = usePathname()
   const isActivityPage = pathname === '/activity'
   const { open } = useShareProfileSheet()
-  const [isScannerOpen, setIsScannerOpen] = useState(false)
 
   return (
     <div className="page-title-gobankless">
@@ -57,7 +58,7 @@ export default function TopGlassBar() {
       <div className="icons">
         <div className="icon-group">
           <button
-            onClick={() => setIsScannerOpen(true)}
+            onClick={onScanClick}
             className="icon-button"
             aria-label="Scan QR code"
             type="button"
