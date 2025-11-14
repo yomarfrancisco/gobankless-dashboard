@@ -44,47 +44,21 @@ export async function generateQRCodeCanvas(text: string, size: number = 220): Pr
 }
 
 /**
- * Generate QR code with embedded logo
+ * Generate plain QR code (no logo overlay)
  */
-export async function generateQRCodeWithLogo(
-  text: string,
-  logoUrl: string,
-  qrSize: number = 220,
-  logoSize: number = 52
-): Promise<string> {
+export async function generateQRCode(text: string, size: number = 512): Promise<string> {
   try {
-    // Generate base QR code
-    const canvas = await generateQRCodeCanvas(text, qrSize)
-    const ctx = canvas.getContext('2d')
-    if (!ctx) throw new Error('Could not get canvas context')
-
-    // Load and draw logo
-    const logo = new window.Image()
-    await new Promise((resolve, reject) => {
-      logo.onload = resolve
-      logo.onerror = reject
-      logo.src = logoUrl
+    const dataURL = await QRCode.toDataURL(text, {
+      width: size,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#ffffff',
+      },
     })
-
-    // Calculate logo position (center)
-    const logoX = (qrSize - logoSize) / 2
-    const logoY = (qrSize - logoSize) / 2
-
-    // Draw white square backing for logo with padding
-    const padding = logoSize * 0.15 // 15% padding around logo
-    const backingSize = logoSize + padding * 2
-    const backingX = (qrSize - backingSize) / 2
-    const backingY = (qrSize - backingSize) / 2
-
-    ctx.fillStyle = '#FFFFFF'
-    ctx.fillRect(backingX, backingY, backingSize, backingSize)
-
-    // Draw logo on top of white backing
-    ctx.drawImage(logo, logoX, logoY, logoSize, logoSize)
-
-    return canvas.toDataURL('image/png')
+    return dataURL
   } catch (error) {
-    console.error('Error generating QR code with logo:', error)
+    console.error('Error generating QR code:', error)
     throw error
   }
 }

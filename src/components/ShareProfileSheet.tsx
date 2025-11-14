@@ -7,7 +7,7 @@ import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 import { useShareProfileSheet } from '@/store/useShareProfileSheet'
 import { useUserProfileStore } from '@/store/userProfile'
-import { generateQRCodeWithLogo, downloadQRCode } from '@/lib/qr'
+import { generateQRCode, downloadQRCode } from '@/lib/qr'
 import { useNotificationStore } from '@/store/notifications'
 import styles from './ShareProfileSheet.module.css'
 
@@ -25,7 +25,7 @@ export default function ShareProfileSheet() {
       try {
         const handle = profile.userHandle || '@samakoyo'
         const paymentUrl = `https://gobankless.app/pay/${handle.replace('@', '')}`
-        const qr = await generateQRCodeWithLogo(paymentUrl, '/assets/core/dollar-sign.png', 220, 52)
+        const qr = await generateQRCode(paymentUrl, 512)
         setQrDataURL(qr)
       } catch (error) {
         console.error('Failed to generate QR code:', error)
