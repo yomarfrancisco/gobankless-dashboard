@@ -946,7 +946,12 @@ body {
 
 /* Spacing above Convert cash to crypto to give the cards some air */
 .convertCashSpacing {
-  margin-top: clamp(5px, 0.9vh, 11px); /* Reduced by additional 40% - map sits very close to card stack */
+  margin-top: clamp(4px, 1.2vh, 12px); /* Tightened by 40-50% - reduced gap between card stack and map section */
+}
+
+/* Neutralize extra heading margin inside .convertCashSpacing */
+.convertCashSpacing h2 {
+  margin-top: 0;
 }
 
 /* TEST ONLY: move Mapbox logo off-screen (avoid CSS Modules purity issues) */
