@@ -98,12 +98,21 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
   }
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="" size="compact">
-      <div className={styles.content}>
-        {/* Header */}
-        <header className={styles.header}>
+    <ActionSheet open={open} onClose={onClose} title="" size="compact" className={styles.transferSheetWrapper}>
+      <div className={styles.transferSheet}>
+        {/* Close button row */}
+        <div className={styles.headerTop}>
+          <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+            <Image src="/assets/clear.svg" alt="" width={18} height={18} />
+          </button>
+        </div>
+
+        {/* Title row */}
+        <div className={styles.headerMain}>
           <h2 className={styles.title}>Transfer</h2>
-        </header>
+        </div>
+
+        <div className={styles.content}>
 
         {/* FROM section */}
         <section className={styles.section}>
@@ -244,6 +253,7 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
             <ChevronRight size={20} strokeWidth={2} style={{ color: '#000' }} />
           </button>
         </footer>
+        </div>
       </div>
     </ActionSheet>
   )

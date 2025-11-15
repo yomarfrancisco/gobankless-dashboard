@@ -7,6 +7,11 @@
 @import '../styles/slot-counter.css';
 @import 'mapbox-gl/dist/mapbox-gl.css';
 
+/* Hide ActionSheet's close-only button for Transfer sheet (has its own close button) */
+.as-sheet.transferSheetWrapper .as-close-only {
+  display: none;
+}
+
 :root {
   --top-safe: 176px;
   --bottom-safe: 132px;
