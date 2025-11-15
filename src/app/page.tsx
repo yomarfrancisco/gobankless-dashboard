@@ -22,12 +22,15 @@ import AgentListSheet from '@/components/AgentListSheet'
 import { useWalletMode } from '@/state/walletMode'
 import { ScanOverlay } from '@/components/ScanOverlay'
 import { ScanQrSheet } from '@/components/ScanQrSheet'
+import WalletHelperSheet from '@/components/WalletHelperSheet'
 
 // Toggle flag to compare both scanner implementations
 const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
 
 export default function Home() {
   const [topCardType, setTopCardType] = useState<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc'>('savings')
+  const [isHelperOpen, setIsHelperOpen] = useState(false)
+  const [helperWalletKey, setHelperWalletKey] = useState<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc' | null>(null)
   const cardStackRef = useRef<CardStackHandle>(null)
   const { setOnSelect, open } = useTransactSheet()
   const [openDeposit, setOpenDeposit] = useState(false)
@@ -184,7 +187,27 @@ export default function Home() {
                 <div className="frame-parent">
                   <div className="wallet-header">
                     <h1 className="wallet-title">{title}</h1>
-                    <div className="help-icon">?</div>
+                    <div
+                      className="help-icon"
+                      onClick={() => {
+                        if (!topCardType) return
+                        setHelperWalletKey(topCardType)
+                        setIsHelperOpen(true)
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          if (!topCardType) return
+                          setHelperWalletKey(topCardType)
+                          setIsHelperOpen(true)
+                        }
+                      }}
+                      aria-label="Help"
+                    >
+                      ?
+                    </div>
                   </div>
                   <p className="wallet-subtitle">{subtitle}</p>
                 </div>
@@ -301,6 +324,13 @@ export default function Home() {
       <AgentListSheet
         open={isAgentSheetOpen}
         onClose={() => setIsAgentSheetOpen(false)}
+      />
+      <WalletHelperSheet
+        walletKey={helperWalletKey}
+        onClose={() => {
+          setIsHelperOpen(false)
+          setHelperWalletKey(null)
+        }}
       />
     </div>
   )
