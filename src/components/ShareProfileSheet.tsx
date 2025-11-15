@@ -9,7 +9,58 @@ import { useShareProfileSheet } from '@/store/useShareProfileSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { generateQRCode, downloadQRCode } from '@/lib/qr'
 import { useNotificationStore } from '@/store/notifications'
+import Avatar from './Avatar'
 import styles from './ShareProfileSheet.module.css'
+
+// Reusable share row component
+type ShareRowProps = {
+  leftIcon: React.ReactNode
+  title: string
+  description: string
+  valueToCopy: string
+  toastLabel: string
+}
+
+const ShareRow: React.FC<ShareRowProps> = ({ leftIcon, title, description, valueToCopy, toastLabel }) => {
+  const pushNotification = useNotificationStore((state) => state.pushNotification)
+
+  const handleCopy = async () => {
+    if (!valueToCopy) {
+      pushNotification({
+        kind: 'payment_failed',
+        title: 'Error',
+        body: 'Address not available',
+      })
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(valueToCopy)
+      pushNotification({
+        kind: 'payment_sent',
+        title: 'Copied!',
+        body: toastLabel,
+      })
+    } catch (error) {
+      console.error('Failed to copy:', error)
+      pushNotification({
+        kind: 'payment_failed',
+        title: 'Error',
+        body: 'Failed to copy address',
+      })
+    }
+  }
+
+  return (
+    <ActionSheetItem
+      icon={leftIcon}
+      title={title}
+      caption={description}
+      onClick={handleCopy}
+      trailing={<Copy size={18} strokeWidth={2} style={{ color: '#111' }} />}
+    />
+  )
+}
 
 export default function ShareProfileSheet() {
   const { isOpen, close } = useShareProfileSheet()
@@ -103,6 +154,26 @@ export default function ShareProfileSheet() {
   }
 
   const displayHandle = profile.userHandle || '@samakoyo'
+  const handle = profile.userHandle || '@samakoyo'
+  const paymentUrl = `https://gobankless.app/pay/${handle.replace('@', '')}`
+
+  // Card image paths
+  const cardImages = {
+    zar: '/assets/cards/card-savings.jpg',
+    mzn: '/assets/cards/card-MZN.jpg',
+    pepe: '/assets/cards/card-pepe.jpg',
+    eth: '/assets/cards/card-ETH.jpg',
+    btc: '/assets/cards/card-BTC.jpg',
+  }
+
+  // Placeholder addresses (TODO: wire real addresses)
+  const addresses = {
+    usdtSa: profile.usdtSaAddress || '0x0000000000000000000000000000000000000000', // TODO: wire real address
+    usdtMzn: profile.usdtMznAddress || '0x0000000000000000000000000000000000000000', // TODO: wire real address
+    pepe: profile.pepeAddress || '0x0000000000000000000000000000000000000000', // TODO: wire real address
+    eth: profile.ethAddress || '0x0000000000000000000000000000000000000000', // TODO: wire real address
+    btc: profile.btcAddress || 'bc1q00000000000000000000000000000000000000000000000000', // TODO: wire real address
+  }
 
   return (
     <ActionSheet open={isOpen} onClose={close} title="" size="compact" className={styles.shareSheet}>
@@ -129,12 +200,116 @@ export default function ShareProfileSheet() {
           caption="Send your GoBankless profile to anyone."
           onClick={handleShare}
         />
+
+        {/* Upgraded Copy payment link row with avatar */}
         <ActionSheetItem
-          icon={<Copy size={24} strokeWidth={2} style={{ color: '#111' }} />}
+          icon={
+            <div className={styles.avatarIcon}>
+              <Avatar avatarUrl={profile.avatarUrl} name={profile.fullName} email={profile.email} size={40} />
+            </div>
+          }
           title="Copy payment link"
           caption="Copy your personal payment URL."
           onClick={handleCopy}
+          trailing={<Copy size={18} strokeWidth={2} style={{ color: '#111' }} />}
         />
+
+        {/* Crypto address rows */}
+        <ShareRow
+          leftIcon={
+            <div className={styles.cardIcon}>
+              <Image
+                src={cardImages.zar}
+                alt="ZAR Card"
+                width={40}
+                height={26}
+                className={styles.cardIconImage}
+                unoptimized
+              />
+            </div>
+          }
+          title="Copy USDT SA address"
+          description="Share this address to receive USDT from South African accounts."
+          valueToCopy={addresses.usdtSa}
+          toastLabel="USDT SA address copied"
+        />
+
+        <ShareRow
+          leftIcon={
+            <div className={styles.cardIcon}>
+              <Image
+                src={cardImages.mzn}
+                alt="MZN Card"
+                width={40}
+                height={26}
+                className={styles.cardIconImage}
+                unoptimized
+              />
+            </div>
+          }
+          title="Copy USDT MZN address"
+          description="Share this address to receive USDT from Mozambique accounts."
+          valueToCopy={addresses.usdtMzn}
+          toastLabel="USDT MZN address copied"
+        />
+
+        <ShareRow
+          leftIcon={
+            <div className={styles.cardIcon}>
+              <Image
+                src={cardImages.pepe}
+                alt="PEPE Card"
+                width={40}
+                height={26}
+                className={styles.cardIconImage}
+                unoptimized
+              />
+            </div>
+          }
+          title="Copy PEPE address"
+          description="Share this address to receive PEPE directly to this profile."
+          valueToCopy={addresses.pepe}
+          toastLabel="PEPE address copied"
+        />
+
+        <ShareRow
+          leftIcon={
+            <div className={styles.cardIcon}>
+              <Image
+                src={cardImages.eth}
+                alt="ETH Card"
+                width={40}
+                height={26}
+                className={styles.cardIconImage}
+                unoptimized
+              />
+            </div>
+          }
+          title="Copy ETH address"
+          description="Share this address to receive ETH directly to this profile."
+          valueToCopy={addresses.eth}
+          toastLabel="ETH address copied"
+        />
+
+        <ShareRow
+          leftIcon={
+            <div className={styles.cardIcon}>
+              <Image
+                src={cardImages.btc}
+                alt="BTC Card"
+                width={40}
+                height={26}
+                className={styles.cardIconImage}
+                unoptimized
+              />
+            </div>
+          }
+          title="Copy BTC address"
+          description="Share this address to receive BTC directly to this profile."
+          valueToCopy={addresses.btc}
+          toastLabel="BTC address copied"
+        />
+
         <ActionSheetItem
           icon={<Download size={24} strokeWidth={2} style={{ color: '#111' }} />}
           title="Download my QR"
@@ -145,4 +320,3 @@ export default function ShareProfileSheet() {
     </ActionSheet>
   )
 }
-

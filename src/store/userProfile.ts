@@ -11,6 +11,12 @@ export interface UserProfile {
   instagramUrl?: string
   linkedinUrl?: string
   description?: string
+  // TODO: wire real addresses
+  usdtSaAddress?: string // USDT SA (ZAR wallet) address
+  usdtMznAddress?: string // USDT MZN (Moz wallet) address
+  pepeAddress?: string // PEPE address
+  ethAddress?: string // ETH address
+  btcAddress?: string // BTC address
 }
 
 interface UserProfileState {
