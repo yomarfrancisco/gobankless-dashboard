@@ -29,16 +29,14 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
           caption: 'Send a link to pay via email or WhatsApp.',
           method: 'email' as const,
           icon: (
-            <div style={{ width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: 'transparent' }}>
-              <Image
-                src="/assets/WhatsApp_Balck.png"
-                alt="WhatsApp"
-                width={24}
-                height={24}
-                style={{ objectFit: 'contain', width: '24px', height: '24px' }}
-                unoptimized
-              />
-            </div>
+            <Image
+              src="/assets/WhatsApp_Balck.png"
+              alt="WhatsApp"
+              width={24}
+              height={24}
+              style={{ objectFit: 'contain' }}
+              unoptimized
+            />
           )
         },
         {
