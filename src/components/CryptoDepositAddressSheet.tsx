@@ -76,10 +76,10 @@ export default function CryptoDepositAddressSheet({ open, onClose, wallet }: Pro
   const coinLabel = coinLabelMap[wallet.coin]
 
   return (
-    <ActionSheet open={open} onClose={onClose} title={`Deposit to ${wallet.title}`} size="compact">
+    <ActionSheet open={open} onClose={onClose} title="" size="compact">
       <div className={styles.content}>
-        {/* QR code */}
-        <div className={styles.qrWrapper}>
+        {/* QR Block - matching ShareProfileSheet */}
+        <div className={styles.qrContainer}>
           {qrDataURL ? (
             <img src={qrDataURL} alt="QR Code" className={styles.qrImage} />
           ) : (
@@ -87,10 +87,11 @@ export default function CryptoDepositAddressSheet({ open, onClose, wallet }: Pro
           )}
         </div>
 
-        {/* Raw address */}
-        <div className={styles.addressBox}>
-          <code className={styles.addressText}>{wallet.address}</code>
-        </div>
+        {/* Address text - acts as primary title (like handle in Share sheet) */}
+        <div className={styles.addressText}>{wallet.address}</div>
+
+        {/* Divider */}
+        <div className={styles.divider} />
 
         {/* Copy row */}
         <ActionSheetItem
