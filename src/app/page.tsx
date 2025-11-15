@@ -23,6 +23,7 @@ import { useWalletMode } from '@/state/walletMode'
 import { ScanOverlay } from '@/components/ScanOverlay'
 import { ScanQrSheet } from '@/components/ScanQrSheet'
 import WalletHelperSheet from '@/components/WalletHelperSheet'
+import InternalTransferSheet from '@/components/InternalTransferSheet'
 
 // Toggle flag to compare both scanner implementations
 const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
@@ -50,6 +51,9 @@ export default function Home() {
   const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
   const [depositAmountZAR, setDepositAmountZAR] = useState(0)
   const [isAgentSheetOpen, setIsAgentSheetOpen] = useState(false)
+  const [openInternalTransfer, setOpenInternalTransfer] = useState(false)
+  const [transferFromWalletId, setTransferFromWalletId] = useState<'savings' | 'pepe' | 'yield' | 'mzn' | 'btc'>('savings')
+  const [transferToWalletId, setTransferToWalletId] = useState<'savings' | 'pepe' | 'yield' | 'mzn' | 'btc'>('pepe')
 
   // Register onSelect handler for global Transact sheet
   useEffect(() => {
@@ -64,8 +68,16 @@ export default function Home() {
       } else if (action === 'transfer') {
         setFlowType('transfer')
         setAmountMode('send')
-        setSendMethod('brics') // Use GoBankless Handle flow like payment
-        setTimeout(() => setOpenAmount(true), 220)
+        // Map topCardType to walletId for default FROM wallet
+        const cardTypeToWalletId: Record<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc', 'savings' | 'pepe' | 'yield' | 'mzn' | 'btc'> = {
+          savings: 'savings',
+          pepe: 'pepe',
+          yield: 'yield',
+          mzn: 'mzn',
+          btc: 'btc',
+        }
+        setTransferFromWalletId(cardTypeToWalletId[topCardType])
+        setTimeout(() => setOpenInternalTransfer(true), 220)
       }
     })
     
@@ -95,6 +107,15 @@ export default function Home() {
   const closeBankTransferDetails = useCallback(() => {
     setOpenBankTransferDetails(false)
   }, [])
+  const closeInternalTransfer = useCallback(() => {
+    setOpenInternalTransfer(false)
+  }, [])
+  const handleTransferNext = useCallback((fromWalletId: 'savings' | 'pepe' | 'yield' | 'mzn' | 'btc', toWalletId: 'savings' | 'pepe' | 'yield' | 'mzn' | 'btc') => {
+    setTransferFromWalletId(fromWalletId)
+    setTransferToWalletId(toWalletId)
+    setOpenInternalTransfer(false)
+    setTimeout(() => setOpenAmount(true), 220)
+  }, [])
 
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
     if (method === 'email' || method === 'wallet' || method === 'brics') {
@@ -113,9 +134,24 @@ export default function Home() {
       setSendAmountUSDT(amountZAR / fxRateZARperUSDT)
       setOpenAmount(false)
       
-      setTimeout(() => setOpenSendDetails(true), 220)
+      // For transfers, skip SendDetailsSheet and go directly to success
+      if (flowType === 'transfer') {
+        // Set recipient to wallet name for display
+        const walletNames: Record<'savings' | 'pepe' | 'yield' | 'mzn' | 'btc', string> = {
+          savings: 'ZAR wallet',
+          pepe: 'PEPE wallet',
+          yield: 'ETH wallet',
+          mzn: 'MZN wallet',
+          btc: 'BTC wallet',
+        }
+        setSendRecipient(walletNames[transferToWalletId])
+        setTimeout(() => setOpenSendSuccess(true), 220)
+      } else {
+        // For payments, still use SendDetailsSheet
+        setTimeout(() => setOpenSendDetails(true), 220)
+      }
     }
-  }, [amountMode, flowType])
+  }, [amountMode, flowType, transferToWalletId])
 
   // Get wallet allocation for funds available display
   const { alloc, getCash, getEth, getPepe, setCash, setEth, setPepe } = useWalletAlloc()
@@ -331,6 +367,12 @@ export default function Home() {
           setIsHelperOpen(false)
           setHelperWalletKey(null)
         }}
+      />
+      <InternalTransferSheet
+        open={openInternalTransfer}
+        onClose={closeInternalTransfer}
+        onNext={handleTransferNext}
+        defaultFromWalletId={transferFromWalletId}
       />
     </div>
   )
