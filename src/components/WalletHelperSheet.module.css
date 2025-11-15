@@ -28,7 +28,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
+  gap: 8px; /* Reduced from 12px for tighter vertical spacing */
 }
 
 /* Tile 1: Card + APY */
@@ -116,7 +116,7 @@
 .tileTitle {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500; /* Reduced from 600 for lighter, more elegant typography */
   color: #0a0a0a;
   margin: 0;
   text-align: center;
@@ -127,7 +127,7 @@
   font-size: 16px;
   font-weight: 400;
   color: rgba(10, 10, 10, 0.7);
-  margin: 4px 0 0 0;
+  margin: 2px 0 0 0; /* Reduced from 4px for tighter spacing */
   text-align: center;
 }
 
@@ -136,6 +136,6 @@
   font-size: 14px;
   font-weight: 400;
   color: rgba(10, 10, 10, 0.6);
-  margin: 4px 0 0 0;
+  margin: 2px 0 0 0; /* Reduced from 4px for tighter spacing */
   text-align: center;
 }
