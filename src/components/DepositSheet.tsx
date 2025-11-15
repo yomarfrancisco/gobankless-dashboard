@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { MailPlus, Globe, AtSign, Landmark, CreditCard, Wallet } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
@@ -24,13 +25,24 @@ export default function DepositSheet({ open, onClose, onSelect, variant = 'depos
   const options = variant === 'direct-payment' 
     ? [
         {
-          title: 'Email or Phone',
-          caption: 'Send a link to pay via email or phone.',
+          title: 'Email or WhatsApp',
+          caption: 'Send a link to pay via email or WhatsApp.',
           method: 'email' as const,
-          icon: <MailPlus size={22} strokeWidth={2} />
+          icon: (
+            <div style={{ width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: 'transparent' }}>
+              <Image
+                src="/assets/WhatsApp_Balck.png"
+                alt="WhatsApp"
+                width={24}
+                height={24}
+                style={{ objectFit: 'contain', width: '24px', height: '24px' }}
+                unoptimized
+              />
+            </div>
+          )
         },
         {
-          title: 'External USDT Wallet',
+          title: 'USDT Wallet',
           caption: 'Transfer to any wallet on Tron, Ethereum, or Solana.',
           method: 'wallet' as const,
           icon: <Globe size={22} strokeWidth={2} />
