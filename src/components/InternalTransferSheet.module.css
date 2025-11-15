@@ -6,47 +6,9 @@
   overflow: hidden;
 }
 
-/* Close button row */
-.headerTop {
-  position: relative;
-  height: 64px;
-  flex-shrink: 0;
-  padding: 16px 24px 0;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-}
-
-.closeButton {
-  width: 32px;
-  height: 32px;
-  border-radius: 27px;
-  background: #E9E9EB;
-  display: grid;
-  place-items: center;
-  border: 0;
-  cursor: pointer;
-  padding: 0;
-  transition: background 150ms ease;
-  flex-shrink: 0;
-}
-
-.closeButton:hover {
-  background: #D1D1D6;
-}
-
-.closeButton:active {
-  background: #C7C7CC;
-}
-
-.closeButton img {
-  width: 18px;
-  height: 18px;
-}
-
 /* Title row */
 .headerMain {
-  padding: 0 24px;
+  padding: 64px 24px 0 24px;
   flex-shrink: 0;
 }
 
