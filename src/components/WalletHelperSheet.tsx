@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
 import ActionSheet from './ActionSheet'
 import styles from './WalletHelperSheet.module.css'
@@ -35,55 +34,55 @@ export default function WalletHelperSheet({ walletKey, onClose }: WalletHelperSh
   const cardImage = cardImages[walletKey]
 
   return (
-    <ActionSheet open={!!walletKey} onClose={onClose} title="" size="tall">
+    <ActionSheet open={!!walletKey} onClose={onClose} title={title} size="tall">
       <div className={styles.content}>
-        {/* Title row with close button */}
-        <div className={styles.titleRow}>
-          <h2 className={styles.titleText}>{title}</h2>
-          <button className={styles.closeButton} onClick={onClose} aria-label="Close">
-            ✕
-          </button>
-        </div>
-
         {/* Descriptive paragraph */}
         <p className={styles.description}>
           A savings account that earns interest on your deposits while enabling you to make direct payments on the app
         </p>
 
-        {/* Card preview */}
-        <div className={styles.cardPreviewWrapper}>
-          <div className={styles.cardMini}>
-            <Image
-              src={cardImage}
-              alt={title}
-              fill
-              className={styles.cardImage}
-              sizes="204px"
-              unoptimized
-            />
+        {/* Tile 1: Card + APY */}
+        <div className={styles.tile}>
+          <div className={styles.cardPreviewContainer}>
+            {/* Dark pill with APY */}
+            <div className={styles.apyPill}>
+              <span className={styles.apyPercentage}>9.38%</span>
+              <span className={styles.apyLabel}>annual yield</span>
+            </div>
+            {/* Card preview - showing top third/half */}
+            <div className={styles.cardPreview}>
+              <Image
+                src={cardImage}
+                alt={title}
+                fill
+                className={styles.cardImage}
+                sizes="204px"
+                unoptimized
+              />
+            </div>
           </div>
+          <h3 className={styles.apyHeading}>Earn 9% annually on your deposits</h3>
+          <p className={styles.apySubtext}>Compounded monthly</p>
         </div>
 
-        {/* Feature rows */}
-        <div className={styles.features}>
-          <div className={styles.featureRow}>
-            <div className={styles.featureLabel}>Anytime</div>
-            <div className={styles.featureValue}>Access to funds with no lock-in period</div>
-          </div>
-          <div className={styles.featureRow}>
-            <div className={styles.featureLabel}>0%</div>
-            <div className={styles.featureValue}>Tax on interest earned</div>
-          </div>
-          <div className={styles.featureRow}>
-            <div className={styles.featureLabel}>Zero</div>
-            <div className={styles.featureValue}>Fees on payments and transfers</div>
-          </div>
+        {/* Tile 2: Anytime */}
+        <div className={styles.tile}>
+          <h3 className={styles.tileTitle}>Anytime</h3>
+          <p className={styles.tileLine1}>Access to funds</p>
+          <p className={styles.tileLine2}>Withdraw anytime at no additional cost</p>
         </div>
 
-        {/* Interest info */}
-        <div className={styles.interestInfo}>
-          <p className={styles.interestText}>Earn 9% annually on your deposits</p>
-          <p className={styles.interestSubtext}>Compounded monthly</p>
+        {/* Tile 3: 0% */}
+        <div className={styles.tile}>
+          <h3 className={styles.tileTitle}>0%</h3>
+          <p className={styles.tileLine1}>Tax on interest earned</p>
+        </div>
+
+        {/* Tile 4: Zero */}
+        <div className={styles.tile}>
+          <h3 className={styles.tileTitle}>Zero</h3>
+          <p className={styles.tileLine1}>Fees on payments</p>
+          <p className={styles.tileLine2}>Pay any Gobankless account for free</p>
         </div>
       </div>
     </ActionSheet>

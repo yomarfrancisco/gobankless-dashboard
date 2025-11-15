@@ -1,57 +1,11 @@
-.walletHelperSheet {
-  /* Uses ActionSheet base styles */
-}
-
 .content {
   padding: 24px 20px 32px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   max-height: calc(85vh - 100px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-}
-
-/* Title row */
-.titleRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.titleText {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 22px;
-  font-weight: 300;
-  letter-spacing: -0.22px;
-  color: #0a0a0a;
-  margin: 0;
-}
-
-.closeButton {
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: transparent;
-  font-size: 24px;
-  color: rgba(0, 0, 0, 0.6);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 1;
-  transition: color 0.2s ease;
-}
-
-.closeButton:hover {
-  color: rgba(0, 0, 0, 0.8);
-}
-
-.closeButton:active {
-  opacity: 0.6;
 }
 
 /* Description */
@@ -61,85 +15,127 @@
   font-weight: 400;
   line-height: 1.5;
   color: rgba(10, 10, 10, 0.7);
-  margin: 0;
-}
-
-/* Card preview wrapper */
-.cardPreviewWrapper {
-  width: 100%;
-  border-radius: 24px;
-  background: #fff;
-  padding: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.cardMini {
-  width: 204px;
-  height: 127px;
-  border-radius: 17px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.cardImage {
-  object-fit: cover;
-  border-radius: 17px;
-}
-
-/* Features */
-.features {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.featureRow {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.featureLabel {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #0a0a0a;
-  min-width: 80px;
-  flex-shrink: 0;
-}
-
-.featureValue {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: rgba(10, 10, 10, 0.7);
-  flex: 1;
-}
-
-/* Interest info */
-.interestInfo {
-  padding-top: 16px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.interestText {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #0a0a0a;
   margin: 0 0 4px 0;
 }
 
-.interestSubtext {
+/* Tile base styles */
+.tile {
+  width: 100%;
+  border-radius: 24px;
+  background: #f2f2f7;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+/* Tile 1: Card + APY */
+.cardPreviewContainer {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.apyPill {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.apyPercentage {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.1px;
+}
+
+.apyLabel {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.1px;
+}
+
+.cardPreview {
+  width: 204px;
+  height: 85px; /* Reduced height to show only top third/half */
+  border-radius: 17px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #fff;
+}
+
+/* Crop to show only top third/half of card */
+.cardImage {
+  object-fit: cover;
+  object-position: top center;
+  width: 100%;
+  height: 170px; /* Full card height, but container crops it */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.apyHeading {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0a0a0a;
+  margin: 8px 0 0 0;
+  text-align: center;
+}
+
+.apySubtext {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 14px;
   font-weight: 400;
   color: rgba(10, 10, 10, 0.6);
   margin: 0;
+  text-align: center;
 }
 
+/* Tile titles (Anytime, 0%, Zero) */
+.tileTitle {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #0a0a0a;
+  margin: 0;
+  text-align: center;
+}
+
+.tileLine1 {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(10, 10, 10, 0.7);
+  margin: 4px 0 0 0;
+  text-align: center;
+}
+
+.tileLine2 {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(10, 10, 10, 0.6);
+  margin: 4px 0 0 0;
+  text-align: center;
+}
