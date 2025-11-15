@@ -20,7 +20,8 @@ import { useWalletMode } from '@/state/walletMode'
 import { useSupportSheet } from '@/store/useSupportSheet'
 import { CreditCard, WalletCards, Phone, LogOut } from 'lucide-react'
 import Avatar from '@/components/Avatar'
-import DepositCryptoWalletSheet from '@/components/DepositCryptoWalletSheet'
+import DepositCryptoWalletSheet, { type DepositCryptoWallet } from '@/components/DepositCryptoWalletSheet'
+import CryptoDepositAddressSheet from '@/components/CryptoDepositAddressSheet'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -43,6 +44,8 @@ export default function ProfilePage() {
   const [sendMethod, setSendMethod] = useState<'email' | 'wallet' | 'brics' | null>(null)
   const [flowType, setFlowType] = useState<'payment' | 'transfer'>('payment')
   const [openDepositCryptoWallet, setOpenDepositCryptoWallet] = useState(false)
+  const [selectedCryptoDepositWallet, setSelectedCryptoDepositWallet] = useState<DepositCryptoWallet | null>(null)
+  const [showCryptoAddressSheet, setShowCryptoAddressSheet] = useState(false)
 
   const openDepositSheet = useCallback(() => setOpenDeposit(true), [])
   const openDirectPaymentSheet = useCallback(() => setOpenDirectPayment(true), [])
@@ -61,9 +64,14 @@ export default function ProfilePage() {
   const closeDepositCryptoWallet = useCallback(() => {
     setOpenDepositCryptoWallet(false)
   }, [])
-  const handleSelectCryptoDepositWallet = useCallback((walletKey: 'usdt_sa' | 'usdt_mzn' | 'pepe' | 'eth' | 'btc') => {
-    // TODO: in a future step, open QR + address sheet for this wallet
-    console.log('Selected crypto deposit wallet:', walletKey)
+  const handleSelectCryptoDepositWallet = useCallback((wallet: DepositCryptoWallet) => {
+    setSelectedCryptoDepositWallet(wallet)
+    setOpenDepositCryptoWallet(false)
+    setTimeout(() => setShowCryptoAddressSheet(true), 220)
+  }, [])
+  const closeCryptoAddressSheet = useCallback(() => {
+    setShowCryptoAddressSheet(false)
+    setSelectedCryptoDepositWallet(null)
   }, [])
 
   const handleDirectSelect = useCallback((method: 'bank' | 'card' | 'crypto' | 'email' | 'wallet' | 'brics') => {
@@ -417,6 +425,13 @@ export default function ProfilePage() {
         onClose={closeDepositCryptoWallet}
         onSelectCryptoDepositWallet={handleSelectCryptoDepositWallet}
       />
+      {selectedCryptoDepositWallet && (
+        <CryptoDepositAddressSheet
+          open={showCryptoAddressSheet}
+          onClose={closeCryptoAddressSheet}
+          wallet={selectedCryptoDepositWallet}
+        />
+      )}
     </div>
   )
 }

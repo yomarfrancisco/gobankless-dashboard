@@ -24,7 +24,8 @@ import { ScanOverlay } from '@/components/ScanOverlay'
 import { ScanQrSheet } from '@/components/ScanQrSheet'
 import WalletHelperSheet from '@/components/WalletHelperSheet'
 import InternalTransferSheet from '@/components/InternalTransferSheet'
-import DepositCryptoWalletSheet from '@/components/DepositCryptoWalletSheet'
+import DepositCryptoWalletSheet, { type DepositCryptoWallet } from '@/components/DepositCryptoWalletSheet'
+import CryptoDepositAddressSheet from '@/components/CryptoDepositAddressSheet'
 
 // Toggle flag to compare both scanner implementations
 const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
@@ -56,6 +57,8 @@ export default function Home() {
   const [transferFromWalletId, setTransferFromWalletId] = useState<'savings' | 'pepe' | 'yield' | 'mzn' | 'btc'>('savings')
   const [transferToWalletId, setTransferToWalletId] = useState<'savings' | 'pepe' | 'yield' | 'mzn' | 'btc'>('pepe')
   const [openDepositCryptoWallet, setOpenDepositCryptoWallet] = useState(false)
+  const [selectedCryptoDepositWallet, setSelectedCryptoDepositWallet] = useState<DepositCryptoWallet | null>(null)
+  const [showCryptoAddressSheet, setShowCryptoAddressSheet] = useState(false)
 
   // Register onSelect handler for global Transact sheet
   useEffect(() => {
@@ -115,9 +118,14 @@ export default function Home() {
   const closeDepositCryptoWallet = useCallback(() => {
     setOpenDepositCryptoWallet(false)
   }, [])
-  const handleSelectCryptoDepositWallet = useCallback((walletKey: 'usdt_sa' | 'usdt_mzn' | 'pepe' | 'eth' | 'btc') => {
-    // TODO: in a future step, open QR + address sheet for this wallet
-    console.log('Selected crypto deposit wallet:', walletKey)
+  const handleSelectCryptoDepositWallet = useCallback((wallet: DepositCryptoWallet) => {
+    setSelectedCryptoDepositWallet(wallet)
+    setOpenDepositCryptoWallet(false)
+    setTimeout(() => setShowCryptoAddressSheet(true), 220)
+  }, [])
+  const closeCryptoAddressSheet = useCallback(() => {
+    setShowCryptoAddressSheet(false)
+    setSelectedCryptoDepositWallet(null)
   }, [])
   const handleTransferNext = useCallback((fromWalletId: 'savings' | 'pepe' | 'yield' | 'mzn' | 'btc', toWalletId: 'savings' | 'pepe' | 'yield' | 'mzn' | 'btc') => {
     setTransferFromWalletId(fromWalletId)
@@ -390,6 +398,13 @@ export default function Home() {
         onClose={closeDepositCryptoWallet}
         onSelectCryptoDepositWallet={handleSelectCryptoDepositWallet}
       />
+      {selectedCryptoDepositWallet && (
+        <CryptoDepositAddressSheet
+          open={showCryptoAddressSheet}
+          onClose={closeCryptoAddressSheet}
+          wallet={selectedCryptoDepositWallet}
+        />
+      )}
     </div>
   )
 }
