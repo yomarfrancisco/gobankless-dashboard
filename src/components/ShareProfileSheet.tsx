@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Share2, Copy, Download } from 'lucide-react'
+import { Share2, Copy, Download, QrCode, AtSign, Share } from 'lucide-react'
 import ActionSheet from './ActionSheet'
 import ActionSheetItem from './ActionSheetItem'
 import { useShareProfileSheet } from '@/store/useShareProfileSheet'
@@ -195,10 +195,15 @@ export default function ShareProfileSheet() {
 
         {/* Action Rows */}
         <ActionSheetItem
-          icon={<Share2 size={24} strokeWidth={2} style={{ color: '#111' }} />}
+          icon={
+            <div className={styles.iconCircle}>
+              <AtSign size={20} strokeWidth={2.2} style={{ color: '#111' }} />
+            </div>
+          }
           title="Share my profile"
           caption="Send your GoBankless profile to anyone."
           onClick={handleShare}
+          trailing={<Share size={18} strokeWidth={2.2} style={{ color: '#111' }} />}
         />
 
         {/* Upgraded Copy payment link row with avatar */}
@@ -311,10 +316,15 @@ export default function ShareProfileSheet() {
         />
 
         <ActionSheetItem
-          icon={<Download size={24} strokeWidth={2} style={{ color: '#111' }} />}
+          icon={
+            <div className={styles.iconCircle}>
+              <QrCode size={20} strokeWidth={2.2} style={{ color: '#111' }} />
+            </div>
+          }
           title="Download my QR"
           caption="Save your QR code to your device."
           onClick={handleDownload}
+          trailing={<Download size={18} strokeWidth={2.2} style={{ color: '#111' }} />}
         />
       </div>
     </ActionSheet>
