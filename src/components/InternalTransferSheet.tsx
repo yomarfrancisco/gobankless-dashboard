@@ -98,11 +98,16 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
   }
 
   return (
-    <ActionSheet open={open} onClose={onClose} title="Transfer" size="compact">
+    <ActionSheet open={open} onClose={onClose} title="" size="compact">
       <div className={styles.content}>
+        {/* Header */}
+        <header className={styles.header}>
+          <h2 className={styles.title}>Transfer</h2>
+        </header>
+
         {/* FROM section */}
-        <div className={styles.section}>
-          <label className={styles.sectionLabel}>From</label>
+        <section className={styles.section}>
+          <div className={styles.sectionLabel}>From</div>
           <button
             className={styles.walletRow}
             onClick={handleFromClick}
@@ -115,17 +120,17 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
                   alt={fromWallet.name}
                   fill
                   className={styles.cardImage}
-                  sizes="48px"
+                  sizes="72px"
                   unoptimized
                 />
               </div>
-              <div className={styles.walletInfo}>
+              <div className={styles.walletText}>
                 <div className={styles.walletName}>{fromWallet.name}</div>
                 <div className={styles.walletBalance}>{formatBalance(fromWallet.balanceCents)}</div>
-                <div className={styles.transferFee}>0% transfer fee</div>
+                <div className={styles.walletMeta}>0% transfer fee</div>
               </div>
             </div>
-            <ChevronDown size={20} strokeWidth={2} style={{ color: 'rgba(0, 0, 0, 0.4)' }} />
+            <ChevronDown size={20} strokeWidth={2} className={styles.chevron} />
           </button>
 
           {/* FROM wallet picker */}
@@ -150,7 +155,7 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
                         unoptimized
                       />
                     </div>
-                    <div className={styles.walletInfo}>
+                    <div className={styles.walletText}>
                       <div className={styles.walletName}>{wallet.name}</div>
                       <div className={styles.walletBalance}>{formatBalance(wallet.balanceCents)}</div>
                     </div>
@@ -162,11 +167,11 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
               ))}
             </div>
           )}
-        </div>
+        </section>
 
         {/* TO section */}
-        <div className={styles.section}>
-          <label className={styles.sectionLabel}>To</label>
+        <section className={styles.section}>
+          <div className={styles.sectionLabel}>To</div>
           <button
             className={styles.walletRow}
             onClick={handleToClick}
@@ -179,16 +184,16 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
                   alt={toWallet.name}
                   fill
                   className={styles.cardImage}
-                  sizes="48px"
+                  sizes="72px"
                   unoptimized
                 />
               </div>
-              <div className={styles.walletInfo}>
+              <div className={styles.walletText}>
                 <div className={styles.walletName}>{toWallet.name}</div>
                 <div className={styles.walletBalance}>{formatBalance(toWallet.balanceCents)}</div>
               </div>
             </div>
-            <ChevronDown size={20} strokeWidth={2} style={{ color: 'rgba(0, 0, 0, 0.4)' }} />
+            <ChevronDown size={20} strokeWidth={2} className={styles.chevron} />
           </button>
 
           {/* TO wallet picker */}
@@ -213,7 +218,7 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
                         unoptimized
                       />
                     </div>
-                    <div className={styles.walletInfo}>
+                    <div className={styles.walletText}>
                       <div className={styles.walletName}>{wallet.name}</div>
                       <div className={styles.walletBalance}>{formatBalance(wallet.balanceCents)}</div>
                     </div>
@@ -225,20 +230,20 @@ export default function InternalTransferSheet({ open, onClose, onNext, defaultFr
               ))}
             </div>
           )}
-        </div>
+        </section>
 
-        {/* Instant transfer helper text */}
-        <div className={styles.instantTransfer}>Instant transfer</div>
-
-        {/* Next button */}
-        <button
-          className={styles.nextButton}
-          onClick={handleNext}
-          type="button"
-        >
-          Next
-          <ChevronRight size={20} strokeWidth={2} style={{ color: '#000' }} />
-        </button>
+        {/* Footer */}
+        <footer className={styles.footer}>
+          <div className={styles.instantTransfer}>Instant transfer</div>
+          <button
+            className={styles.nextButton}
+            onClick={handleNext}
+            type="button"
+          >
+            <span>Next</span>
+            <ChevronRight size={20} strokeWidth={2} style={{ color: '#000' }} />
+          </button>
+        </footer>
       </div>
     </ActionSheet>
   )
