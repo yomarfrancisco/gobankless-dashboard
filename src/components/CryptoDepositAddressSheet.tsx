@@ -107,8 +107,8 @@ export default function CryptoDepositAddressSheet({ open, onClose, wallet }: Pro
               />
             </div>
           }
-          title={`Copy ${coinLabel} address`}
-          caption={`Copy this address or share it with someone to deposit ${coinLabel} directly into this wallet.`}
+          title={`${coinLabel} address`}
+          caption={`Deposit ${coinLabel} directly into this wallet via Ethereum network.`}
           onClick={handleCopy}
           trailing={<Copy size={18} strokeWidth={2} style={{ color: '#111' }} />}
         />
