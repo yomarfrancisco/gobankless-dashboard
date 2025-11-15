@@ -17,6 +17,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  margin-top: 48px; /* Push QR down to account for close button row */
   margin-bottom: 16px;
 }
 
@@ -37,16 +38,16 @@
   font-weight: 400;
 }
 
-/* Address text - acts as primary title (like handle in Share sheet) */
+/* Address text - smaller and more readable */
 .addressText {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-weight: 500;
-  font-size: 22px;
-  line-height: 1.25;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.4;
   color: #000000;
   text-align: center;
   margin: 16px 0 16px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
   word-break: break-all;
   max-width: 100%;
   padding: 0 8px;

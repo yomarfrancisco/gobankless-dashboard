@@ -16,6 +16,14 @@ export type DepositCryptoWallet = {
   address: string
 }
 
+// Realistic example addresses for fallback
+const exampleAddresses = {
+  usdt: '0x7F3A9b4C1D27e5f0b8931A2C45d8Bc920eA7F213',
+  eth: '0x7F3A9b4C1D27e5f0b8931A2C45d8Bc920eA7F213',
+  pepe: '0x7F3A9b4C1D27e5f0b8931A2C45d8Bc920eA7F213',
+  btc: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+}
+
 // Helper to get wallet config with addresses from profile store
 export const getDepositCryptoWallets = (addresses: {
   usdtSaAddress?: string
@@ -30,7 +38,7 @@ export const getDepositCryptoWallets = (addresses: {
     description: 'Copy or scan the QR for this address to deposit USDT from South African accounts.',
     cardImage: '/assets/cards/card-savings.jpg',
     coin: 'usdt',
-    address: addresses.usdtSaAddress || '0x0000000000000000000000000000000000000000',
+    address: addresses.usdtSaAddress || exampleAddresses.usdt,
   },
   {
     key: 'usdt_mzn',
@@ -38,7 +46,7 @@ export const getDepositCryptoWallets = (addresses: {
     description: 'Copy or scan the QR for this address to deposit USDT from Mozambican accounts.',
     cardImage: '/assets/cards/card-MZN.jpg',
     coin: 'usdt',
-    address: addresses.usdtMznAddress || '0x0000000000000000000000000000000000000000',
+    address: addresses.usdtMznAddress || exampleAddresses.usdt,
   },
   {
     key: 'pepe',
@@ -46,7 +54,7 @@ export const getDepositCryptoWallets = (addresses: {
     description: 'Copy or scan the QR for this address to deposit PEPE directly into this profile.',
     cardImage: '/assets/cards/card-pepe.jpg',
     coin: 'pepe',
-    address: addresses.pepeAddress || '0x0000000000000000000000000000000000000000',
+    address: addresses.pepeAddress || exampleAddresses.pepe,
   },
   {
     key: 'eth',
@@ -54,7 +62,7 @@ export const getDepositCryptoWallets = (addresses: {
     description: 'Copy or scan the QR for this address to deposit ETH directly into this profile.',
     cardImage: '/assets/cards/card-ETH.jpg',
     coin: 'eth',
-    address: addresses.ethAddress || '0x0000000000000000000000000000000000000000',
+    address: addresses.ethAddress || exampleAddresses.eth,
   },
   {
     key: 'btc',
@@ -62,7 +70,7 @@ export const getDepositCryptoWallets = (addresses: {
     description: 'Copy or scan the QR for this address to deposit BTC directly into this profile.',
     cardImage: '/assets/cards/card-BTC.jpg',
     coin: 'btc',
-    address: addresses.btcAddress || 'bc1q00000000000000000000000000000000000000000000000000',
+    address: addresses.btcAddress || exampleAddresses.btc,
   },
 ]
 
