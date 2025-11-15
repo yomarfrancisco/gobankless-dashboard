@@ -24,6 +24,7 @@ import { ScanOverlay } from '@/components/ScanOverlay'
 import { ScanQrSheet } from '@/components/ScanQrSheet'
 import WalletHelperSheet from '@/components/WalletHelperSheet'
 import InternalTransferSheet from '@/components/InternalTransferSheet'
+import DepositCryptoWalletSheet from '@/components/DepositCryptoWalletSheet'
 
 // Toggle flag to compare both scanner implementations
 const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
@@ -54,6 +55,7 @@ export default function Home() {
   const [openInternalTransfer, setOpenInternalTransfer] = useState(false)
   const [transferFromWalletId, setTransferFromWalletId] = useState<'savings' | 'pepe' | 'yield' | 'mzn' | 'btc'>('savings')
   const [transferToWalletId, setTransferToWalletId] = useState<'savings' | 'pepe' | 'yield' | 'mzn' | 'btc'>('pepe')
+  const [openDepositCryptoWallet, setOpenDepositCryptoWallet] = useState(false)
 
   // Register onSelect handler for global Transact sheet
   useEffect(() => {
@@ -109,6 +111,13 @@ export default function Home() {
   }, [])
   const closeInternalTransfer = useCallback(() => {
     setOpenInternalTransfer(false)
+  }, [])
+  const closeDepositCryptoWallet = useCallback(() => {
+    setOpenDepositCryptoWallet(false)
+  }, [])
+  const handleSelectCryptoDepositWallet = useCallback((walletKey: 'usdt_sa' | 'usdt_mzn' | 'pepe' | 'eth' | 'btc') => {
+    // TODO: in a future step, open QR + address sheet for this wallet
+    console.log('Selected crypto deposit wallet:', walletKey)
   }, [])
   const handleTransferNext = useCallback((fromWalletId: 'savings' | 'pepe' | 'yield' | 'mzn' | 'btc', toWalletId: 'savings' | 'pepe' | 'yield' | 'mzn' | 'btc') => {
     setTransferFromWalletId(fromWalletId)
@@ -284,6 +293,8 @@ export default function Home() {
           } else if (method === 'card') {
             setAmountMode('depositCard')
             setTimeout(() => setOpenAmount(true), 220)
+          } else if (method === 'crypto') {
+            setTimeout(() => setOpenDepositCryptoWallet(true), 220)
           } else {
             setAmountMode('deposit')
             setTimeout(() => setOpenAmount(true), 220)
@@ -373,6 +384,11 @@ export default function Home() {
         onClose={closeInternalTransfer}
         onNext={handleTransferNext}
         defaultFromWalletId={transferFromWalletId}
+      />
+      <DepositCryptoWalletSheet
+        open={openDepositCryptoWallet}
+        onClose={closeDepositCryptoWallet}
+        onSelectCryptoDepositWallet={handleSelectCryptoDepositWallet}
       />
     </div>
   )
