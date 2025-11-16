@@ -18,7 +18,7 @@ import { useTransactSheet } from '@/store/useTransactSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { useWalletMode } from '@/state/walletMode'
 import { useSupportSheet } from '@/store/useSupportSheet'
-import { CreditCard, WalletCards, Phone, LogOut } from 'lucide-react'
+import { CreditCard, WalletCards, Phone, LogOut, PiggyBank, Receipt } from 'lucide-react'
 import Avatar from '@/components/Avatar'
 import DepositCryptoWalletSheet, { type DepositCryptoWallet } from '@/components/DepositCryptoWalletSheet'
 import CryptoDepositAddressSheet from '@/components/CryptoDepositAddressSheet'
@@ -263,12 +263,10 @@ export default function ProfilePage() {
                   Edit profile
                 </button>
                 <button
-                  className={`btn profile-inbox ${activityCount === 0 ? 'disabled' : ''}`}
-                  onClick={() => activityCount > 0 && router.push('/activity')}
-                  disabled={activityCount === 0}
-                  style={{ opacity: activityCount === 0 ? 0.5 : 1, cursor: activityCount === 0 ? 'not-allowed' : 'pointer' }}
+                  className="btn profile-inbox"
+                  onClick={openWithdrawSheet}
                 >
-                  Transactions
+                  Cash out
                 </button>
               </div>
 
@@ -278,27 +276,27 @@ export default function ProfilePage() {
                 <div className="profile-settings-card">
                   <button
                     className="profile-settings-row"
-                    onClick={() => console.log('Linked cards')}
+                    onClick={() => router.push('/activity')}
                     type="button"
                   >
                     <div className="profile-settings-left">
                       <div className="profile-settings-icon">
-                        <CreditCard size={22} strokeWidth={2} style={{ color: '#111' }} />
+                        <Receipt size={22} strokeWidth={2} style={{ color: '#111' }} />
                       </div>
-                      <span className="profile-settings-label">Linked cards</span>
+                      <span className="profile-settings-label">Transactions</span>
                     </div>
                     <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
                   </button>
                   <button
                     className="profile-settings-row"
-                    onClick={() => console.log('Linked wallets')}
+                    onClick={() => console.log('Linked bank accounts')}
                     type="button"
                   >
                     <div className="profile-settings-left">
                       <div className="profile-settings-icon">
-                        <WalletCards size={22} strokeWidth={2} style={{ color: '#111' }} />
+                        <PiggyBank size={22} strokeWidth={2} style={{ color: '#111' }} />
                       </div>
-                      <span className="profile-settings-label">Linked wallets</span>
+                      <span className="profile-settings-label">Linked bank accounts</span>
                     </div>
                     <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
                   </button>

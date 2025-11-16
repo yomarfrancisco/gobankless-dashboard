@@ -36,12 +36,6 @@ export default function TransactionSheet() {
         caption="Add funds instantly via card or bank transfer"
         onClick={() => handleSelect('deposit')}
       />
-      <ActionSheetItem
-        icon={<BanknoteArrowDown size={22} strokeWidth={2} />}
-        title="Withdraw"
-        caption="Move funds back to your bank account or external wallet"
-        onClick={() => handleSelect('withdraw')}
-      />
     </ActionSheet>
   )
 }
