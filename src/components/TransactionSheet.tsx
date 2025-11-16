@@ -30,12 +30,6 @@ export default function TransactionSheet() {
         onClick={() => handleSelect('transfer')}
         ariaLabel="Transfer funds between wallets"
       />
-      <ActionSheetItem
-        icon={<BanknoteArrowUp size={22} strokeWidth={2} />}
-        title="Deposit"
-        caption="Add funds instantly via card or bank transfer"
-        onClick={() => handleSelect('deposit')}
-      />
     </ActionSheet>
   )
 }

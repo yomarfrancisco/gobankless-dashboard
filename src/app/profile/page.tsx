@@ -18,7 +18,7 @@ import { useTransactSheet } from '@/store/useTransactSheet'
 import { useUserProfileStore } from '@/store/userProfile'
 import { useWalletMode } from '@/state/walletMode'
 import { useSupportSheet } from '@/store/useSupportSheet'
-import { CreditCard, WalletCards, Phone, LogOut, PiggyBank, Receipt } from 'lucide-react'
+import { CreditCard, WalletCards, Phone, LogOut, PiggyBank, Receipt, Edit3 } from 'lucide-react'
 import Avatar from '@/components/Avatar'
 import DepositCryptoWalletSheet, { type DepositCryptoWallet } from '@/components/DepositCryptoWalletSheet'
 import CryptoDepositAddressSheet from '@/components/CryptoDepositAddressSheet'
@@ -259,8 +259,8 @@ export default function ProfilePage() {
 
               {/* Buttons */}
               <div className="profile-actions">
-                <button className="btn profile-edit" onClick={openProfileEdit}>
-                  Edit profile
+                <button className="btn profile-edit" onClick={openDepositSheet}>
+                  Cash in
                 </button>
                 <button
                   className="btn profile-inbox"
@@ -284,6 +284,19 @@ export default function ProfilePage() {
                         <Receipt size={22} strokeWidth={2} style={{ color: '#111' }} />
                       </div>
                       <span className="profile-settings-label">Transactions</span>
+                    </div>
+                    <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
+                  </button>
+                  <button
+                    className="profile-settings-row"
+                    onClick={openProfileEdit}
+                    type="button"
+                  >
+                    <div className="profile-settings-left">
+                      <div className="profile-settings-icon">
+                        <Edit3 size={22} strokeWidth={2} style={{ color: '#111' }} />
+                      </div>
+                      <span className="profile-settings-label">Edit profile</span>
                     </div>
                     <Image src="/assets/next_ui.svg" alt="" width={18} height={18} style={{ opacity: 0.4 }} />
                   </button>
