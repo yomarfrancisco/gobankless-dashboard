@@ -584,11 +584,6 @@ body {
   max-height: none !important;
 }
 
-/* White background for avatar button in autonomous mode */
-.fab-dollar.is-autonomous {
-  background-color: #fff !important; /* Force white background behind transparent PNG */
-}
-
 .nav-label {
   font-size: 11px;
   letter-spacing: -0.14px;
