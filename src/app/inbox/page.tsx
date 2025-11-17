@@ -7,9 +7,9 @@ import Inbox from '@/components/Inbox/Inbox'
 export default function InboxPage() {
   const { openInbox } = useFinancialInboxStore()
 
-  // Auto-open inbox and navigate to Portfolio Manager on page load
+  // Auto-open inbox on page load
   useEffect(() => {
-    openInbox('portfolio-manager')
+    openInbox()
   }, [openInbox])
 
   return <Inbox />

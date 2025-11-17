@@ -29,8 +29,8 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
       if (isInboxOpen) {
         closeInbox()
       } else {
-        // Open inbox and auto-navigate to Portfolio Manager thread
-        openInbox('portfolio-manager')
+        // Open Financial Inbox sheet
+        openInbox()
       }
     } else {
       const handler = onDollarClick ?? (() => open())

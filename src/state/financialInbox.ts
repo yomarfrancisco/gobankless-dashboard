@@ -31,7 +31,7 @@ type FinancialInboxState = {
   messagesByThreadId: Record<ThreadId, ChatMessage[]>
   activeThreadId: ThreadId | null
   isInboxOpen: boolean
-  openInbox: (threadId?: ThreadId) => void
+  openInbox: () => void
   closeInbox: () => void
   sendMessage: (threadId: ThreadId, from: 'user' | 'ai', text: string) => void
   setActiveThread: (threadId: ThreadId | null) => void
@@ -112,13 +112,9 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
     }
   },
 
-  openInbox: (threadId?: ThreadId) => {
-    const state = get()
-    state.ensurePortfolioManagerThread()
-    
+  openInbox: () => {
     set({
       isInboxOpen: true,
-      activeThreadId: threadId || PORTFOLIO_MANAGER_THREAD_ID,
     })
   },
 
