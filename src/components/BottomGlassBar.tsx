@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import clsx from 'clsx'
 import { useWalletMode } from '@/state/walletMode'
 import { useTransactSheet } from '@/store/useTransactSheet'
+import { useAiFabHighlightStore } from '@/state/aiFabHighlight'
 import { ChatbotSheet } from './ChatbotSheet'
 import '@/styles/bottom-glass.css'
 
@@ -20,6 +22,7 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
   const isProfile = currentPath === '/profile' || currentPath === '/transactions' || currentPath === '/activity'
   const { mode } = useWalletMode()
   const isAutonomousMode = mode === 'autonomous'
+  const isHighlighted = useAiFabHighlightStore((state) => state.isHighlighted)
   
   const handleCenterButtonClick = () => {
     if (isAutonomousMode) {
@@ -57,13 +60,43 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
           </div>
           <div className="dollar-sign-container">
             <button
-              className={`dollar-sign-contained fab-dollar ${mode === 'manual' ? 'is-manual' : 'is-autonomous'}`}
+              className={clsx('dollar-sign-contained', 'fab-dollar', {
+                'is-manual': mode === 'manual',
+                'is-autonomous': mode === 'autonomous',
+                'fab-highlighted': isHighlighted && mode === 'manual',
+              })}
               aria-label={isAutonomousMode ? 'Open BRICS chat' : `Transact (${mode} mode)`}
               onClick={handleCenterButtonClick}
               onTouchStart={handleCenterButtonClick}
               type="button"
             >
-              {isAutonomousMode ? (
+              {/* In manual mode, show both dollar sign and avatar (avatar animates over) */}
+              {mode === 'manual' ? (
+                <>
+                  <div className="fab-content-base">
+                    <Image 
+                      src="/assets/core/dollar-sign.png" 
+                      alt="Direct Payment" 
+                      width={60} 
+                      height={60} 
+                      className="fab-dollar-icon"
+                      unoptimized 
+                    />
+                  </div>
+                  <div className={clsx('fab-content-overlay', {
+                    'fab-content-overlay--visible': isHighlighted,
+                  })}>
+                    <Image 
+                      src="/assets/Brics-girl-blue.png" 
+                      alt="AI Manager" 
+                      width={72} 
+                      height={72} 
+                      className="fab-avatar-image"
+                      unoptimized 
+                    />
+                  </div>
+                </>
+              ) : (
                 <Image 
                   src="/assets/Brics-girl-blue.png" 
                   alt="$BRICS Diamond" 
@@ -72,8 +105,6 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
                   className="chat-avatar-image"
                   unoptimized 
                 />
-              ) : (
-                <Image src="/assets/core/dollar-sign.png" alt="Direct Payment" width={60} height={60} unoptimized />
               )}
             </button>
             <div className="nav-label">{isAutonomousMode ? 'BRICS chat' : 'Direct payment'}</div>

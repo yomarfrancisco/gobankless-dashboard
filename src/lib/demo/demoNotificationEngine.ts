@@ -5,6 +5,7 @@
  */
 
 import type { NotificationItem } from '@/store/notifications'
+import { useAiFabHighlightStore, shouldHighlightAiFab } from '@/state/aiFabHighlight'
 
 type NotificationInput = Omit<NotificationItem, 'id' | 'timestamp'>
 
@@ -268,6 +269,19 @@ export function startDemoNotificationEngine(
 
         // Push the notification
         pushNotification(event)
+        
+        // Trigger FAB highlight for "important" AI trades in demo mode
+        if (event.kind === 'ai_trade' && event.amount) {
+          const amountZar = Math.abs(event.amount.value)
+          if (shouldHighlightAiFab(amountZar)) {
+            const { triggerAiFabHighlight } = useAiFabHighlightStore.getState()
+            triggerAiFabHighlight({
+              reason: event.reason,
+              amountZar: amountZar,
+            })
+          }
+        }
+        
         notificationCount++
         lastNotificationTime = Date.now()
       }

@@ -6,6 +6,7 @@ import { useNotificationStore } from '@/store/notifications'
 import { usePortfolioStore } from '@/store/portfolio'
 import { computePostTrade, type HoldingsZAR } from '@/lib/portfolio/applyTrade'
 import { derivePortfolio } from '@/lib/portfolio/calculateMetrics'
+import { useAiFabHighlightStore, shouldHighlightAiFab } from '@/state/aiFabHighlight'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
@@ -38,6 +39,7 @@ export function useAiActionCycle(
   const isProcessingRef = useRef(false)
   const pushNotification = useNotificationStore((state) => state.pushNotification)
   const setHoldingsBulk = usePortfolioStore((state) => state.setHoldingsBulk)
+  const triggerAiFabHighlight = useAiFabHighlightStore((state) => state.triggerAiFabHighlight)
 
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -266,6 +268,14 @@ export function useAiActionCycle(
           routeOnTap: '/transactions',
         })
 
+        // Trigger FAB highlight for "important" trades (above R150 threshold)
+        if (shouldHighlightAiFab(zarAmount)) {
+          triggerAiFabHighlight({
+            reason: shortWhyString,
+            amountZar: zarAmount,
+          })
+        }
+
         // 4) Wait for target slot animation (staggered: health/allocation start at 0ms, slot counter starts at ~120ms)
         await sleep(SLOT_MS)
 
@@ -283,7 +293,7 @@ export function useAiActionCycle(
     } finally {
       isProcessingRef.current = false
     }
-  }, [cardStackRef, balanceUpdaters, pushNotification, setHoldingsBulk])
+  }, [cardStackRef, balanceUpdaters, pushNotification, setHoldingsBulk, triggerAiFabHighlight])
 
   const start = useCallback(() => {
     if (isRunningRef.current) return
