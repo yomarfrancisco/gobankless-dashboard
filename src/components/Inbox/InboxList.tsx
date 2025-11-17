@@ -1,0 +1,102 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { useFinancialInboxStore } from '@/state/financialInbox'
+import styles from './InboxList.module.css'
+
+export default function InboxList() {
+  const { threads, setActiveThread, closeInbox } = useFinancialInboxStore()
+  const router = useRouter()
+
+  // Sort threads: portfolio_manager first, then by lastMessageAt
+  const sortedThreads = [...threads].sort((a, b) => {
+    if (a.kind === 'portfolio_manager' && b.kind !== 'portfolio_manager') return -1
+    if (a.kind !== 'portfolio_manager' && b.kind === 'portfolio_manager') return 1
+    return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime()
+  })
+
+  const handleThreadClick = (threadId: string) => {
+    setActiveThread(threadId)
+  }
+
+  const handleBack = () => {
+    closeInbox()
+    router.push('/')
+  }
+
+  return (
+    <div className={styles.inboxContainer}>
+      {/* Header */}
+      <div className={styles.header}>
+        <button onClick={handleBack} className={styles.backButton} aria-label="Close">
+          <Image
+            src="/assets/back_ui.svg"
+            alt="Back"
+            width={24}
+            height={24}
+          />
+        </button>
+        <div className={styles.headerTitle}>Inbox</div>
+        <div className={styles.headerSpacer} />
+      </div>
+
+      {/* Search bar */}
+      <div className={styles.searchBar}>
+        <div className={styles.searchIcon}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+            <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="Search inbox"
+        />
+      </div>
+
+      {/* Thread list */}
+      <div className={styles.threadList}>
+        {sortedThreads.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyTitle}>No messages here yet</div>
+            <div className={styles.emptySubtitle}>Start the conversation by sending a message</div>
+          </div>
+        ) : (
+          sortedThreads.map((thread) => (
+            <button
+              key={thread.id}
+              className={styles.threadRow}
+              onClick={() => handleThreadClick(thread.id)}
+            >
+              <div className={styles.threadAvatar}>
+                <Image
+                  src={thread.avatarUrl}
+                  alt={thread.title}
+                  width={48}
+                  height={48}
+                  className={styles.avatarImage}
+                  unoptimized
+                />
+              </div>
+              <div className={styles.threadContent}>
+                <div className={styles.threadHeader}>
+                  <div className={styles.threadTitle}>{thread.title}</div>
+                  <div className={styles.threadTime}>{thread.lastMessageAt}</div>
+                </div>
+                <div className={styles.threadFooter}>
+                  <div className={styles.threadSubtitle}>{thread.subtitle}</div>
+                  {thread.unreadCount > 0 && (
+                    <div className={styles.unreadDot} />
+                  )}
+                </div>
+              </div>
+            </button>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+

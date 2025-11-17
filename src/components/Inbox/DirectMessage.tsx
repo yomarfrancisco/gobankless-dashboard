@@ -1,45 +1,21 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { useFinancialInboxStore } from '@/state/financialInbox'
 import styles from './DirectMessage.module.css'
 
-type ChatMessage = {
-  id: string
-  from: 'user' | 'ai'
-  text: string
-  createdAt: string // e.g. '14:09'
-}
-
 type DirectMessageProps = {
-  onBack?: () => void
+  threadId: string
 }
 
-export default function DirectMessage({ onBack }: DirectMessageProps) {
-  const router = useRouter()
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      from: 'user',
-      text: 'Sent a direct message',
-      createdAt: '14:09',
-    },
-    {
-      id: '2',
-      from: 'ai',
-      text: 'Reply to direct message',
-      createdAt: '14:09',
-    },
-    {
-      id: '3',
-      from: 'ai',
-      text: 'Longer reply. Assess borrower risk and price accordingly via lender-specific interest rates. Receive a return on deposited capital even if funds are not drawn down. Withdraw deposited capital on-demand if funds are not drawn down by a Borrower.',
-      createdAt: '14:09',
-    },
-  ])
+export default function DirectMessage({ threadId }: DirectMessageProps) {
+  const { messagesByThreadId, threads, sendMessage, setActiveThread } = useFinancialInboxStore()
   const [inputText, setInputText] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const messages = messagesByThreadId[threadId] || []
+  const thread = threads.find((t) => t.id === threadId)
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -52,34 +28,22 @@ export default function DirectMessage({ onBack }: DirectMessageProps) {
     e.preventDefault()
     if (!inputText.trim()) return
 
-    // Add user message
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      from: 'user',
-      text: inputText.trim(),
-      createdAt: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-    }
-    setMessages((prev) => [...prev, userMessage])
+    // Send user message
+    sendMessage(threadId, 'user', inputText.trim())
     setInputText('')
 
     // Add stub AI reply after delay
     setTimeout(() => {
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        from: 'ai',
-        text: "Got it. I'll walk you through what changed in your portfolio in the last 24h in the next iteration.",
-        createdAt: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-      }
-      setMessages((prev) => [...prev, aiMessage])
-    }, 700)
+      sendMessage(
+        threadId,
+        'ai',
+        "Got it – I'll keep you posted on your portfolio. This will later come from the BabyCDO backend."
+      )
+    }, 800)
   }
 
   const handleBack = () => {
-    if (onBack) {
-      onBack()
-    } else {
-      router.push('/')
-    }
+    setActiveThread(null) // Return to inbox list
   }
 
   return (
@@ -194,8 +158,8 @@ export default function DirectMessage({ onBack }: DirectMessageProps) {
         <div className={styles.profileHeader}>
           <Image
             className={styles.avatarProfile}
-            src="/assets/Brics-girl-blue.png"
-            alt="BabyCDO"
+            src={thread?.avatarUrl || '/assets/Brics-girl-blue.png'}
+            alt={thread?.title || 'BabyCDO'}
             width={32}
             height={32}
             unoptimized
@@ -203,7 +167,7 @@ export default function DirectMessage({ onBack }: DirectMessageProps) {
           <div className={styles.usernameProfileWrapper}>
             <div className={styles.usernameProfile}>
               <div className={styles.textInput}>
-                <div className={styles.text}>BabyCDO</div>
+                <div className={styles.text}>{thread?.title || 'BabyCDO'}</div>
               </div>
             </div>
           </div>

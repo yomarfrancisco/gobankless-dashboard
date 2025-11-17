@@ -6,8 +6,8 @@ import clsx from 'clsx'
 import { useWalletMode } from '@/state/walletMode'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import { useAiFabHighlightStore } from '@/state/aiFabHighlight'
-import { useBabyCdoChatStore } from '@/state/babyCdoChat'
-import { BabyCdoChatSheet } from './BabyCdoChatSheet'
+import { useFinancialInboxStore } from '@/state/financialInbox'
+import { FinancialInboxSheet } from './Inbox/FinancialInboxSheet'
 import '@/styles/bottom-glass.css'
 
 interface BottomGlassBarProps {
@@ -22,14 +22,15 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
   const { mode } = useWalletMode()
   const isAutonomousMode = mode === 'autonomous'
   const isHighlighted = useAiFabHighlightStore((state) => state.isHighlighted)
-  const { open: isChatOpen, openChat, close } = useBabyCdoChatStore()
+  const { isInboxOpen, openInbox, closeInbox } = useFinancialInboxStore()
   
   const handleCenterButtonClick = () => {
     if (isAutonomousMode) {
-      if (isChatOpen) {
-        close()
+      if (isInboxOpen) {
+        closeInbox()
       } else {
-        openChat()
+        // Open inbox and auto-navigate to Portfolio Manager thread
+        openInbox('portfolio-manager')
       }
     } else {
       const handler = onDollarClick ?? (() => open())
@@ -101,9 +102,9 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
                 </div>
               </div>
             </button>
-            <div className="nav-label">{isAutonomousMode ? 'BRICS chat' : 'Direct payment'}</div>
+            <div className="nav-label">{isAutonomousMode ? 'Financial Inbox' : 'Direct payment'}</div>
           </div>
-          <BabyCdoChatSheet />
+          <FinancialInboxSheet />
           <div className="nav-item">
             <Link href="/profile" aria-label="Profile">
               <Image 
