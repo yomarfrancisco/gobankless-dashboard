@@ -14,8 +14,10 @@ export function setupDevNotificationHelpers() {
   const store = useNotificationStore.getState()
 
   // Auto-fire identity examples once per session in non-production builds
+  // BUT only if demo mode is NOT enabled (demo mode handles its own notifications)
   if (
     process.env.NODE_ENV !== 'production' &&
+    process.env.NEXT_PUBLIC_DEMO_MODE !== 'true' &&
     !(window as any).__debugIdentitiesFired
   ) {
     // Mark as fired to prevent duplicate calls

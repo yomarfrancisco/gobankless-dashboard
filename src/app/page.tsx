@@ -26,6 +26,8 @@ import WalletHelperSheet from '@/components/WalletHelperSheet'
 import InternalTransferSheet from '@/components/InternalTransferSheet'
 import DepositCryptoWalletSheet, { type DepositCryptoWallet } from '@/components/DepositCryptoWalletSheet'
 import CryptoDepositAddressSheet from '@/components/CryptoDepositAddressSheet'
+import { useNotificationStore } from '@/store/notifications'
+import { startDemoNotificationEngine, stopDemoNotificationEngine } from '@/lib/demo/demoNotificationEngine'
 
 // Toggle flag to compare both scanner implementations
 const USE_MODAL_SCANNER = false // Set to true to use sheet-based scanner, false for full-screen overlay
@@ -192,6 +194,34 @@ export default function Home() {
     setEth,
     setPepe,
   }, mode === 'autonomous')
+
+  // Demo notification engine - only run in demo mode
+  const pushNotification = useNotificationStore((state) => state.pushNotification)
+  useEffect(() => {
+    const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+    
+    if (isDemoMode) {
+      // Stub callbacks for map panning and card animations
+      const onMapPan = (lat: number, lng: number) => {
+        // TODO: Wire up to MapboxMap component for actual panning
+        console.log('[Demo] Map pan to:', { lat, lng })
+      }
+
+      const onCardAnimation = (type: 'ai_trade' | 'portfolio_rebalanced') => {
+        // TODO: Trigger card animation (balance pulse, health bar wiggle)
+        console.log('[Demo] Card animation:', type)
+      }
+
+      startDemoNotificationEngine(pushNotification, {
+        onMapPan,
+        onCardAnimation,
+      })
+
+      return () => {
+        stopDemoNotificationEngine()
+      }
+    }
+  }, [pushNotification])
 
   // Manual mode titles per card
   const MANUAL_TITLES: Record<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc', { title: string; subtitle: string }> = {

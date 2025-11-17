@@ -72,6 +72,11 @@ export type NotificationItem = {
   }
   direction?: 'up' | 'down' // inflow/outflow (for Transactions derivation)
   actor?: ActorIdentity | LegacyActor // Supports both new and legacy formats
+  map?: {
+    lat: number
+    lng: number
+    markerId?: string
+  }
   timestamp: number // ms since epoch
   routeOnTap?: string // e.g., '/transactions' or deep link
 }
