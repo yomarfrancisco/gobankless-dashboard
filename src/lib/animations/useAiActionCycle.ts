@@ -7,6 +7,8 @@ import { usePortfolioStore } from '@/store/portfolio'
 import { computePostTrade, type HoldingsZAR } from '@/lib/portfolio/applyTrade'
 import { derivePortfolio } from '@/lib/portfolio/calculateMetrics'
 import { useAiFabHighlightStore, shouldHighlightAiFab } from '@/state/aiFabHighlight'
+import { useBabyCdoChatStore } from '@/state/babyCdoChat'
+import { formatBabyCdoIntroFromTradeContext, type TradeContext } from '@/lib/babycdo/formatIntroMessage'
 
 const FX_USD_ZAR_DEFAULT = 18.1
 
@@ -274,6 +276,24 @@ export function useAiActionCycle(
             reason: shortWhyString,
             amountZar: zarAmount,
           })
+
+          // Open BabyCDO chat with intro message for important trades
+          const tradeContext: TradeContext = {
+            action: `Rebalanced: ${actionVerb} ${Math.abs(delta)} ${assetName} (R${zarAmount.toFixed(2)}).`,
+            reason: shortWhyString,
+            amountZar: zarAmount,
+            asset: assetName === 'ETH' ? 'ETH' : assetName === 'PEPE' ? 'PEPE' : 'CASH',
+            direction: delta > 0 ? 'buy' : 'sell',
+            timestamp: Date.now(),
+          }
+          
+          const introText = formatBabyCdoIntroFromTradeContext(tradeContext)
+          const { openWithIntro } = useBabyCdoChatStore.getState()
+          
+          // Open chat with intro message, auto-close after 12s if user ignores
+          setTimeout(() => {
+            openWithIntro(introText, 12000)
+          }, 2000) // Small delay after FAB highlight
         }
 
         // 4) Wait for target slot animation (staggered: health/allocation start at 0ms, slot counter starts at ~120ms)

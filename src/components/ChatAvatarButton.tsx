@@ -1,19 +1,26 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import Image from 'next/image'
-import { ChatbotSheet } from './ChatbotSheet'
+import { BabyCdoChatSheet } from './BabyCdoChatSheet'
+import { useBabyCdoChatStore } from '@/state/babyCdoChat'
 import styles from './ChatAvatarButton.module.css'
 
 export function ChatAvatarButton() {
-  const [open, setOpen] = useState(false)
+  const { open, openChat, close } = useBabyCdoChatStore()
 
   return (
     <>
       {/* Floating avatar button */}
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          if (open) {
+            close()
+          } else {
+            openChat()
+          }
+        }}
         className={styles.fab}
         aria-label="Open BRICS chat"
       >
@@ -28,8 +35,8 @@ export function ChatAvatarButton() {
         </div>
       </button>
 
-      {/* Popup sheet with Chatbase iframe */}
-      <ChatbotSheet open={open} onClose={() => setOpen(false)} />
+      {/* BabyCDO chat sheet */}
+      <BabyCdoChatSheet />
     </>
   )
 }

@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 import { useWalletMode } from '@/state/walletMode'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import { useAiFabHighlightStore } from '@/state/aiFabHighlight'
-import { ChatbotSheet } from './ChatbotSheet'
+import { useBabyCdoChatStore } from '@/state/babyCdoChat'
+import { BabyCdoChatSheet } from './BabyCdoChatSheet'
 import '@/styles/bottom-glass.css'
 
 interface BottomGlassBarProps {
@@ -17,16 +17,20 @@ interface BottomGlassBarProps {
 
 export default function BottomGlassBar({ currentPath = '/', onDollarClick }: BottomGlassBarProps) {
   const { open } = useTransactSheet()
-  const [isChatOpen, setIsChatOpen] = useState(false)
   const isHome = currentPath === '/'
   const isProfile = currentPath === '/profile' || currentPath === '/transactions' || currentPath === '/activity'
   const { mode } = useWalletMode()
   const isAutonomousMode = mode === 'autonomous'
   const isHighlighted = useAiFabHighlightStore((state) => state.isHighlighted)
+  const { open: isChatOpen, openChat, close } = useBabyCdoChatStore()
   
   const handleCenterButtonClick = () => {
     if (isAutonomousMode) {
-      setIsChatOpen(true)
+      if (isChatOpen) {
+        close()
+      } else {
+        openChat()
+      }
     } else {
       const handler = onDollarClick ?? (() => open())
       handler()
@@ -99,7 +103,7 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
             </button>
             <div className="nav-label">{isAutonomousMode ? 'BRICS chat' : 'Direct payment'}</div>
           </div>
-          <ChatbotSheet open={isChatOpen} onClose={() => setIsChatOpen(false)} />
+          <BabyCdoChatSheet />
           <div className="nav-item">
             <Link href="/profile" aria-label="Profile">
               <Image 
