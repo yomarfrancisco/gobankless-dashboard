@@ -3,15 +3,14 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { useNotificationStore, type NotificationItem, getNotificationDetail } from '@/store/notifications'
+import clsx from 'clsx'
+import { useNotificationStore, type NotificationItem, getNotificationDetail, migrateLegacyActor } from '@/store/notifications'
+import { resolveAvatarForActor } from '@/lib/notifications/identityResolver'
 import { formatRelativeShort } from '@/lib/formatRelativeTime'
 import '@/styles/notifications.css'
 
 const MAX_VISIBLE = 2
 const AUTO_DISMISS_MS = 3000
-
-// GoB pink logo avatar path (use the provided image)
-const GOB_AVATAR_PATH = '/assets/aa2b32f2dc3e3a159949cb59284abddef5683b05.png'
 
 export default function TopNotifications() {
   const router = useRouter()
@@ -65,15 +64,38 @@ export default function TopNotifications() {
   return (
     <div className="notifications-container" role="status" aria-live="polite" aria-atomic="false">
       {visibleNotifications.map((notification, index) => {
-        const avatarUrl =
-          notification.actor?.type === 'ai'
-            ? GOB_AVATAR_PATH
-            : notification.actor?.avatarUrl || GOB_AVATAR_PATH
+        // Migrate legacy actor and resolve avatar
+        const actor = migrateLegacyActor(notification.actor)
+        const avatarUrl = resolveAvatarForActor(actor)
+
+        // Get alt text based on identity
+        const getAltText = () => {
+          if (!actor) return 'Notification'
+          switch (actor.type) {
+            case 'ai_manager':
+              return 'AI Manager'
+            case 'member':
+              return actor.name || 'Member'
+            case 'co_op':
+              return actor.name || 'Co-op'
+            case 'system':
+              return 'System'
+            case 'user':
+            default:
+              return 'You'
+          }
+        }
 
         return (
           <div
             key={notification.id}
-            className="notification-item"
+            className={clsx('notification-item', {
+              'notification--ai': actor?.type === 'ai_manager',
+              'notification--member': actor?.type === 'member',
+              'notification--co-op': actor?.type === 'co_op',
+              'notification--system': actor?.type === 'system',
+              'notification--user': actor?.type === 'user',
+            })}
             style={{
               animationDelay: `${index * 50}ms`,
             }}
@@ -90,7 +112,7 @@ export default function TopNotifications() {
             <div className="notification-avatar">
               <Image
                 src={avatarUrl}
-                alt={notification.actor?.type === 'ai' ? 'AI' : 'User'}
+                alt={getAltText()}
                 width={38}
                 height={38}
                 className="notification-avatar-img"

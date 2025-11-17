@@ -48,6 +48,7 @@ export default function CryptoDepositAddressSheet({ open, onClose, wallet }: Pro
           kind: 'payment_failed',
           title: 'Error',
           body: 'Failed to generate QR code',
+          actor: { type: 'system' },
         })
       }
     }
@@ -69,6 +70,7 @@ export default function CryptoDepositAddressSheet({ open, onClose, wallet }: Pro
         kind: 'payment_failed',
         title: 'Error',
         body: 'Failed to copy address',
+        actor: { type: 'system' },
       })
     }
   }

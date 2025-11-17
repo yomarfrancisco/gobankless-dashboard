@@ -12,6 +12,52 @@ export type NotificationKind =
   | 'mode-change'
   | 'transfer'
 
+// New identity-based actor type
+export type ActorIdentity =
+  | { type: 'user'; id?: string; avatar?: string; name?: string }
+  | { type: 'ai_manager'; id?: string; avatar?: string; name?: string }
+  | { type: 'co_op'; id?: string; avatar?: string; name?: string }
+  | { type: 'member'; id?: string; avatar?: string; name?: string; handle?: string }
+  | { type: 'system'; id?: string; avatar?: string; name?: string }
+
+// Legacy actor type for backward compatibility
+type LegacyActor = { type: 'ai' | 'user'; avatarUrl?: string }
+
+// Migration helper to convert legacy actors to new identity format
+export const migrateLegacyActor = (
+  actor?: ActorIdentity | LegacyActor
+): ActorIdentity | undefined => {
+  if (!actor) return undefined
+
+  // Already new style
+  if (
+    actor.type === 'user' ||
+    actor.type === 'ai_manager' ||
+    actor.type === 'co_op' ||
+    actor.type === 'member' ||
+    actor.type === 'system'
+  ) {
+    return actor as ActorIdentity
+  }
+
+  // Legacy style
+  const legacy = actor as LegacyActor
+  if (legacy.type === 'ai') {
+    return {
+      type: 'ai_manager',
+      avatar: legacy.avatarUrl ?? '/assets/Brics-girl-blue.png',
+      name: 'AI manager',
+    }
+  }
+
+  // legacy.type === 'user'
+  return {
+    type: 'user',
+    avatar: legacy.avatarUrl,
+    name: 'You',
+  }
+}
+
 export type NotificationItem = {
   id: string // uuid
   kind: NotificationKind
@@ -25,10 +71,7 @@ export type NotificationItem = {
     value: number // positive for inflow, negative for outflow
   }
   direction?: 'up' | 'down' // inflow/outflow (for Transactions derivation)
-  actor?: {
-    type: 'ai' | 'user'
-    avatarUrl?: string // user avatar if available
-  }
+  actor?: ActorIdentity | LegacyActor // Supports both new and legacy formats
   timestamp: number // ms since epoch
   routeOnTap?: string // e.g., '/transactions' or deep link
 }
@@ -43,8 +86,12 @@ type NotificationState = {
 export const useNotificationStore = create<NotificationState>((set) => ({
   notifications: [],
   pushNotification: (item) => {
+    // Migrate legacy actor to new identity format
+    const migratedActor = migrateLegacyActor(item.actor)
+    
     const notification: NotificationItem = {
       ...item,
+      actor: migratedActor,
       id: crypto.randomUUID(),
       timestamp: Date.now(),
     }
@@ -56,9 +103,18 @@ export const useNotificationStore = create<NotificationState>((set) => ({
     const activityStore = useActivityStore.getState()
     // Get detail text using the same formatter as notifications
     const detail = getNotificationDetail(notification)
+    // Activity store still uses legacy format for now, convert back if needed
+    const activityActor = migratedActor
+      ? migratedActor.type === 'ai_manager'
+        ? { type: 'ai' as const, avatarUrl: migratedActor.avatar }
+        : migratedActor.type === 'user'
+        ? { type: 'user' as const, avatarUrl: migratedActor.avatar }
+        : { type: 'user' as const, avatarUrl: migratedActor.avatar }
+      : { type: 'user' as const }
+    
     activityStore.add({
       id: notification.id,
-      actor: notification.actor || { type: 'user' },
+      actor: activityActor,
       title: notification.title,
       body: detail || undefined,
       amount: notification.amount

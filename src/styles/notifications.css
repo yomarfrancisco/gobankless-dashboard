@@ -162,6 +162,31 @@
   }
 }
 
+/* Identity-based visual distinction */
+.notification--ai .notification-avatar {
+  /* Soft glow for AI manager */
+  box-shadow: 0 0 0 2px rgba(255, 0, 128, 0.35);
+}
+
+.notification--member .notification-avatar {
+  /* Soft glow for members */
+  box-shadow: 0 0 0 2px rgba(0, 200, 255, 0.35);
+}
+
+.notification--co-op .notification-avatar {
+  /* Subtle border for co-op */
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
+}
+
+.notification--system .notification-avatar {
+  /* Slight opacity reduction for system */
+  opacity: 0.9;
+}
+
+.notification--user .notification-avatar {
+  /* Default user styling (no special treatment) */
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .notification-item {

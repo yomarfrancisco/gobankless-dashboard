@@ -100,7 +100,7 @@ export default function SuccessSheet({
         },
         direction: 'up',
         actor: {
-          type: 'user',
+          type: 'system',
         },
         routeOnTap: '/transactions',
       })

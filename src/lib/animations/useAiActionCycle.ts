@@ -261,7 +261,7 @@ export function useAiActionCycle(
           },
           direction: delta > 0 ? 'down' : 'up',
           actor: {
-            type: 'ai',
+            type: 'ai_manager',
           },
           routeOnTap: '/transactions',
         })
