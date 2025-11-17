@@ -62,6 +62,7 @@ export default function MapboxMap({
   const savedZoomRef = useRef<number | null>(null)
   const highlightMarkerRef = useRef<mapboxgl.Marker | null>(null)
   const agentMarkersRef = useRef<Map<string, mapboxgl.Marker>>(new Map())
+  const cameraLockedUntilRef = useRef<number>(0) // Timestamp when camera lock expires
   
   const highlight = useMapHighlightStore((state) => state.highlight)
   
@@ -484,6 +485,11 @@ export default function MapboxMap({
       savedCenterRef.current = [center.lng, center.lat]
       savedZoomRef.current = zoom
 
+      // Lock camera for the duration of highlight animation + dwell time
+      // flyTo duration: 1000ms, dwell time: 3500ms, return flight: 1000ms
+      const totalLockDuration = 1000 + 3500 + 1000 // 5.5 seconds total
+      cameraLockedUntilRef.current = Date.now() + totalLockDuration
+
       // Pan to highlight location using flyTo for smoother animation
       map.flyTo({
         center: [highlight.lng, highlight.lat],
@@ -527,12 +533,21 @@ export default function MapboxMap({
       // No cleanup needed - we're using existing markers
     } else if (savedCenterRef.current && savedZoomRef.current) {
       // Return to saved position when highlight clears
+      // Lock camera during return flight as well
+      cameraLockedUntilRef.current = Date.now() + 1000 // 1 second for return flight
+      
       map.flyTo({
         center: savedCenterRef.current,
         zoom: savedZoomRef.current,
         duration: 1000,
         essential: true,
       })
+      
+      // Clear lock after return flight completes
+      setTimeout(() => {
+        cameraLockedUntilRef.current = 0
+      }, 1000)
+      
       savedCenterRef.current = null
       savedZoomRef.current = null
     }
@@ -582,6 +597,16 @@ export default function MapboxMap({
     const targetZoom = Math.min(16, Math.max(3, rawZoom)) // clamp
 
     // Center stays on user, only zoom changes
+    // BUT: Don't recenter if camera is locked (during highlight animations)
+    if (Date.now() < cameraLockedUntilRef.current) {
+      // Camera is locked - skip recentering but still update zoom if needed
+      // This prevents GPS updates from interrupting highlight animations
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('[map] camera locked, skipping recenter')
+      }
+      return
+    }
+
     // Debounce micro-bursts from geolocate with rAF
     requestAnimationFrame(() => {
       // Make sure center is the user (in case geolocate ran earlier)
