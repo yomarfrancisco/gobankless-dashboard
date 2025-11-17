@@ -85,14 +85,16 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
               <div className={clsx('fab-content-overlay', {
                 'fab-content-overlay--visible': isHighlighted,
               })}>
-                <Image 
-                  src="/assets/Brics-girl-blue.png" 
-                  alt="AI Manager" 
-                  width={72} 
-                  height={72} 
-                  className="fab-avatar-image"
-                  unoptimized 
-                />
+                <div className="fab-avatar-container">
+                  <Image 
+                    src="/assets/Brics-girl-blue.png" 
+                    alt="AI Manager" 
+                    width={94} 
+                    height={94} 
+                    className="fab-avatar-image"
+                    unoptimized 
+                  />
+                </div>
               </div>
             </button>
             <div className="nav-label">{isAutonomousMode ? 'BRICS chat' : 'Direct payment'}</div>

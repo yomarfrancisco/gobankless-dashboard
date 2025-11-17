@@ -1,25 +1,6 @@
-/* FAB Mode Indicator Styles - No Flicker */
-
-/* Dataset-driven default before React mounts */
-html[data-wallet-mode="autonomous"] .fab-dollar {
-  background: transparent; /* Avatar image will show, no background needed */
-}
-
-html[data-wallet-mode="manual"] .fab-dollar {
-  background: #000; /* Inverted: manual mode is now black */
-}
-
-/* Class-driven after React mounts (keeps parity with store) */
-.fab-dollar.is-autonomous {
-  background: #fff !important; /* White background behind transparent PNG avatar */
-}
-
-.fab-dollar.is-manual {
-  background: #000; /* Inverted: manual mode is now black */
-}
-
-/* Keep it crisp; prevent flicker due to transitions on mount */
+/* FAB Mode Indicator Styles - Always black container */
 .fab-dollar {
+  background: #000 !important; /* Always black circular container in both modes */
   transition: background-color 120ms linear; /* mild for user-initiated toggles */
   /* Avoid shadow/transform transitions on route change */
   will-change: auto;
@@ -61,10 +42,22 @@ html[data-wallet-mode="manual"] .fab-dollar {
   object-fit: contain;
 }
 
-.fab-avatar-image {
+/* AI avatar container in FAB overlay - white circular background */
+.fab-avatar-container {
   width: 72px;
   height: 72px;
-  object-fit: cover;
   border-radius: 50%;
+  background-color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fab-avatar-image {
+  width: 94px; /* ~30% larger than 72px for zoomed-in face */
+  height: 94px;
+  object-fit: cover;
+  object-position: center top; /* Center face, crop from top */
 }
 
