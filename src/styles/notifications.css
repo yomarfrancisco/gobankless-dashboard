@@ -96,11 +96,7 @@
   display: block;
 }
 
-/* AI manager avatar - zoomed in for better face framing */
-.notification-avatar--ai .notification-avatar-img {
-  transform: scale(1.3); /* ~30% zoom for more face, less shoulder */
-  object-position: center top; /* Center face, crop from top */
-}
+/* No zoom for notification avatars - keep original size */
 
 /* Content */
 .notification-content {

@@ -89,8 +89,8 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
                   <Image 
                     src="/assets/Brics-girl-blue.png" 
                     alt="AI Manager" 
-                    width={94} 
-                    height={94} 
+                    width={110} 
+                    height={110} 
                     className="fab-avatar-image"
                     unoptimized 
                   />
