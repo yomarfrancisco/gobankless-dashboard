@@ -13,6 +13,66 @@ export function setupDevNotificationHelpers() {
 
   const store = useNotificationStore.getState()
 
+  // Auto-fire identity examples once per session in non-production builds
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    !(window as any).__debugIdentitiesFired
+  ) {
+    // Mark as fired to prevent duplicate calls
+    ;(window as any).__debugIdentitiesFired = true
+
+    // Fire after a short delay to ensure app is fully loaded
+    setTimeout(() => {
+      const push = store.pushNotification
+
+      // 1. Me / user
+      push({
+        kind: 'payment_sent',
+        title: 'You sent R120 to Nomsa',
+        body: 'Payment complete.',
+        actor: { type: 'user' },
+      })
+
+      // 2. AI manager
+      push({
+        kind: 'ai_trade',
+        title: 'AI manager rebalanced your portfolio',
+        body: 'Shifted R250 from PEPE to USDT.',
+        actor: { type: 'ai_manager' },
+      })
+
+      // 3. Co-op
+      push({
+        kind: 'payment_received',
+        title: 'Co-op reached R10,000',
+        body: 'New contribution added to the shared pool.',
+        actor: { type: 'co_op', name: 'GoBankless Co-op' },
+      })
+
+      // 4. Member
+      push({
+        kind: 'payment_received',
+        title: 'Amanda topped up R50',
+        body: 'Member nearby just contributed.',
+        actor: {
+          type: 'member',
+          id: 'demo-amanda',
+          name: 'Amanda',
+          handle: '@amanda',
+          avatar: '/assets/avatar_agent2.png',
+        },
+      })
+
+      // 5. System
+      push({
+        kind: 'payment_failed',
+        title: 'Network issue',
+        body: "We'll retry your payment in a moment.",
+        actor: { type: 'system', name: 'System' },
+      })
+    }, 1000) // 1 second delay to ensure UI is ready
+  }
+
   // @ts-ignore
   window.debugNotify = (kind: string, options?: Partial<any>) => {
     const baseNotification = {

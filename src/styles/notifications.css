@@ -76,13 +76,13 @@
   height: 38px;
   border-radius: 50%;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.05);
+  background: #fff; /* White background for circular mask */
 }
 
 .notification-avatar-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Ensure images fill the circle */
 }
 
 /* Content */
@@ -164,8 +164,7 @@
 
 /* Identity-based visual distinction */
 .notification--ai .notification-avatar {
-  /* Soft glow for AI manager */
-  box-shadow: 0 0 0 2px rgba(255, 0, 128, 0.35);
+  /* No special styling - let the Brics girl avatar speak for itself */
 }
 
 .notification--member .notification-avatar {

@@ -1,9 +1,9 @@
 import type { ActorIdentity } from '@/store/notifications'
+import { useUserProfileStore } from '@/store/userProfile'
 
 const DEFAULT_GOB_LOGO = '/assets/aa2b32f2dc3e3a159949cb59284abddef5683b05.png'
 const AI_MANAGER_AVATAR = '/assets/Brics-girl-blue.png'
 const MEMBER_DEFAULT = '/assets/avatar_agent1.png' // fallback for member if none provided
-const CO_OP_BADGE = '/assets/profile/Avatar_case.svg' // co-op casing/badge
 
 /**
  * Resolves the avatar URL for a given actor identity.
@@ -24,13 +24,17 @@ export const resolveAvatarForActor = (actor?: ActorIdentity): string => {
       return MEMBER_DEFAULT
 
     case 'co_op':
-      // For now just use the co-op casing as the main avatar; we can layer later.
-      return CO_OP_BADGE
+      // Co-op uses the GoBankless logo
+      return DEFAULT_GOB_LOGO
 
     case 'system':
       return DEFAULT_GOB_LOGO
 
     case 'user':
+      // Use current user's profile avatar if available, else GoB logo
+      const userProfile = useUserProfileStore.getState().profile
+      return userProfile.avatarUrl || DEFAULT_GOB_LOGO
+
     default:
       return DEFAULT_GOB_LOGO
   }
