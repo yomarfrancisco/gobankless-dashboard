@@ -63,49 +63,37 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
               className={clsx('dollar-sign-contained', 'fab-dollar', {
                 'is-manual': mode === 'manual',
                 'is-autonomous': mode === 'autonomous',
-                'fab-highlighted': isHighlighted && mode === 'manual',
+                'fab-highlighted': isHighlighted,
               })}
               aria-label={isAutonomousMode ? 'Open BRICS chat' : `Transact (${mode} mode)`}
               onClick={handleCenterButtonClick}
               onTouchStart={handleCenterButtonClick}
               type="button"
             >
-              {/* In manual mode, show both dollar sign and avatar (avatar animates over) */}
-              {mode === 'manual' ? (
-                <>
-                  <div className="fab-content-base">
-                    <Image 
-                      src="/assets/core/dollar-sign.png" 
-                      alt="Direct Payment" 
-                      width={60} 
-                      height={60} 
-                      className="fab-dollar-icon"
-                      unoptimized 
-                    />
-                  </div>
-                  <div className={clsx('fab-content-overlay', {
-                    'fab-content-overlay--visible': isHighlighted,
-                  })}>
-                    <Image 
-                      src="/assets/Brics-girl-blue.png" 
-                      alt="AI Manager" 
-                      width={72} 
-                      height={72} 
-                      className="fab-avatar-image"
-                      unoptimized 
-                    />
-                  </div>
-                </>
-              ) : (
+              {/* Always show layered structure: dollar sign base + avatar overlay */}
+              {/* Rest state is always $ icon; avatar only appears during highlights (slides up) */}
+              <div className="fab-content-base">
                 <Image 
-                  src="/assets/Brics-girl-blue.png" 
-                  alt="$BRICS Diamond" 
-                  width={78} 
-                  height={78} 
-                  className="chat-avatar-image"
+                  src="/assets/core/dollar-sign.png" 
+                  alt="Direct Payment" 
+                  width={60} 
+                  height={60} 
+                  className="fab-dollar-icon"
                   unoptimized 
                 />
-              )}
+              </div>
+              <div className={clsx('fab-content-overlay', {
+                'fab-content-overlay--visible': isHighlighted,
+              })}>
+                <Image 
+                  src="/assets/Brics-girl-blue.png" 
+                  alt="AI Manager" 
+                  width={72} 
+                  height={72} 
+                  className="fab-avatar-image"
+                  unoptimized 
+                />
+              </div>
             </button>
             <div className="nav-label">{isAutonomousMode ? 'BRICS chat' : 'Direct payment'}</div>
           </div>

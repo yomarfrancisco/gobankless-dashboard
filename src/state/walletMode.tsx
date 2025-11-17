@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 import { useNotificationStore } from '@/store/notifications'
+import { useAiFabHighlightStore } from '@/state/aiFabHighlight'
 
 export type WalletMode = 'autonomous' | 'manual'
 
@@ -16,6 +17,7 @@ const WalletModeContext = createContext<WalletModeContextType | undefined>(undef
 
 export function WalletModeProvider({ children }: { children: ReactNode }) {
   const pushNotification = useNotificationStore((state) => state.pushNotification)
+  const triggerAiFabHighlight = useAiFabHighlightStore((state) => state.triggerAiFabHighlight)
 
   // Initialize from localStorage synchronously - default to 'manual'
   const [mode, setModeState] = useState<WalletMode>(() => {
@@ -62,12 +64,20 @@ export function WalletModeProvider({ children }: { children: ReactNode }) {
               type: 'user',
             },
           })
+
+          // Trigger FAB highlight animation when switching to autonomous mode
+          if (newMode === 'autonomous' && oldMode === 'manual') {
+            triggerAiFabHighlight({
+              reason: 'Autonomous wallet enabled',
+              amountZar: undefined,
+            })
+          }
         }
       } catch {
         // Ignore localStorage errors
       }
     },
-    [mode, pushNotification]
+    [mode, pushNotification, triggerAiFabHighlight]
   )
 
   // Listen for storage events (cross-tab sync)
