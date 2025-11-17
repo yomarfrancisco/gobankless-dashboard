@@ -76,12 +76,17 @@
   height: 38px;
   border-radius: 50%;
   overflow: hidden;
-  background: transparent; /* No white background */
+  background: transparent; /* No white background by default */
   padding: 0;
   margin: 0;
   border: none;
   box-shadow: none;
   outline: none;
+}
+
+/* AI manager avatar needs white background for transparent PNG */
+.notification-avatar--ai {
+  background: #ffffff; /* White circular background for BRICS girl */
 }
 
 .notification-avatar-img {

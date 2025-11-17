@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import clsx from 'clsx'
 import { useNotificationStore, type NotificationItem, getNotificationDetail, migrateLegacyActor } from '@/store/notifications'
-import { resolveAvatarForActor } from '@/lib/notifications/identityResolver'
+import { resolveAvatarForActor, isAiManager } from '@/lib/notifications/identityResolver'
 import { handleMapFromNotification } from '@/lib/notifications/mapNotificationRouter'
 import { formatRelativeShort } from '@/lib/formatRelativeTime'
 import '@/styles/notifications.css'
@@ -120,7 +120,9 @@ export default function TopNotifications() {
               }
             }}
           >
-            <div className="notification-avatar">
+            <div className={clsx('notification-avatar', {
+              'notification-avatar--ai': isAiManager(actor),
+            })}>
               <Image
                 src={avatarUrl}
                 alt={getAltText()}

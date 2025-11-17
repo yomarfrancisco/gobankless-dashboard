@@ -45,3 +45,10 @@ export function resolveAvatarForActor(actor?: ActorIdentity): string {
   }
 }
 
+/**
+ * Check if an actor is the AI manager
+ */
+export function isAiManager(actor?: ActorIdentity): boolean {
+  return actor?.type === 'ai_manager'
+}
+
