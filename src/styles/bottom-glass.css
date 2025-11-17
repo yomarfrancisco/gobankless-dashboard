@@ -54,11 +54,12 @@
   justify-content: center;
 }
 
-/* FAB takeover avatar - zoomed in ~30% for hero moment */
+/* FAB takeover avatar - same aspect ratio as notification, but zoomed in */
 .fab-avatar-image {
-  width: 110px; /* ~53% larger than 72px container for zoomed-in face (more than 30% to compensate for container) */
-  height: 110px;
+  width: 72px; /* Match container size to preserve same aspect ratio as notification */
+  height: 72px;
   object-fit: cover;
-  object-position: center top; /* Center face, crop from top for better framing */
+  object-position: center; /* Match notification's default object-position */
+  transform: scale(1.5); /* ~50% zoom to make it larger while keeping same crop point */
 }
 
