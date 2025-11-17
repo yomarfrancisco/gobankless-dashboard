@@ -1,11 +1,15 @@
 'use client'
 
 import { useFinancialInboxStore } from '@/state/financialInbox'
-import ActionSheet from './ActionSheet'
-import InboxList from './Inbox/InboxList'
-import DirectMessage from './Inbox/DirectMessage'
+import ActionSheet from '../ActionSheet'
+import InboxList from './InboxList'
+import DirectMessage from './DirectMessage'
 
-export default function InboxSheet() {
+/**
+ * Financial Inbox component using the same bottom sheet format as Deposit Method
+ * Slides up from bottom, matches Deposit sheet height/rounded corners
+ */
+export default function Inbox() {
   const { isInboxOpen, activeThreadId, closeInbox } = useFinancialInboxStore()
 
   // Determine which view to show
@@ -16,7 +20,7 @@ export default function InboxSheet() {
       open={isInboxOpen}
       onClose={closeInbox}
       title={showDM ? '' : 'Inbox'} // Empty string hides title for DM view, shows "Inbox" for list
-      size="tall" // Use tall size to match deposit sheet height
+      size="tall" // Use tall size (85vh) to match deposit sheet height
       className="inbox-sheet"
     >
       {showDM ? (

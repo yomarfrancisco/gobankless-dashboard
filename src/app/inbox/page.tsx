@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useFinancialInboxStore } from '@/state/financialInbox'
-import { FinancialInboxSheet } from '@/components/Inbox/FinancialInboxSheet'
+import Inbox from '@/components/Inbox/Inbox'
 
 export default function InboxPage() {
   const { openInbox } = useFinancialInboxStore()
@@ -12,6 +12,6 @@ export default function InboxPage() {
     openInbox('portfolio-manager')
   }, [openInbox])
 
-  return <FinancialInboxSheet />
+  return <Inbox />
 }
 
