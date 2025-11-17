@@ -69,20 +69,26 @@
   opacity: 0.8;
 }
 
-/* Avatar */
+/* Avatar - clean, no halos or borders */
 .notification-avatar {
   flex-shrink: 0;
   width: 38px;
   height: 38px;
   border-radius: 50%;
   overflow: hidden;
-  background: #fff; /* White background for circular mask */
+  background: transparent; /* No white background */
+  padding: 0;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  outline: none;
 }
 
 .notification-avatar-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure images fill the circle */
+  object-fit: cover;
+  display: block;
 }
 
 /* Content */

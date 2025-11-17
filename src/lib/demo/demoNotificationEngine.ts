@@ -86,7 +86,7 @@ const demoEvents: NotificationInput[] = [
     map: { lat: -25.9692, lng: 32.5732, markerId: 'co-op-maputo' }, // Maputo
   },
 
-  // Member events - with map coordinates for panning
+  // Member events - with map coordinates for panning (using new high-quality avatars)
   {
     kind: 'payment_received',
     title: 'Naledi added R200',
@@ -98,7 +98,7 @@ const demoEvents: NotificationInput[] = [
       id: 'demo-naledi',
       name: 'Naledi',
       handle: '@naledi',
-      avatar: '/assets/avatar_agent1.png',
+      avatar: '/assets/avatar_agent5.png',
     },
     map: { lat: -26.2041, lng: 28.0473, markerId: 'member-naledi-jhb' }, // Johannesburg
   },
@@ -113,7 +113,7 @@ const demoEvents: NotificationInput[] = [
       id: 'demo-joao',
       name: 'João',
       handle: '@joao',
-      avatar: '/assets/avatar_agent2.png',
+      avatar: '/assets/avatar_agent6.png',
     },
     map: { lat: -25.9692, lng: 32.5732, markerId: 'member-joao-maputo' }, // Maputo
   },
@@ -128,7 +128,7 @@ const demoEvents: NotificationInput[] = [
       id: 'demo-thabo',
       name: 'Thabo',
       handle: '@thabo',
-      avatar: '/assets/avatar_agent3.png',
+      avatar: '/assets/avatar_agent7.png',
     },
     map: { lat: -33.9249, lng: 18.4241, markerId: 'member-thabo-cpt' }, // Cape Town
   },
@@ -143,7 +143,7 @@ const demoEvents: NotificationInput[] = [
       id: 'demo-sarah',
       name: 'Sarah',
       handle: '@sarah',
-      avatar: '/assets/avatar_agent4.png',
+      avatar: '/assets/avatar_agent8.png',
     },
     map: { lat: -29.8587, lng: 31.0218, markerId: 'member-sarah-dbn' }, // Durban
   },

@@ -176,6 +176,61 @@ export function setupDevNotificationHelpers() {
   }
 
   // @ts-ignore
+  window.debugMapAgentDemo = () => {
+    const push = store.pushNotification
+    // Dynamic import to avoid SSR issues
+    const { useMapHighlightStore } = require('@/state/mapHighlight')
+    const { highlightOnMap } = useMapHighlightStore.getState()
+    
+    const agents = [
+      { id: 'demo-naledi', name: 'Naledi', lat: -26.2041, lng: 28.0473, avatar: '/assets/avatar_agent5.png' },
+      { id: 'demo-joao', name: 'João', lat: -25.9692, lng: 32.5732, avatar: '/assets/avatar_agent6.png' },
+      { id: 'demo-thabo', name: 'Thabo', lat: -33.9249, lng: 18.4241, avatar: '/assets/avatar_agent7.png' },
+      { id: 'demo-sarah', name: 'Sarah', lat: -29.8587, lng: 31.0218, avatar: '/assets/avatar_agent8.png' },
+    ]
+    
+    let index = 0
+    const cycle = () => {
+      const agent = agents[index]
+      
+      // Push notification
+      push({
+        kind: 'payment_received',
+        title: `${agent.name} added R${150 + Math.floor(Math.random() * 100)}`,
+        body: `${agent.name} just contributed from their location.`,
+        amount: { currency: 'ZAR', value: 150 + Math.floor(Math.random() * 100) },
+        direction: 'up',
+        actor: {
+          type: 'member',
+          id: agent.id,
+          name: agent.name,
+          handle: `@${agent.name.toLowerCase()}`,
+          avatar: agent.avatar,
+        },
+        map: { lat: agent.lat, lng: agent.lng, markerId: agent.id },
+      })
+      
+      // Trigger map highlight
+      highlightOnMap({
+        id: agent.id,
+        lat: agent.lat,
+        lng: agent.lng,
+        kind: 'member',
+      })
+      
+      index = (index + 1) % agents.length
+      
+      // Schedule next
+      if (index > 0) {
+        setTimeout(cycle, 4000)
+      }
+    }
+    
+    cycle()
+    console.log('[Dev Helper] Started map agent demo cycle')
+  }
+
+  // @ts-ignore
   window.debugSeedActivity = () => {
     const activityStore = useActivityStore.getState()
     const now = Date.now()

@@ -20,8 +20,11 @@ export function handleMapFromNotification(n: NotificationItem): void {
 
   const { highlightOnMap } = useMapHighlightStore.getState()
 
+  // Use markerId from notification, or derive from actor id
+  const markerId = n.map.markerId || n.actor.id || n.id
+
   highlightOnMap({
-    id: n.map.markerId || n.id,
+    id: markerId,
     lat: n.map.lat,
     lng: n.map.lng,
     kind: n.actor.type,

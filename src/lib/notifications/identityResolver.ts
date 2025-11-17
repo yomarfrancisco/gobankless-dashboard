@@ -1,9 +1,12 @@
 import type { ActorIdentity } from '@/store/notifications'
 import { useUserProfileStore } from '@/store/userProfile'
 
-const CO_OP_AVATAR = '/assets/avatar_coop.png'
+// High-quality GoB admin avatar (pink + white logo)
+const GOB_ADMIN_AVATAR = '/assets/aa2b32f2dc3e3a159949cb59284abddef5683b05.png'
+// Co-op uses the same high-quality logo (can be recolored later if needed)
+const CO_OP_AVATAR = GOB_ADMIN_AVATAR
 const AI_MANAGER_AVATAR = '/assets/Brics-girl-blue.png'
-const MEMBER_DEFAULT = '/assets/avatar_agent1.png' // fallback for member if none provided
+const MEMBER_DEFAULT = '/assets/avatar_agent5.png' // Updated to use new high-quality avatars
 
 /**
  * Resolves the avatar URL for a given actor identity.
@@ -27,18 +30,18 @@ export function resolveAvatarForActor(actor?: ActorIdentity): string {
       return CO_OP_AVATAR
 
     case 'system':
-      // System can also use the co-op avatar for now
-      return CO_OP_AVATAR
+      // System uses admin avatar
+      return GOB_ADMIN_AVATAR
 
     case 'member':
-      // Fallback for member if none provided – use first agent avatar
+      // Fallback for member if none provided – use new agent avatar
       return MEMBER_DEFAULT
 
     case 'user':
     default:
       // Let user profile logic override this where we have a real avatar
       const userProfile = useUserProfileStore.getState().profile
-      return userProfile.avatarUrl || CO_OP_AVATAR
+      return userProfile.avatarUrl || GOB_ADMIN_AVATAR
   }
 }
 

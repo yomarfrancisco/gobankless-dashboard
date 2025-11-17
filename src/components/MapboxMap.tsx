@@ -7,6 +7,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import type { Feature, LineString } from 'geojson'
 import styles from './MapboxMap.module.css'
 import { useMapHighlightStore } from '@/state/mapHighlight'
+import { DEMO_AGENTS } from '@/lib/demo/demoAgents'
 // static import so Next bundles it and gives us a stable .src
 import userIcon from '../../public/assets/character.png'
 
@@ -14,8 +15,10 @@ export type Marker = {
   id: string
   lng: number
   lat: number
-  kind?: 'dealer' | 'branch'
+  kind?: 'dealer' | 'branch' | 'member' | 'co_op'
   label?: string
+  avatar?: string // Avatar URL for member/co-op markers
+  name?: string // Name for member/co-op markers
 }
 
 interface Props {
@@ -58,8 +61,23 @@ export default function MapboxMap({
   const savedCenterRef = useRef<[number, number] | null>(null)
   const savedZoomRef = useRef<number | null>(null)
   const highlightMarkerRef = useRef<mapboxgl.Marker | null>(null)
+  const agentMarkersRef = useRef<Map<string, mapboxgl.Marker>>(new Map())
   
   const highlight = useMapHighlightStore((state) => state.highlight)
+  
+  // Get demo agents as markers if in demo mode
+  const demoAgentMarkers: Marker[] = 
+    process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+      ? DEMO_AGENTS.map((agent) => ({
+          id: agent.id,
+          lng: agent.lng,
+          lat: agent.lat,
+          kind: 'member' as const,
+          label: agent.name,
+          avatar: agent.avatar,
+          name: agent.name,
+        }))
+      : []
 
   const log = (message: string) => {
     const timestamped = `${new Date().toISOString()}  ${message}`
@@ -356,23 +374,104 @@ export default function MapboxMap({
       return
     }
 
-    // Add new markers using Mapbox default marker
+    // Add new markers - use avatar markers for members/co-op, default pin for branches/dealers
     log(`adding ${markers.length} markers`)
     markers.forEach((m) => {
-      const marker = new mapboxgl.Marker() // default Mapbox pin
-        .setLngLat([m.lng, m.lat])
-        .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(m.label ?? ''))
-        .addTo(mapRef.current!)
+      let marker: mapboxgl.Marker
+      
+      if (m.kind === 'member' || m.kind === 'co_op') {
+        // Create avatar marker
+        const el = document.createElement('div')
+        el.className = 'map-avatar-marker'
+        el.style.width = '40px'
+        el.style.height = '40px'
+        el.style.borderRadius = '50%'
+        el.style.overflow = 'hidden'
+        el.style.background = '#ffffff'
+        el.style.border = 'none'
+        el.style.boxShadow = 'none'
+        
+        const img = document.createElement('img')
+        img.src = m.avatar || '/assets/avatar_agent5.png'
+        img.alt = m.name || m.label || ''
+        img.style.width = '100%'
+        img.style.height = '100%'
+        img.style.objectFit = 'cover'
+        img.style.display = 'block'
+        el.appendChild(img)
+        
+        marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
+          .setLngLat([m.lng, m.lat])
+          .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(m.label || m.name || ''))
+          .addTo(mapRef.current!)
+      } else {
+        // Default Mapbox pin for branches/dealers
+        marker = new mapboxgl.Marker()
+          .setLngLat([m.lng, m.lat])
+          .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(m.label ?? ''))
+          .addTo(mapRef.current!)
+      }
 
       created.push(marker)
+      agentMarkersRef.current.set(m.id, marker)
       log(`marker added: ${m.id} at [${m.lng}, ${m.lat}]`)
     })
 
     // Cleanup function
     return () => {
-      created.forEach((marker) => marker.remove())
+      created.forEach((marker) => {
+        marker.remove()
+        // Remove from agent markers ref
+        for (const [id, m] of agentMarkersRef.current.entries()) {
+          if (m === marker) {
+            agentMarkersRef.current.delete(id)
+            break
+          }
+        }
+      })
     }
   }, [markers, showDebug])
+  
+  // Add demo agent markers when in demo mode
+  useEffect(() => {
+    if (!mapRef.current || !loadedRef.current) return
+    if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') return
+    
+    // Add demo agents as persistent markers
+    demoAgentMarkers.forEach((agent) => {
+      if (agentMarkersRef.current.has(agent.id)) return // Already added
+      
+      const el = document.createElement('div')
+      el.className = 'map-avatar-marker'
+      el.style.width = '40px'
+      el.style.height = '40px'
+      el.style.borderRadius = '50%'
+      el.style.overflow = 'hidden'
+      el.style.background = '#ffffff'
+      el.style.border = 'none'
+      el.style.boxShadow = 'none'
+      
+      const img = document.createElement('img')
+      img.src = agent.avatar || '/assets/avatar_agent5.png'
+      img.alt = agent.name || ''
+      img.style.width = '100%'
+      img.style.height = '100%'
+      img.style.objectFit = 'cover'
+      img.style.display = 'block'
+      el.appendChild(img)
+      
+      const marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
+        .setLngLat([agent.lng, agent.lat])
+        .setPopup(new mapboxgl.Popup({ offset: 12 }).setText(agent.name || ''))
+        .addTo(mapRef.current!)
+      
+      agentMarkersRef.current.set(agent.id, marker)
+    })
+    
+    return () => {
+      // Don't remove demo agents on cleanup - they should persist
+    }
+  }, [demoAgentMarkers])
 
   // Effect to handle map highlighting from notifications
   useEffect(() => {
@@ -386,58 +485,54 @@ export default function MapboxMap({
       savedCenterRef.current = [center.lng, center.lat]
       savedZoomRef.current = zoom
 
-      // Pan to highlight location
-      map.easeTo({
+      // Pan to highlight location using flyTo for smoother animation
+      map.flyTo({
         center: [highlight.lng, highlight.lat],
         zoom: Math.max(zoom, 15), // Zoom in if needed
         duration: 1000,
+        essential: true,
       })
 
-      // Create a pulsing marker at the highlight location
-      if (highlightMarkerRef.current) {
-        highlightMarkerRef.current.remove()
-      }
-
-      const el = document.createElement('div')
-      el.className = 'map-highlight-marker'
-      el.style.width = '48px'
-      el.style.height = '48px'
-      el.style.borderRadius = '50%'
-      el.style.background = 'rgba(255, 255, 255, 0.9)'
-      el.style.border = '3px solid #000'
-      el.style.boxShadow = '0 0 0 4px rgba(0, 0, 0, 0.1)'
-      el.style.animation = 'pulse 1s ease-in-out infinite'
+      // Find the existing marker for this highlight and pulse it
+      // Don't create a new marker - use the existing one
+      const existingMarker = agentMarkersRef.current.get(highlight.id)
       
-      // Add pulse animation
-      const style = document.createElement('style')
-      style.textContent = `
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.1); opacity: 0.8; }
-        }
-      `
-      document.head.appendChild(style)
-
-      highlightMarkerRef.current = new mapboxgl.Marker({ element: el })
-        .setLngLat([highlight.lng, highlight.lat])
-        .addTo(map)
-
-      // Cleanup marker when highlight clears
-      return () => {
-        if (highlightMarkerRef.current) {
-          highlightMarkerRef.current.remove()
-          highlightMarkerRef.current = null
-        }
-        if (document.head.contains(style)) {
-          document.head.removeChild(style)
+      if (existingMarker) {
+        // Pulse the existing marker by adding animation to its element
+        const markerEl = existingMarker.getElement()
+        if (markerEl) {
+          markerEl.style.animation = 'mapMarkerPulse 1s ease-in-out infinite'
+          
+          // Add pulse animation style if not already present
+          if (!document.getElementById('map-marker-pulse-style')) {
+            const style = document.createElement('style')
+            style.id = 'map-marker-pulse-style'
+            style.textContent = `
+              @keyframes mapMarkerPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.15); }
+              }
+            `
+            document.head.appendChild(style)
+          }
+          
+          // Remove animation after highlight clears
+          setTimeout(() => {
+            if (markerEl) {
+              markerEl.style.animation = ''
+            }
+          }, 3500)
         }
       }
+
+      // No cleanup needed - we're using existing markers
     } else if (savedCenterRef.current && savedZoomRef.current) {
       // Return to saved position when highlight clears
-      map.easeTo({
+      map.flyTo({
         center: savedCenterRef.current,
         zoom: savedZoomRef.current,
         duration: 1000,
+        essential: true,
       })
       savedCenterRef.current = null
       savedZoomRef.current = null
