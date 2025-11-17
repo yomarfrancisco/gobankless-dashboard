@@ -20,15 +20,16 @@ const RATE_LIMIT_MS = 20000 // 20 seconds
 const MAX_NOTIFICATIONS_PER_WINDOW = 3
 let notificationCount = 0
 let windowStartTime = Date.now()
+let engineStartTime = Date.now()
 
-// Demo event templates
+// Demo event templates - refined for "catching up with the world" narrative
 const demoEvents: NotificationInput[] = [
-  // AI Manager events
+  // AI Manager events - appear early to show AI is already working
   {
     kind: 'ai_trade',
     title: 'AI trade executed',
-    action: 'Rebalanced: sold 10.11 PEPE (R183.09).',
-    reason: 'Portfolio optimization based on current trends.',
+    action: 'Rebalanced 10.11 PEPE → ETH (R183.09).',
+    reason: 'Keeping your co-op portfolio aligned with current trends.',
     amount: { currency: 'ZAR', value: -183.09 },
     direction: 'down',
     actor: { type: 'ai_manager' },
@@ -59,20 +60,20 @@ const demoEvents: NotificationInput[] = [
     actor: { type: 'ai_manager' },
   },
 
-  // Co-op events (using existing notification kinds)
+  // Co-op events - show the co-op is active
   {
     kind: 'payment_received',
-    title: 'Co-op fund grew',
-    body: '3 members added R270 to the co-op wallet.',
+    title: 'Co-op contribution',
+    body: '3 members added R270 to the shared wallet.',
     amount: { currency: 'ZAR', value: 270 },
     direction: 'up',
     actor: { type: 'co_op', name: 'GoBankless Co-op' },
-    map: { lat: -26.1069, lng: 28.0567 }, // Sandton-ish
+    map: { lat: -26.1069, lng: 28.0567, markerId: 'co-op-sandton' }, // Sandton-ish
   },
   {
     kind: 'payment_received',
-    title: 'Co-op reached R12,500',
-    body: 'New contribution added to the shared pool.',
+    title: 'Co-op crossed R12,500',
+    body: 'Total contributions reached R12,500.',
     amount: { currency: 'ZAR', value: 500 },
     direction: 'up',
     actor: { type: 'co_op', name: 'GoBankless Co-op' },
@@ -82,14 +83,14 @@ const demoEvents: NotificationInput[] = [
     title: 'Co-op opened new cell',
     body: 'Co-op opened a new cell in Maputo CBD.',
     actor: { type: 'co_op', name: 'GoBankless Co-op' },
-    map: { lat: -25.9692, lng: 32.5732 }, // Maputo
+    map: { lat: -25.9692, lng: 32.5732, markerId: 'co-op-maputo' }, // Maputo
   },
 
-  // Member events
+  // Member events - with map coordinates for panning
   {
     kind: 'payment_received',
-    title: 'Naledi contributed',
-    body: 'Naledi just added R200 from Johannesburg.',
+    title: 'Naledi added R200',
+    body: 'Naledi added R200 from Johannesburg.',
     amount: { currency: 'ZAR', value: 200 },
     direction: 'up',
     actor: {
@@ -99,11 +100,11 @@ const demoEvents: NotificationInput[] = [
       handle: '@naledi',
       avatar: '/assets/avatar_agent1.png',
     },
-    map: { lat: -26.2041, lng: 28.0473 }, // Johannesburg
+    map: { lat: -26.2041, lng: 28.0473, markerId: 'member-naledi-jhb' }, // Johannesburg
   },
   {
     kind: 'payment_sent',
-    title: 'João cashed out',
+    title: 'João cashed out R350',
     body: 'João cashed out R350 in Maputo.',
     amount: { currency: 'ZAR', value: -350 },
     direction: 'down',
@@ -114,11 +115,11 @@ const demoEvents: NotificationInput[] = [
       handle: '@joao',
       avatar: '/assets/avatar_agent2.png',
     },
-    map: { lat: -25.9692, lng: 32.5732 }, // Maputo
+    map: { lat: -25.9692, lng: 32.5732, markerId: 'member-joao-maputo' }, // Maputo
   },
   {
     kind: 'payment_received',
-    title: 'Thabo topped up',
+    title: 'Thabo added R150',
     body: 'Thabo added R150 to the co-op from Cape Town.',
     amount: { currency: 'ZAR', value: 150 },
     direction: 'up',
@@ -129,12 +130,12 @@ const demoEvents: NotificationInput[] = [
       handle: '@thabo',
       avatar: '/assets/avatar_agent3.png',
     },
-    map: { lat: -33.9249, lng: 18.4241 }, // Cape Town
+    map: { lat: -33.9249, lng: 18.4241, markerId: 'member-thabo-cpt' }, // Cape Town
   },
   {
     kind: 'payment_received',
-    title: 'Sarah contributed',
-    body: 'Sarah just added R180 from Durban.',
+    title: 'Sarah added R180',
+    body: 'Sarah added R180 from Durban.',
     amount: { currency: 'ZAR', value: 180 },
     direction: 'up',
     actor: {
@@ -144,7 +145,7 @@ const demoEvents: NotificationInput[] = [
       handle: '@sarah',
       avatar: '/assets/avatar_agent4.png',
     },
-    map: { lat: -29.8587, lng: 31.0218 }, // Durban
+    map: { lat: -29.8587, lng: 31.0218, markerId: 'member-sarah-dbn' }, // Durban
   },
 
   // User events (only show if user has done something)
@@ -184,9 +185,23 @@ const demoEvents: NotificationInput[] = [
 
 /**
  * Get a random event from the demo events pool
+ * Prioritizes AI events in the first 5-8 seconds for "catching up" narrative
  */
-function getRandomEvent(): NotificationInput {
-  const event = { ...demoEvents[Math.floor(Math.random() * demoEvents.length)] }
+function getRandomEvent(secondsSinceStart: number): NotificationInput {
+  // In first 8 seconds, 60% chance of AI event to establish "AI is working" narrative
+  const isEarly = secondsSinceStart < 8
+  const shouldPrioritizeAI = isEarly && Math.random() < 0.6
+  
+  let event: NotificationInput
+  
+  if (shouldPrioritizeAI) {
+    // Pick from AI events only
+    const aiEvents = demoEvents.filter((e) => e.actor?.type === 'ai_manager')
+    event = { ...aiEvents[Math.floor(Math.random() * aiEvents.length)] }
+  } else {
+    // Pick from all events
+    event = { ...demoEvents[Math.floor(Math.random() * demoEvents.length)] }
+  }
   
   // Randomize amounts slightly (±10%)
   if (event.amount) {
@@ -231,12 +246,15 @@ export function startDemoNotificationEngine(
     stopDemoNotificationEngine()
   }
 
+  engineStartTime = Date.now()
+  
   const scheduleNext = () => {
     // Random interval between 4-9 seconds
     const delay = 4000 + Math.random() * 5000
     demoInterval = setTimeout(() => {
       if (canSendNotification()) {
-        const event = getRandomEvent()
+        const secondsSinceStart = (Date.now() - engineStartTime) / 1000
+        const event = getRandomEvent(secondsSinceStart)
         
         // Trigger map pan for member/co-op events with coordinates
         if (event.map && options.onMapPan) {
@@ -259,10 +277,10 @@ export function startDemoNotificationEngine(
     }, delay)
   }
 
-  // Start the first event after a short delay
+  // Start the first event after a short delay (2 seconds)
   setTimeout(() => {
     scheduleNext()
-  }, 2000) // 2 second initial delay
+  }, 2000)
 }
 
 /**
@@ -275,5 +293,6 @@ export function stopDemoNotificationEngine(): void {
   }
   notificationCount = 0
   windowStartTime = Date.now()
+  engineStartTime = Date.now()
 }
 

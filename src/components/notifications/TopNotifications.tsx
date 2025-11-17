@@ -6,6 +6,7 @@ import Image from 'next/image'
 import clsx from 'clsx'
 import { useNotificationStore, type NotificationItem, getNotificationDetail, migrateLegacyActor } from '@/store/notifications'
 import { resolveAvatarForActor } from '@/lib/notifications/identityResolver'
+import { handleMapFromNotification } from '@/lib/notifications/mapNotificationRouter'
 import { formatRelativeShort } from '@/lib/formatRelativeTime'
 import '@/styles/notifications.css'
 
@@ -21,6 +22,16 @@ export default function TopNotifications() {
   useEffect(() => {
     const visible = notifications.slice(0, MAX_VISIBLE)
     setVisibleIds(new Set(visible.map((n) => n.id)))
+
+    // Handle map highlighting for member/co-op notifications
+    visible.forEach((notification) => {
+      if (notification.map && (notification.actor?.type === 'member' || notification.actor?.type === 'co_op')) {
+        // Trigger map highlight after a short delay
+        setTimeout(() => {
+          handleMapFromNotification(notification)
+        }, 300)
+      }
+    })
 
     // Auto-dismiss after delay
     visible.forEach((notification) => {

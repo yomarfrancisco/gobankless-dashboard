@@ -6,6 +6,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { Feature, LineString } from 'geojson'
 import styles from './MapboxMap.module.css'
+import { useMapHighlightStore } from '@/state/mapHighlight'
 // static import so Next bundles it and gives us a stable .src
 import userIcon from '../../public/assets/character.png'
 
@@ -54,6 +55,11 @@ export default function MapboxMap({
   const [userLngLat, setUserLngLat] = useState<[number, number] | null>(null)
   const [routeData, setRouteData] = useState<Feature<LineString> | null>(null)
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null)
+  const savedCenterRef = useRef<[number, number] | null>(null)
+  const savedZoomRef = useRef<number | null>(null)
+  const highlightMarkerRef = useRef<mapboxgl.Marker | null>(null)
+  
+  const highlight = useMapHighlightStore((state) => state.highlight)
 
   const log = (message: string) => {
     const timestamped = `${new Date().toISOString()}  ${message}`
@@ -367,6 +373,76 @@ export default function MapboxMap({
       created.forEach((marker) => marker.remove())
     }
   }, [markers, showDebug])
+
+  // Effect to handle map highlighting from notifications
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !loadedRef.current) return
+
+    if (highlight) {
+      // Save current map state
+      const center = map.getCenter()
+      const zoom = map.getZoom()
+      savedCenterRef.current = [center.lng, center.lat]
+      savedZoomRef.current = zoom
+
+      // Pan to highlight location
+      map.easeTo({
+        center: [highlight.lng, highlight.lat],
+        zoom: Math.max(zoom, 15), // Zoom in if needed
+        duration: 1000,
+      })
+
+      // Create a pulsing marker at the highlight location
+      if (highlightMarkerRef.current) {
+        highlightMarkerRef.current.remove()
+      }
+
+      const el = document.createElement('div')
+      el.className = 'map-highlight-marker'
+      el.style.width = '48px'
+      el.style.height = '48px'
+      el.style.borderRadius = '50%'
+      el.style.background = 'rgba(255, 255, 255, 0.9)'
+      el.style.border = '3px solid #000'
+      el.style.boxShadow = '0 0 0 4px rgba(0, 0, 0, 0.1)'
+      el.style.animation = 'pulse 1s ease-in-out infinite'
+      
+      // Add pulse animation
+      const style = document.createElement('style')
+      style.textContent = `
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+        }
+      `
+      document.head.appendChild(style)
+
+      highlightMarkerRef.current = new mapboxgl.Marker({ element: el })
+        .setLngLat([highlight.lng, highlight.lat])
+        .addTo(map)
+
+      // Cleanup marker when highlight clears
+      return () => {
+        if (highlightMarkerRef.current) {
+          highlightMarkerRef.current.remove()
+          highlightMarkerRef.current = null
+        }
+        if (document.head.contains(style)) {
+          document.head.removeChild(style)
+        }
+      }
+    } else if (savedCenterRef.current && savedZoomRef.current) {
+      // Return to saved position when highlight clears
+      map.easeTo({
+        center: savedCenterRef.current,
+        zoom: savedZoomRef.current,
+        duration: 1000,
+      })
+      savedCenterRef.current = null
+      savedZoomRef.current = null
+    }
+  }, [highlight])
 
   // Effect to keep nearest branch in view while user stays centered
   useEffect(() => {

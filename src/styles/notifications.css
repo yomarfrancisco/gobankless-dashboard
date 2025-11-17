@@ -162,28 +162,25 @@
   }
 }
 
-/* Identity-based visual distinction */
+/* Identity-based visual distinction - NO HALOS/GLOWS */
 .notification--ai .notification-avatar {
   /* No special styling - let the Brics girl avatar speak for itself */
 }
 
 .notification--member .notification-avatar {
-  /* Soft glow for members */
-  box-shadow: 0 0 0 2px rgba(0, 200, 255, 0.35);
+  /* No halo - clean avatar */
 }
 
 .notification--co-op .notification-avatar {
-  /* Subtle border for co-op */
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
+  /* No halo - clean avatar */
 }
 
 .notification--system .notification-avatar {
-  /* Slight opacity reduction for system */
-  opacity: 0.9;
+  /* No special styling */
 }
 
 .notification--user .notification-avatar {
-  /* Default user styling (no special treatment) */
+  /* No special styling */
 }
 
 /* Reduced motion */
