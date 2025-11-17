@@ -422,12 +422,11 @@ export default function MapboxMap({
       created.forEach((marker) => {
         marker.remove()
         // Remove from agent markers ref
-        for (const [id, m] of agentMarkersRef.current.entries()) {
+        agentMarkersRef.current.forEach((m, id) => {
           if (m === marker) {
             agentMarkersRef.current.delete(id)
-            break
           }
-        }
+        })
       })
     }
   }, [markers, showDebug])
