@@ -1,13 +1,11 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useFinancialInboxStore } from '@/state/financialInbox'
 import styles from './InboxList.module.css'
 
 export default function InboxList() {
-  const { threads, setActiveThread, closeInbox } = useFinancialInboxStore()
-  const router = useRouter()
+  const { threads, setActiveThread } = useFinancialInboxStore()
 
   // Sort threads: portfolio_manager first, then by lastMessageAt
   const sortedThreads = [...threads].sort((a, b) => {
@@ -20,26 +18,9 @@ export default function InboxList() {
     setActiveThread(threadId)
   }
 
-  const handleBack = () => {
-    closeInbox()
-    router.push('/')
-  }
-
   return (
     <div className={styles.inboxContainer}>
-      {/* Header */}
-      <div className={styles.header}>
-        <button onClick={handleBack} className={styles.backButton} aria-label="Close">
-          <Image
-            src="/assets/back_ui.svg"
-            alt="Back"
-            width={24}
-            height={24}
-          />
-        </button>
-        <div className={styles.headerTitle}>Inbox</div>
-        <div className={styles.headerSpacer} />
-      </div>
+      {/* Header removed - ActionSheet provides it */}
 
       {/* Search bar */}
       <div className={styles.searchBar}>

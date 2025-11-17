@@ -48,7 +48,7 @@ export default function ActionSheet({ open, title, onClose, children, className,
     <div className="as-root" aria-modal="true" role="dialog">
       <button className="as-overlay" aria-label="Close" onClick={onClose} />
       <div className={`as-sheet as-sheet-${size} ${className || ''}`} ref={sheetRef}>
-        {title && (
+        {title && title.trim() && (
           <div className="as-header">
             <h3 className="as-title">{title}</h3>
             <button className="as-close" onClick={onClose} aria-label="Close">
@@ -56,7 +56,7 @@ export default function ActionSheet({ open, title, onClose, children, className,
             </button>
           </div>
         )}
-        {!title && (
+        {(!title || !title.trim()) && (
           <button className="as-close-only" onClick={onClose} aria-label="Close">
             <Image src="/assets/clear.svg" alt="" width={18} height={18} />
           </button>

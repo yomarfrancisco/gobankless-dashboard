@@ -48,6 +48,36 @@ export default function DirectMessage({ threadId }: DirectMessageProps) {
 
   return (
     <div className={styles.directMessage}>
+      {/* Header */}
+      <div className={styles.messageHeader}>
+        <button onClick={handleBack} className={styles.backButton} aria-label="Back">
+          <Image
+            className={styles.ico24ArrowsBackUi}
+            src="/assets/back_ui.svg"
+            alt="Back"
+            width={24}
+            height={24}
+          />
+        </button>
+        <div className={styles.profileHeader}>
+          <Image
+            className={styles.avatarProfile}
+            src={thread?.avatarUrl || '/assets/Brics-girl-blue.png'}
+            alt={thread?.title || 'BabyCDO'}
+            width={32}
+            height={32}
+            unoptimized
+          />
+          <div className={styles.usernameProfileWrapper}>
+            <div className={styles.usernameProfile}>
+              <div className={styles.textInput}>
+                <div className={styles.text}>{thread?.title || 'BabyCDO'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.frameParent}>
         {messages.map((message, index) => {
           // Show date chip before first message
@@ -142,36 +172,6 @@ export default function DirectMessage({ threadId }: DirectMessageProps) {
             </button>
           )}
         </form>
-      </div>
-
-      {/* HEADER */}
-      <div className={styles.messageHeader}>
-        <button onClick={handleBack} className={styles.backButton} aria-label="Back">
-          <Image
-            className={styles.ico24ArrowsBackUi}
-            src="/assets/back_ui.svg"
-            alt="Back"
-            width={24}
-            height={24}
-          />
-        </button>
-        <div className={styles.profileHeader}>
-          <Image
-            className={styles.avatarProfile}
-            src={thread?.avatarUrl || '/assets/Brics-girl-blue.png'}
-            alt={thread?.title || 'BabyCDO'}
-            width={32}
-            height={32}
-            unoptimized
-          />
-          <div className={styles.usernameProfileWrapper}>
-            <div className={styles.usernameProfile}>
-              <div className={styles.textInput}>
-                <div className={styles.text}>{thread?.title || 'BabyCDO'}</div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )

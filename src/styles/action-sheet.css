@@ -50,6 +50,11 @@
   background: #000; /* Match Chatbase dark theme */
 }
 
+/* Inbox sheet: ensure full height for DM view */
+.as-sheet.inbox-sheet {
+  max-height: 85vh;
+}
+
 /* Compact sheets (default) - for Edit Profile, Name & Handle, Social Links, Help & Support, etc. */
 .as-sheet-compact {
   max-height: 65vh;

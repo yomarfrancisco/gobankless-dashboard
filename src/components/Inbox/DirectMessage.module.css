@@ -1,4 +1,5 @@
 /* DirectMessage Component Styles */
+/* Adapted to work inside ActionSheet container */
 /* Font import moved to globals.css */
 
 .directMessage {
@@ -9,16 +10,18 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .frameParent {
   flex: 1;
   overflow-y: auto;
-  padding: 60px 16px 80px 16px;
+  padding: 0 16px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* User message (right-aligned) */
@@ -202,9 +205,9 @@
   height: 20px;
 }
 
-/* Header */
+/* Header - now positioned relative since ActionSheet provides backdrop */
 .messageHeader {
-  position: absolute;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
@@ -216,6 +219,7 @@
   gap: 12px;
   z-index: 10;
   flex-shrink: 0;
+  margin-bottom: 16px;
 }
 
 .backButton {
