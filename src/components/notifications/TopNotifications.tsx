@@ -8,6 +8,7 @@ import { useNotificationStore, type NotificationItem, getNotificationDetail, mig
 import { resolveAvatarForActor, isAiManager } from '@/lib/notifications/identityResolver'
 import { handleMapFromNotification } from '@/lib/notifications/mapNotificationRouter'
 import { formatRelativeShort } from '@/lib/formatRelativeTime'
+import { useFinancialInboxStore } from '@/state/financialInbox'
 import '@/styles/notifications.css'
 
 const MAX_VISIBLE = 2
@@ -16,6 +17,7 @@ const AUTO_DISMISS_MS = 3000
 export default function TopNotifications() {
   const router = useRouter()
   const { notifications, dismissNotification } = useNotificationStore()
+  const { isInboxOpen } = useFinancialInboxStore() // Check if financial inbox is open
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
 
   // Show notifications up to MAX_VISIBLE
@@ -68,7 +70,8 @@ export default function TopNotifications() {
 
   const visibleNotifications = notifications.filter((n) => visibleIds.has(n.id))
 
-  if (visibleNotifications.length === 0) {
+  // Hide notifications when financial inbox sheet is open to prevent overlap
+  if (isInboxOpen || visibleNotifications.length === 0) {
     return null
   }
 

@@ -88,7 +88,7 @@
 .divider {
   height: 1px;
   background: #E8E8ED; /* Light bluish-grey divider */
-  margin: 0 0 16px 0; /* More padding below divider for breathing room */
+  margin: 0 0 24px 0; /* Increased spacing below divider for more breathing room */
   flex-shrink: 0;
 }
 
@@ -103,7 +103,7 @@
 
 .messageWrapper {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end; /* Align avatar to bottom of bubble, not top */
   gap: 8px;
   width: 100%;
 }
@@ -136,7 +136,7 @@
 .messageBubble {
   background: #F3F3F9; /* Exact Figma bubble color */
   border-radius: 16px; /* Fully rounded corners */
-  padding: 12px 16px;
+  padding: 16px 20px; /* Increased padding for more breathing room (top/bottom: 16px, left/right: 20px) */
   font-size: 15px;
   line-height: 1.4;
   font-weight: 400; /* Normal weight */

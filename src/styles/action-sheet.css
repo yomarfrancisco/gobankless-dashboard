@@ -9,7 +9,7 @@
 .as-root {
   position: fixed;
   inset: 0;
-  z-index: 999;
+  z-index: 10000; /* Higher than notifications (9999) to ensure sheet appears on top */
   overflow: hidden; /* Prevent square overlay from showing above rounded sheet */
 }
 
