@@ -12,7 +12,7 @@ const sandtonBranch: Marker = {
 
 export default function ConvertCashSection() {
   return (
-    <section className="sectionShell" aria-labelledby="convert-title">
+    <section className={`sectionShell ${styles.mapSectionShell}`} aria-labelledby="convert-title">
       <div className={styles.mapHeader}>
         <div className={styles.headerRow}>
           <h2 id="convert-title" className={styles.mapHeaderTitle}>

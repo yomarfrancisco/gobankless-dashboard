@@ -1,5 +1,10 @@
 /* Section shell is now in globals.css - shared with card section */
 
+/* Map section shell - add top margin to replace .convertCashSpacing wrapper */
+.mapSectionShell {
+  margin-top: 4px; /* Same spacing as removed .convertCashSpacing wrapper */
+}
+
 .mapHeader {
   padding: 8px 24px 0; /* Match .frame-parent padding exactly */
   color: #0a0a0a;

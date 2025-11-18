@@ -326,14 +326,9 @@ export default function Home() {
                 <CardStack ref={cardStackRef} onTopCardChange={setTopCardType} />
               </div>
 
-              {/* Explore savings circles section with shared shell */}
-              <div 
-                className="convertCashSpacing"
-                style={{ marginTop: '4px' }}
-              >
-                <ConvertCashSection />
-                <BranchManagerFooter onWhatsAppClick={() => setIsAgentSheetOpen(true)} />
-              </div>
+              {/* Explore savings circles section with shared shell - directly under .content */}
+              <ConvertCashSection />
+              <BranchManagerFooter onWhatsAppClick={() => setIsAgentSheetOpen(true)} />
 
             </div>
           </div>
