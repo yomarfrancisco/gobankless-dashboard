@@ -63,6 +63,11 @@
   background: #fff;
 }
 
+/* Remove default as-body padding for financial inbox sheet - let internal container control spacing */
+.as-sheet.financial-inbox-sheet .as-body {
+  padding: 0; /* Remove default 24px padding so internal container controls all spacing */
+}
+
 /* Compact sheets (default) - for Edit Profile, Name & Handle, Social Links, Help & Support, etc. */
 .as-sheet-compact {
   max-height: 65vh;
