@@ -29,10 +29,10 @@ export default function FinancialInboxSheet() {
           </button>
           <div className={styles.avatar}>
             <Image
-              src="/assets/avatar - profile.png"
+              src="/assets/Brics-girl-blue.png"
               alt="$BRICS Diamond"
-              width={64}
-              height={64}
+              width={38}
+              height={38}
               className={styles.avatarImage}
               unoptimized
             />
@@ -40,15 +40,18 @@ export default function FinancialInboxSheet() {
           <div className={styles.name}>$BRICS Diamond</div>
         </div>
 
+        {/* Divider line */}
+        <div className={styles.divider} />
+
         {/* Message area */}
         <div className={styles.messageArea}>
           <div className={styles.messageWrapper}>
             <div className={styles.messageAvatar}>
               <Image
-                src="/assets/avatar - profile.png"
+                src="/assets/Brics-girl-blue.png"
                 alt="Baby Diamond"
-                width={64}
-                height={64}
+                width={31}
+                height={31}
                 className={styles.messageAvatarImage}
                 unoptimized
               />

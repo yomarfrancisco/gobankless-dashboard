@@ -10,6 +10,7 @@
   position: fixed;
   inset: 0;
   z-index: 999;
+  overflow: hidden; /* Prevent square overlay from showing above rounded sheet */
 }
 
 .as-overlay {
@@ -53,6 +54,13 @@
 /* Inbox sheet: ensure full height for DM view */
 .as-sheet.inbox-sheet {
   max-height: 85vh;
+}
+
+/* Financial inbox sheet - remove square overlay, ensure clean rounded corners */
+.as-sheet.financial-inbox-sheet {
+  max-height: 85vh;
+  overflow: hidden; /* Prevent square background from showing */
+  background: #fff;
 }
 
 /* Compact sheets (default) - for Edit Profile, Name & Handle, Social Links, Help & Support, etc. */
