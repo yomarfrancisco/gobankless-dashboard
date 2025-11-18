@@ -954,7 +954,7 @@ body {
   z-index: -1; /* still focusable */
 }
 
-/* Spacing above Convert cash to crypto to give the cards some air */
+/* Spacing above Explore savings circles to give the cards some air */
 .convertCashSpacing {
   margin-top: clamp(4px, 1.2vh, 12px); /* Tightened by 40-50% - reduced gap between card stack and map section */
 }

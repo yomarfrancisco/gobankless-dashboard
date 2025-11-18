@@ -239,8 +239,8 @@ export default function Home() {
     }
     // autonomous (existing behavior)
     return {
-      title: 'Autonomous wallet',
-      subtitle: `R${formattedFunds.major}.${formattedFunds.cents} available`,
+      title: 'Collective wallet',
+      subtitle: `R${formattedFunds.major} ${formattedFunds.cents} in shared savings`,
     }
   }
 
@@ -299,7 +299,7 @@ export default function Home() {
                 <CardStack ref={cardStackRef} onTopCardChange={setTopCardType} />
               </div>
 
-              {/* Convert cash to crypto section */}
+              {/* Explore savings circles section */}
               <div 
                 className="convertCashSpacing"
                 style={{ marginTop: '4px' }}

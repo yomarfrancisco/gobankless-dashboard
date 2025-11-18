@@ -61,7 +61,7 @@ const cardsData: CardData[] = [
   {
     type: 'mzn',
     image: '/assets/cards/card-MZN.jpg',
-    alt: 'MZN Cash Card',
+    alt: 'MZN Savings Card',
     width: 342,
     height: 213,
   },
@@ -76,11 +76,11 @@ const cardsData: CardData[] = [
 
 // Card labels mapping
 const CARD_LABELS: Record<CardType, string> = {
-  savings: 'CASH CARD',
-  pepe: 'CASH CARD',
-  yield: 'CASH CARD',
-  mzn: 'CASH CARD',
-  btc: 'CASH CARD',
+  savings: 'SAVINGS CARD',
+  pepe: 'SAVINGS CARD',
+  yield: 'SAVINGS CARD',
+  mzn: 'SAVINGS CARD',
+  btc: 'SAVINGS CARD',
 }
 
 // Map card type to allocation key

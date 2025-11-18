@@ -15,14 +15,14 @@ export default function ConvertCashSection() {
     <section className={styles.wrap} aria-labelledby="convert-title">
       <div className={styles.headerRow}>
         <h2 id="convert-title" className={styles.title}>
-          Convert cash to crypto
+          Explore savings circles
         </h2>
         <button className={styles.helpBtn} aria-label="Help">
           ?
         </button>
       </div>
       <p className={styles.sub}>
-        Deposit cash and receive stablecoins directly from verified agents and partner branches.
+        Join local groups — or start your own.
       </p>
 
       <div className={styles.mapCard}>
