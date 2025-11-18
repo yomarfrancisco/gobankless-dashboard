@@ -61,7 +61,7 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
     {
       id: PORTFOLIO_MANAGER_THREAD_ID,
       title: 'Ama — Stokvel Treasurer',
-      subtitle: 'Hi, I\'m Ama, your Stokvel Treasurer 👋   I can help you make your first deposit, join a Stokvel, or start a new group with friends.   What would you like to do first?',
+      subtitle: 'Welcome! I can help you join or start a Stokvel.',
       avatarUrl: '/assets/Brics-girl-blue.png',
       unreadCount: 1, // Mark as unread with blue dot
       lastMessageAt: '16:09',
@@ -84,7 +84,7 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
           {
             id: PORTFOLIO_MANAGER_THREAD_ID,
             title: 'Ama — Stokvel Treasurer',
-            subtitle: 'Portfolio Manager',
+            subtitle: 'Welcome! I can help you join or start a Stokvel.',
             avatarUrl: '/assets/Brics-girl-blue.png',
             unreadCount: 0,
             lastMessageAt: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
