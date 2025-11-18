@@ -1,13 +1,11 @@
 .wrap {
   width: 100%;
-  max-width: 398px; /* Match CardStack max-width */
   display: flex;
   flex-direction: column;
-  padding: 8px 0 0; /* Remove horizontal padding - let map card be full width like CardStack */
+  padding: 8px 24px 0; /* Match .frame-parent padding exactly for text alignment */
   gap: 8px;
   color: #0a0a0a;
   font-family: Figtree, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  margin: 0 auto; /* Center like CardStack */
 }
 
 .headerRow {
@@ -15,7 +13,7 @@
   gap: 12px;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px; /* Add padding only to header to align with .frame-parent text */
+  padding: 0; /* Remove padding - .wrap already has 24px padding */
 }
 
 .title {
@@ -48,14 +46,16 @@
   margin-top: 6px;
   letter-spacing: 0.08px;
   font-weight: 300;
-  padding: 0 24px; /* Add padding to subtitle to align with header */
+  padding: 0; /* Remove padding - .wrap already has 24px padding */
 }
 
 /* Map card wrapper - fixed height to avoid resize churn */
 .mapCard {
   position: relative;
   margin-top: 12px;
-  width: 100%;
+  width: calc(100% + 48px); /* Extend beyond .wrap padding to match card width: 100% + 24px*2 */
+  margin-left: -24px; /* Offset the padding to align with card stack */
+  margin-right: -24px;
   height: 512px; /* Fixed height to match design */
   border-radius: 24px;
   overflow: hidden;
@@ -93,13 +93,9 @@
   opacity: 0.18;
 }
 
-/* Respect safe areas - header and subtitle already have padding */
+/* Respect safe areas - .wrap padding handles this */
 @supports (padding: max(0px)) {
-  .headerRow {
-    padding-left: max(24px, env(safe-area-inset-left));
-    padding-right: max(24px, env(safe-area-inset-right));
-  }
-  .sub {
+  .wrap {
     padding-left: max(24px, env(safe-area-inset-left));
     padding-right: max(24px, env(safe-area-inset-right));
   }
