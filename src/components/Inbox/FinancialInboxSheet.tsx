@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { CirclePlus } from 'lucide-react'
 import ActionSheet from '../ActionSheet'
 import { useFinancialInboxStore } from '@/state/financialInbox'
 import listStyles from './FinancialInboxListSheet.module.css'
@@ -79,7 +80,7 @@ export default function FinancialInboxSheet() {
   }
 
   // Determine title based on view mode
-  const sheetTitle = inboxViewMode === 'inbox' ? 'Collectives' : ''
+  const sheetTitle = inboxViewMode === 'inbox' ? 'Saving circles' : ''
 
   return (
     <ActionSheet
@@ -152,16 +153,17 @@ export default function FinancialInboxSheet() {
           </div>
 
           {/* Sticky bottom button - positioned relative to as-body */}
-          <div className={listStyles.stickyButtonContainer}>
+          <div className={listStyles.modalFooter}>
             <button
-              className={listStyles.launchMissionButton}
+              className={listStyles.launchButton}
               onClick={() => {
-                console.log('Launch a Mission clicked')
+                console.log('Launch clicked')
                 // TODO: implement launch mission flow
               }}
               type="button"
             >
-              Launch a Mission
+              <CirclePlus className={listStyles.launchIcon} />
+              <span>Launch</span>
             </button>
           </div>
         </>
