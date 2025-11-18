@@ -68,7 +68,7 @@ export default function ProfileDark() {
                 <div className={styles.filled} />
               </div>
             </div>
-            <div className={styles.myDealerNetwork}>StockFell Community</div>
+            <div className={styles.myDealerNetwork}>Community</div>
           </div>
         </div>
       </div>

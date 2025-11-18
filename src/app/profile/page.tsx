@@ -192,7 +192,7 @@ export default function ProfilePage() {
                   <div className="network-track">
                     <div className="network-fill" />
                   </div>
-                  <div className="network-label">StockFell Community</div>
+                  <div className="network-label">Community</div>
                 </div>
               </div>
 

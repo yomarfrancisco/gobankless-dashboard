@@ -16,7 +16,7 @@ export default function ConvertCashSection() {
       <div className={styles.mapHeader}>
         <div className={styles.headerRow}>
           <h2 id="convert-title" className={styles.mapHeaderTitle}>
-            Explore investment collectives
+            Collectives around you
           </h2>
           <button className={styles.helpBtn} aria-label="Help">
             ?
