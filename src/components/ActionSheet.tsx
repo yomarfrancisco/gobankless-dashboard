@@ -56,7 +56,7 @@ export default function ActionSheet({ open, title, onClose, children, className,
             </button>
           </div>
         )}
-        {(!title || !title.trim()) && (
+        {(!title || !title.trim()) && className !== 'financial-inbox-sheet' && (
           <button className="as-close-only" onClick={onClose} aria-label="Close">
             <Image src="/assets/clear.svg" alt="" width={18} height={18} />
           </button>

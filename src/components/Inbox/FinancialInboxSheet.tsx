@@ -17,8 +17,20 @@ export default function FinancialInboxSheet() {
       className="financial-inbox-sheet"
     >
       <div className={styles.container}>
-        {/* Top bar */}
-        <div className={styles.topBar}>
+        {/* Close button row - separate from header */}
+        <div className={styles.closeRow}>
+          <button className={styles.closeButton} onClick={closeInbox} aria-label="Close">
+            <Image
+              src="/assets/clear.svg"
+              alt="Close"
+              width={18}
+              height={18}
+            />
+          </button>
+        </div>
+
+        {/* Username row */}
+        <div className={styles.usernameRow}>
           <button className={styles.backButton} onClick={closeInbox} aria-label="Back">
             <Image
               src="/assets/back_ui.svg"
@@ -65,7 +77,7 @@ export default function FinancialInboxSheet() {
           </div>
         </div>
 
-        {/* Input bar */}
+        {/* Input bar - no divider line above */}
         <div className={styles.inputBar}>
           <button className={styles.attachButton} aria-label="Attach">
             <Image
@@ -78,7 +90,7 @@ export default function FinancialInboxSheet() {
           <input
             type="text"
             className={styles.input}
-            placeholder="Type a message..."
+            placeholder="Add a message"
           />
         </div>
       </div>

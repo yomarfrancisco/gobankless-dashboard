@@ -56,9 +56,9 @@
   max-height: 85vh;
 }
 
-/* Financial inbox sheet - remove square overlay, ensure clean rounded corners */
+/* Financial inbox sheet - remove square overlay, ensure clean rounded corners, taller height */
 .as-sheet.financial-inbox-sheet {
-  max-height: 85vh;
+  max-height: 90vh; /* Increased height for more breathing room */
   overflow: hidden; /* Prevent square background from showing */
   background: #fff;
 }
