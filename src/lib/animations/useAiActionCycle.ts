@@ -258,7 +258,7 @@ export function useAiActionCycle(
           kind: 'ai_trade',
           title: 'AI trade executed',
           action: `Rebalanced: ${actionVerb} ${Math.abs(delta)} ${assetName} (R${zarAmount.toFixed(2)}).`,
-          reason: shortWhyString,
+          reason: 'Market shift detected; protecting group savings.',
           amount: {
             currency: 'ZAR',
             value: delta > 0 ? -zarAmount : zarAmount,

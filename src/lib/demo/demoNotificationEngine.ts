@@ -74,7 +74,7 @@ const demoEvents: NotificationInput[] = [
   {
     kind: 'payment_received',
     title: 'Co-op crossed R12,500',
-    body: 'Total contributions reached R12,500.',
+    body: 'Your community reached R12,500 toward its goal.',
     amount: { currency: 'ZAR', value: 500 },
     direction: 'up',
     actor: { type: 'co_op', name: 'GoBankless Co-op' },

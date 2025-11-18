@@ -407,7 +407,7 @@ export default function CardStackCard({
 
       {/* Bottom-right health bar */}
       <div className="card-health-group">
-        <span className="card-health-label">Health</span>
+        <span className="card-health-label">Goal</span>
         <div className="card-health-bar-container">
           <div
             className={clsx(

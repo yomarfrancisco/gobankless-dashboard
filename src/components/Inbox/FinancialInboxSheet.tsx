@@ -24,9 +24,9 @@ export default function FinancialInboxSheet() {
   const conversations = [
     {
       id: 'brics',
-      name: '$BRICS Diamond',
+      name: 'Ama — Stokvel Treasurer',
       avatar: '/assets/Brics-girl-blue.png',
-      preview: 'Longer reply. Assess borrower risk and price accordingly via lender-specific interest rates. Receive a return on deposited capital even if funds are not drawn down. Withdraw deposited capital on-demand if funds aren\'t drawn down by a Borrower.',
+      preview: '18 members • Goal: R20,000 monthly payouts',
       time: '16:09',
       unread: true,
     },
@@ -34,7 +34,7 @@ export default function FinancialInboxSheet() {
       id: 'user-1',
       name: '$kerry',
       avatar: '/assets/avatar - profile (1).png',
-      preview: 'Message received by me from another user going into two lines',
+      preview: '9 members • Goal: Side-gig savings pot',
       time: '15:30',
       unread: false,
     },
@@ -42,7 +42,7 @@ export default function FinancialInboxSheet() {
       id: 'user-2',
       name: '$simi_love',
       avatar: '/assets/avatar - profile (2).png',
-      preview: 'Media with caption sent by me to another user...',
+      preview: '13 members • Goal: Creators equipment fund',
       time: '14:45',
       unread: false,
     },
@@ -50,7 +50,7 @@ export default function FinancialInboxSheet() {
       id: 'user-3',
       name: '$ariel',
       avatar: '/assets/avatar - profile (3).png',
-      preview: 'Photo',
+      preview: '7 members • Goal: Student essentials fund',
       time: '13:20',
       unread: false,
     },
@@ -58,7 +58,7 @@ export default function FinancialInboxSheet() {
       id: 'user-4',
       name: '$dana',
       avatar: '/assets/avatar - profile (4).png',
-      preview: 'Video',
+      preview: '11 members • Goal: December travel fund',
       time: '12:15',
       unread: false,
     },
@@ -94,7 +94,7 @@ export default function FinancialInboxSheet() {
         // Inbox list view
         <>
           <div className={listStyles.content}>
-            <p className={listStyles.subtitle}>Join communities saving toward shared goals.</p>
+            <p className={listStyles.subtitle}>Explore real groups with real goals — pick one that matches you.</p>
             <div className={listStyles.divider} />
             
             {/* Search bar */}
@@ -108,7 +108,7 @@ export default function FinancialInboxSheet() {
               <input
                 type="text"
                 className={listStyles.searchInput}
-                placeholder="Search inbox"
+                placeholder="Search Stokvels"
               />
             </div>
 
@@ -163,7 +163,7 @@ export default function FinancialInboxSheet() {
               type="button"
             >
               <CirclePlus className={listStyles.launchIcon} />
-              <span>Launch</span>
+              <span>Start a Stokvel</span>
             </button>
           </div>
         </>
@@ -183,14 +183,14 @@ export default function FinancialInboxSheet() {
             <div className={chatStyles.avatar}>
               <Image
                 src="/assets/Brics-girl-blue.png"
-                alt="$BRICS Diamond"
+                alt="Ama — Stokvel Treasurer"
                 width={38}
                 height={38}
                 className={chatStyles.avatarImage}
                 unoptimized
               />
             </div>
-            <div className={chatStyles.name}>$BRICS Diamond</div>
+            <div className={chatStyles.name}>Ama — Stokvel Treasurer</div>
           </div>
 
           {/* Divider line */}
@@ -211,7 +211,7 @@ export default function FinancialInboxSheet() {
               </div>
               <div className={chatStyles.bubbleContainer}>
                 <div className={chatStyles.messageBubble}>
-                  Longer reply. Assess borrower risk and price accordingly via lender-specific interest rates. Receive a return on deposited capital even if funds are not drawn down. Withdraw deposited capital on-demand if funds aren&apos;t drawn down by a Borrower.
+                  Hi, I&apos;m Ama, your Stokvel Treasurer 👋   I can help you make your first deposit, join a Stokvel, or start a new group with friends.   What would you like to do first?
                 </div>
                 <div className={chatStyles.timestamp}>14:09</div>
               </div>

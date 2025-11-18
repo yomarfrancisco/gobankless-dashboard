@@ -50,22 +50,8 @@ const initialPMMessages: ChatMessage[] = [
   {
     id: nanoid(),
     threadId: PORTFOLIO_MANAGER_THREAD_ID,
-    from: 'user',
-    text: 'Sent a direct message',
-    createdAt: '14:09',
-  },
-  {
-    id: nanoid(),
-    threadId: PORTFOLIO_MANAGER_THREAD_ID,
     from: 'ai',
-    text: 'Reply to direct message',
-    createdAt: '14:09',
-  },
-  {
-    id: nanoid(),
-    threadId: PORTFOLIO_MANAGER_THREAD_ID,
-    from: 'ai',
-    text: 'Longer reply. Assess borrower risk and price accordingly via lender-specific interest rates. Receive a return on deposited capital even if funds are not drawn down. Withdraw deposited capital on-demand if funds are not drawn down by a Borrower.',
+    text: 'Hi, I\'m Ama, your Stokvel Treasurer 👋   I can help you make your first deposit, join a Stokvel, or start a new group with friends.   What would you like to do first?',
     createdAt: '14:09',
   },
 ]
@@ -74,8 +60,8 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
   threads: [
     {
       id: PORTFOLIO_MANAGER_THREAD_ID,
-      title: '$BRICS Diamond',
-      subtitle: 'Longer reply. Assess borrower risk and price accordingly via lender-specific interest rates. Receive a return on deposited capital even if funds are not drawn down. Withdraw deposited capital on-demand if funds aren\'t drawn down by a Borrower.',
+      title: 'Ama — Stokvel Treasurer',
+      subtitle: 'Hi, I\'m Ama, your Stokvel Treasurer 👋   I can help you make your first deposit, join a Stokvel, or start a new group with friends.   What would you like to do first?',
       avatarUrl: '/assets/Brics-girl-blue.png',
       unreadCount: 1, // Mark as unread with blue dot
       lastMessageAt: '16:09',
@@ -97,7 +83,7 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
         threads: [
           {
             id: PORTFOLIO_MANAGER_THREAD_ID,
-            title: '$BRICS Diamond',
+            title: 'Ama — Stokvel Treasurer',
             subtitle: 'Portfolio Manager',
             avatarUrl: '/assets/Brics-girl-blue.png',
             unreadCount: 0,

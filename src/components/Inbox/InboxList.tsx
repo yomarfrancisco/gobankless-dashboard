@@ -33,7 +33,7 @@ export default function InboxList() {
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="Search inbox"
+          placeholder="Search Stokvels"
         />
       </div>
 
