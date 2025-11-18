@@ -2,7 +2,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 8px 16px 0; /* Reduced from 28px to 8px to close gap to cards (80% total reduction) */
+  padding: 8px 24px 0; /* Match .frame-parent padding to align with card stack above */
   gap: 8px;
   color: #0a0a0a;
   font-family: Figtree, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -92,8 +92,8 @@
 /* Respect safe areas and keep consistent gutters */
 @supports (padding: max(0px)) {
   .wrap {
-    padding-left: max(16px, env(safe-area-inset-left));
-    padding-right: max(16px, env(safe-area-inset-right));
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
   }
 }
 
