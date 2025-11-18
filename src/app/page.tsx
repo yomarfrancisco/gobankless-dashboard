@@ -44,9 +44,9 @@ export default function Home() {
     // Find card stack (first .sectionShell .stack)
     const cardShells = document.querySelectorAll('.sectionShell')
     const card = cardShells[0]?.querySelector('.stack') as HTMLElement | null
-    // Find map card (second .sectionShell, look for element with mapbox-container id)
+    // Find map card (second .sectionShell, look for element with mapbox-container id, then go up one level to .mapCard)
     const mapShell = cardShells[1]
-    const map = mapShell?.querySelector('[id="mapbox-container"]')?.parentElement?.parentElement as HTMLElement | null
+    const map = mapShell?.querySelector('[id="mapbox-container"]')?.parentElement as HTMLElement | null
     if (card && map) {
       const cardWidth = card.getBoundingClientRect().width
       const mapWidth = map.getBoundingClientRect().width

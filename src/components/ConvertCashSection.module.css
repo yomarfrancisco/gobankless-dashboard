@@ -47,22 +47,19 @@
   padding: 0; /* No extra horizontal padding */
 }
 
-.mapContainer {
-  width: 100%;
-  margin-top: 16px; /* Spacing from header */
-  padding: 0 24px 24px; /* Match .frame-parent horizontal padding */
-  box-sizing: border-box;
-}
-
 /* Map card wrapper - fixed height to avoid resize churn */
+/* Directly inside .sectionShell like .stack - no wrapper container */
 .mapCard {
   position: relative;
-  width: 100%; /* Simple 100% - no hack needed */
+  width: 100%; /* Full width of .sectionShell */
+  max-width: 398px; /* Match .stack max-width */
+  margin: 16px auto 0; /* Match .stack margin pattern (16px top, auto for centering) */
   height: 512px; /* Fixed height to match design */
   border-radius: 24px; /* match card corner radius */
   overflow: hidden;
   background: #efece7;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 @media (min-width: 390px) {
@@ -98,10 +95,6 @@
 /* Respect safe areas */
 @supports (padding: max(0px)) {
   .mapHeader {
-    padding-left: max(24px, env(safe-area-inset-left));
-    padding-right: max(24px, env(safe-area-inset-right));
-  }
-  .mapContainer {
     padding-left: max(24px, env(safe-area-inset-left));
     padding-right: max(24px, env(safe-area-inset-right));
   }
