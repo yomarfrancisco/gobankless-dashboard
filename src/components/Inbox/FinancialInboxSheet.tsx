@@ -91,65 +91,67 @@ export default function FinancialInboxSheet() {
     >
       {inboxViewMode === 'inbox' ? (
         // Inbox list view
-        <div className={listStyles.content}>
-          <p className={listStyles.subtitle}>Join communities saving toward shared goals.</p>
-          <div className={listStyles.divider} />
-          
-          {/* Search bar */}
-          <div className={listStyles.searchBar}>
-            <div className={listStyles.searchIcon}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-                <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+        <>
+          <div className={listStyles.content}>
+            <p className={listStyles.subtitle}>Join communities saving toward shared goals.</p>
+            <div className={listStyles.divider} />
+            
+            {/* Search bar */}
+            <div className={listStyles.searchBar}>
+              <div className={listStyles.searchIcon}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                  <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <input
+                type="text"
+                className={listStyles.searchInput}
+                placeholder="Search inbox"
+              />
             </div>
-            <input
-              type="text"
-              className={listStyles.searchInput}
-              placeholder="Search inbox"
-            />
-          </div>
 
-          {/* Conversation list - scrollable */}
-          <div className={listStyles.conversationList}>
-            {conversations.map((conversation) => (
-              <button
-                key={conversation.id}
-                className={listStyles.inboxRow}
-                onClick={() => handleRowClick(conversation.id)}
-                type="button"
-              >
-                <div className={listStyles.inboxRowLeft}>
-                  <div className={listStyles.avatarWrapper}>
-                    <Image
-                      src={conversation.avatar}
-                      alt={conversation.name}
-                      width={64}
-                      height={64}
-                      className={listStyles.avatar}
-                      unoptimized
-                    />
-                  </div>
-                  <div className={listStyles.inboxTextBlock}>
-                    <div className={listStyles.inboxHeader}>
-                      <div className={listStyles.inboxTitle}>{conversation.name}</div>
-                      <div className={listStyles.inboxTimeRow}>
-                        <div className={listStyles.inboxTime}>{conversation.time}</div>
-                        {conversation.unread && (
-                          <div className={listStyles.unreadDot} />
-                        )}
+            {/* Conversation list - scrollable */}
+            <div className={listStyles.conversationList}>
+              {conversations.map((conversation) => (
+                <button
+                  key={conversation.id}
+                  className={listStyles.inboxRow}
+                  onClick={() => handleRowClick(conversation.id)}
+                  type="button"
+                >
+                  <div className={listStyles.inboxRowLeft}>
+                    <div className={listStyles.avatarWrapper}>
+                      <Image
+                        src={conversation.avatar}
+                        alt={conversation.name}
+                        width={64}
+                        height={64}
+                        className={listStyles.avatar}
+                        unoptimized
+                      />
+                    </div>
+                    <div className={listStyles.inboxTextBlock}>
+                      <div className={listStyles.inboxHeader}>
+                        <div className={listStyles.inboxTitle}>{conversation.name}</div>
+                        <div className={listStyles.inboxTimeRow}>
+                          <div className={listStyles.inboxTime}>{conversation.time}</div>
+                          {conversation.unread && (
+                            <div className={listStyles.unreadDot} />
+                          )}
+                        </div>
+                      </div>
+                      <div className={listStyles.inboxPreview}>
+                        {conversation.preview}
                       </div>
                     </div>
-                    <div className={listStyles.inboxPreview}>
-                      {conversation.preview}
-                    </div>
                   </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Sticky bottom button */}
+          {/* Sticky bottom button - positioned relative to as-body */}
           <div className={listStyles.stickyButtonContainer}>
             <button
               className={listStyles.launchMissionButton}
@@ -162,7 +164,7 @@ export default function FinancialInboxSheet() {
               Launch a Mission
             </button>
           </div>
-        </div>
+        </>
       ) : (
         // Chat view
         <div className={chatStyles.container}>

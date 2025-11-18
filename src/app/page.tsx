@@ -239,8 +239,8 @@ export default function Home() {
     }
     // autonomous (existing behavior)
     return {
-      title: 'Collective wallet',
-      subtitle: `R${formattedFunds.major} ${formattedFunds.cents} in shared savings`,
+      title: 'Community wallet',
+      subtitle: `R${formattedFunds.major} ${formattedFunds.cents} available`,
     }
   }
 

@@ -57,7 +57,7 @@ const demoEvents: NotificationInput[] = [
   {
     kind: 'ai_trade',
     title: 'AI manager preparing',
-    body: 'Setting up your collective wallet...',
+    body: 'Setting up your community wallet...',
     actor: { type: 'ai_manager' },
   },
 

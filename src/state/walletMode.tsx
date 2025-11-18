@@ -68,7 +68,7 @@ export function WalletModeProvider({ children }: { children: ReactNode }) {
           // Trigger FAB highlight animation when switching to autonomous mode
           if (newMode === 'autonomous' && oldMode === 'manual') {
             triggerAiFabHighlight({
-              reason: 'Collective wallet enabled',
+              reason: 'Community wallet enabled',
               amountZar: undefined,
             })
           }
