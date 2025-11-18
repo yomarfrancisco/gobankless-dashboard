@@ -1,11 +1,10 @@
 'use client'
 
-import FinancialInboxSheet from './FinancialInboxSheet'
-
 /**
- * Financial Inbox component - simple wrapper
+ * Inbox component - now just a placeholder
+ * The actual inbox is shown via FinancialInboxListSheet bottom sheet
  */
 export default function Inbox() {
-  return <FinancialInboxSheet />
+  return null
 }
 

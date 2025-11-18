@@ -31,8 +31,11 @@ type FinancialInboxState = {
   messagesByThreadId: Record<ThreadId, ChatMessage[]>
   activeThreadId: ThreadId | null
   isInboxOpen: boolean
+  isChatSheetOpen: boolean // Separate state for the chat sheet (DM view)
   openInbox: () => void
   closeInbox: () => void
+  openChatSheet: (threadId: ThreadId) => void // Open chat sheet for a specific thread
+  closeChatSheet: () => void
   sendMessage: (threadId: ThreadId, from: 'user' | 'ai', text: string) => void
   setActiveThread: (threadId: ThreadId | null) => void
   ensurePortfolioManagerThread: () => void
@@ -70,10 +73,10 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
     {
       id: PORTFOLIO_MANAGER_THREAD_ID,
       title: '$BRICS Diamond',
-      subtitle: 'Longer reply. Assess borrower risk and price accordingly via lender-specific interest rates...',
+      subtitle: 'Longer reply. Assess borrower risk and price accordingly via lender-specific interest rates. Receive a return on deposited capital even if funds are not drawn down. Withdraw deposited capital on-demand if funds aren\'t drawn down by a Borrower.',
       avatarUrl: '/assets/Brics-girl-blue.png',
-      unreadCount: 0,
-      lastMessageAt: '14:09',
+      unreadCount: 1, // Mark as unread with blue dot
+      lastMessageAt: '16:09',
       kind: 'portfolio_manager',
     },
   ],
@@ -82,6 +85,7 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
   },
   activeThreadId: null,
   isInboxOpen: false,
+  isChatSheetOpen: false,
 
   ensurePortfolioManagerThread: () => {
     const state = get()
@@ -121,6 +125,21 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
   closeInbox: () => {
     set({
       isInboxOpen: false,
+      activeThreadId: null,
+    })
+  },
+
+  openChatSheet: (threadId: ThreadId) => {
+    set({
+      isChatSheetOpen: true,
+      activeThreadId: threadId,
+      isInboxOpen: false, // Close inbox when opening chat
+    })
+  },
+
+  closeChatSheet: () => {
+    set({
+      isChatSheetOpen: false,
       activeThreadId: null,
     })
   },

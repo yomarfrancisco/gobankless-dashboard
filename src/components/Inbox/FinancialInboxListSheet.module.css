@@ -1,0 +1,137 @@
+/* Financial Inbox Sheet - follows AgentListSheet pattern */
+
+.financialInboxSheet :global(.as-title) {
+  text-align: center !important;
+}
+
+.content {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.subtitle {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin: 0 24px 16px;
+  letter-spacing: -0.09px;
+  line-height: 1.35;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 24px 8px;
+}
+
+/* Inbox row - matches AgentListSheet row layout */
+.inboxRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: 0;
+  padding: 24px;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 150ms ease;
+  text-align: left;
+}
+
+.inboxRow:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.inboxRow:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.inboxRowLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.avatarWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 34px;
+  background: #E9E9EB;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 34px;
+}
+
+.inboxTextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.inboxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.inboxTitle {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.25;
+  color: #000;
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inboxTimeRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.inboxTime {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.09px;
+  line-height: 1.35;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #007AFF; /* iOS blue */
+  flex-shrink: 0;
+}
+
+.inboxPreview {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.09px;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

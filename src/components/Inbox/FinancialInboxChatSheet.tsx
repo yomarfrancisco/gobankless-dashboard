@@ -3,15 +3,19 @@
 import Image from 'next/image'
 import ActionSheet from '../ActionSheet'
 import { useFinancialInboxStore } from '@/state/financialInbox'
-import styles from './FinancialInboxSheet.module.css'
+import styles from './FinancialInboxChatSheet.module.css'
 
-export default function FinancialInboxSheet() {
-  const { isInboxOpen, closeInbox } = useFinancialInboxStore()
+/**
+ * Financial Inbox Chat Sheet - the DM view with message bubble
+ * This is the existing chat sheet we polished earlier
+ */
+export default function FinancialInboxChatSheet() {
+  const { isChatSheetOpen, closeChatSheet } = useFinancialInboxStore()
 
   return (
     <ActionSheet
-      open={isInboxOpen}
-      onClose={closeInbox}
+      open={isChatSheetOpen}
+      onClose={closeChatSheet}
       title=""
       size="tall"
       className="financial-inbox-sheet"
@@ -19,7 +23,7 @@ export default function FinancialInboxSheet() {
       <div className={styles.container}>
         {/* Close button row - separate from header */}
         <div className={styles.closeRow}>
-          <button className={styles.closeButton} onClick={closeInbox} aria-label="Close">
+          <button className={styles.closeButton} onClick={closeChatSheet} aria-label="Close">
             <Image
               src="/assets/clear.svg"
               alt="Close"
@@ -31,7 +35,7 @@ export default function FinancialInboxSheet() {
 
         {/* Username row */}
         <div className={styles.usernameRow}>
-          <button className={styles.backButton} onClick={closeInbox} aria-label="Back">
+          <button className={styles.backButton} onClick={closeChatSheet} aria-label="Back">
             <Image
               src="/assets/back_ui.svg"
               alt="Back"
