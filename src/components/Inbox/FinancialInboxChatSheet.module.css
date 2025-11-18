@@ -1,52 +1,21 @@
-/* Financial Inbox Sheet - Pixel-perfect Figma match */
+/* Financial Inbox Chat Sheet - unified with inbox sheet */
 
 .container {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  /* No background - ActionSheet provides the white background */
   min-height: 0;
-  overflow: hidden; /* Prevent square overlay from showing */
+  overflow: hidden;
 }
 
-/* Close button row - separate from username row */
-.closeRow {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 20px 20px 8px 20px; /* More top padding, spacing below */
-  flex-shrink: 0;
-}
-
-.closeButton {
-  background: #E9E9EB;
-  border: none;
-  border-radius: 27px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  transition: background 150ms ease;
-}
-
-.closeButton:hover {
-  background: #D1D1D6;
-}
-
-.closeButton:active {
-  background: #B8B8BC;
-}
-
-/* Username row - below close button */
+/* Username row - ActionSheet provides the close button, so we start with username row */
 .usernameRow {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 20px 14px 20px; /* More padding between username row and divider */
+  padding: 20px 20px 14px 20px; /* Top padding to account for ActionSheet's close button space */
   flex-shrink: 0;
 }
 

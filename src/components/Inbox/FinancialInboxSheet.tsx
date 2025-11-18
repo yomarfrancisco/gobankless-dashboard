@@ -152,19 +152,7 @@ export default function FinancialInboxSheet() {
       ) : (
         // Chat view
         <div className={chatStyles.container}>
-          {/* Close button row - separate from header */}
-          <div className={chatStyles.closeRow}>
-            <button className={chatStyles.closeButton} onClick={closeInbox} aria-label="Close">
-              <Image
-                src="/assets/clear.svg"
-                alt="Close"
-                width={18}
-                height={18}
-              />
-            </button>
-          </div>
-
-          {/* Username row */}
+          {/* Username row - no separate close button row, ActionSheet provides the close button */}
           <div className={chatStyles.usernameRow}>
             <button className={chatStyles.backButton} onClick={goBackToInbox} aria-label="Back">
               <Image
