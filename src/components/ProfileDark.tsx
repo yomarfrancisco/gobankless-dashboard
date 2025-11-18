@@ -54,12 +54,12 @@ export default function ProfileDark() {
             <div className={styles.divider} />
             <div className={styles.statUnit}>
               <div className={styles.text}>8,122</div>
-              <div className={styles.k}>Suppliers</div>
+              <div className={styles.k}>Circles</div>
             </div>
             <div className={styles.divider} />
             <div className={styles.statUnit}>
               <div className={styles.text}>556</div>
-              <div className={styles.k}>Supplying</div>
+              <div className={styles.k}>Launched</div>
             </div>
           </div>
           <div className={styles.license}>
@@ -68,7 +68,7 @@ export default function ProfileDark() {
                 <div className={styles.filled} />
               </div>
             </div>
-            <div className={styles.myDealerNetwork}>Business network</div>
+            <div className={styles.myDealerNetwork}>Savings community</div>
           </div>
         </div>
       </div>

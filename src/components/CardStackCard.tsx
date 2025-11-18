@@ -28,11 +28,11 @@ const HEALTH_CONFIG: Record<CardType, { level: HealthLevel; percent: number }> =
 }
 
 const CARD_LABELS: Record<CardType, string> = {
-  savings: 'SAVINGS CARD',
-  pepe: 'SAVINGS CARD',
-  yield: 'SAVINGS CARD',
-  mzn: 'SAVINGS CARD',
-  btc: 'SAVINGS CARD',
+  savings: 'CASH CARD',
+  pepe: 'CASH CARD',
+  yield: 'CASH CARD',
+  mzn: 'CASH CARD',
+  btc: 'CASH CARD',
 }
 
 const CARD_TO_ALLOC_KEY: Record<CardType, 'cashCents' | 'ethCents' | 'pepeCents' | 'mznCents' | 'btcCents'> = {

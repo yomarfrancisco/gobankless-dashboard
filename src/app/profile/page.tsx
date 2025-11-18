@@ -180,19 +180,19 @@ export default function ProfilePage() {
                   <div className="stat-divider" />
                   <div className="stat">
                     <div className="stat-value">8,122</div>
-                    <div className="stat-sub">Suppliers</div>
+                    <div className="stat-sub">Circles</div>
                   </div>
                   <div className="stat-divider" />
                   <div className="stat">
                     <div className="stat-value">556</div>
-                    <div className="stat-sub">Supplying</div>
+                    <div className="stat-sub">Launched</div>
                   </div>
                 </div>
                 <div className="network-pill">
                   <div className="network-track">
                     <div className="network-fill" />
                   </div>
-                  <div className="network-label">Business network</div>
+                  <div className="network-label">Savings community</div>
                 </div>
               </div>
 
