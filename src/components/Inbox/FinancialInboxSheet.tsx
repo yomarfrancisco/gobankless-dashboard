@@ -21,7 +21,49 @@ export default function FinancialInboxSheet() {
   } = useFinancialInboxStore()
 
   // Mock conversation data (same as in ListSheet)
+  // Stokvel groups prepended above DMs
   const conversations = [
+    {
+      id: 'stokvel_books',
+      name: 'Study Squad',
+      avatar: '/assets/stokvel1.png',
+      preview: '12 members • Goal: Textbook fund for semester',
+      time: '16:01',
+      unread: false,
+    },
+    {
+      id: 'stokvel_sneakers',
+      name: 'Kasi Kicks Collective',
+      avatar: '/assets/stokvel2.png',
+      preview: '8 members • Goal: Sneaker drop savings pot',
+      time: '15:40',
+      unread: false,
+    },
+    {
+      id: 'stokvel_braam',
+      name: 'Braam Hustle Crew',
+      avatar: '/assets/stokvel3.png',
+      preview: '19 members • Goal: Side-gig and equipment pool',
+      time: '14:55',
+      unread: false,
+    },
+    {
+      id: 'stokvel_girls',
+      name: 'Girls Night Pot',
+      avatar: '/assets/stokvel4.png',
+      preview: '6 members • Goal: Weekend experiences fund',
+      time: '14:22',
+      unread: false,
+    },
+    {
+      id: 'stokvel_moms',
+      name: 'New Moms Support Fund',
+      avatar: '/assets/stokvel5.png',
+      preview: '5 members • Goal: Baby essentials & emergencies',
+      time: '13:48',
+      unread: false,
+    },
+    // DM entry (Ama)
     {
       id: 'brics',
       name: 'Ama — Stokvel Treasurer',
@@ -29,38 +71,6 @@ export default function FinancialInboxSheet() {
       preview: 'Welcome! I can help you join or start a Stokvel.',
       time: '16:09',
       unread: true,
-    },
-    {
-      id: 'user-1',
-      name: 'Sandton Side-Hustle Fund',
-      avatar: '/assets/avatar - profile (1).png',
-      preview: '9 members • Goal: R5,000 weekly gig capital',
-      time: '15:30',
-      unread: false,
-    },
-    {
-      id: 'user-2',
-      name: 'Creators Equipment Club',
-      avatar: '/assets/avatar - profile (2).png',
-      preview: '13 members • Goal: Camera & studio gear',
-      time: '14:45',
-      unread: false,
-    },
-    {
-      id: 'user-3',
-      name: 'Student Essentials Stokvel',
-      avatar: '/assets/avatar - profile (3).png',
-      preview: '7 members • Goal: Textbooks & transport',
-      time: '13:20',
-      unread: false,
-    },
-    {
-      id: 'user-4',
-      name: 'December Travel Pot',
-      avatar: '/assets/avatar - profile (4).png',
-      preview: '11 members • Goal: Year-end holiday savings',
-      time: '12:15',
-      unread: false,
     },
   ]
 
