@@ -1,11 +1,13 @@
 .wrap {
   width: 100%;
+  max-width: 398px; /* Match CardStack max-width */
   display: flex;
   flex-direction: column;
-  padding: 8px 24px 0; /* Match .frame-parent padding to align with card stack above */
+  padding: 8px 0 0; /* Remove horizontal padding - let map card be full width like CardStack */
   gap: 8px;
   color: #0a0a0a;
   font-family: Figtree, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  margin: 0 auto; /* Center like CardStack */
 }
 
 .headerRow {
@@ -13,6 +15,7 @@
   gap: 12px;
   align-items: center;
   justify-content: space-between;
+  padding: 0 24px; /* Add padding only to header to align with .frame-parent text */
 }
 
 .title {
@@ -45,6 +48,7 @@
   margin-top: 6px;
   letter-spacing: 0.08px;
   font-weight: 300;
+  padding: 0 24px; /* Add padding to subtitle to align with header */
 }
 
 /* Map card wrapper - fixed height to avoid resize churn */
@@ -89,9 +93,13 @@
   opacity: 0.18;
 }
 
-/* Respect safe areas and keep consistent gutters */
+/* Respect safe areas - header and subtitle already have padding */
 @supports (padding: max(0px)) {
-  .wrap {
+  .headerRow {
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+  }
+  .sub {
     padding-left: max(24px, env(safe-area-inset-left));
     padding-right: max(24px, env(safe-area-inset-right));
   }
