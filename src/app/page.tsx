@@ -265,7 +265,7 @@ export default function Home() {
     }
     // autonomous (existing behavior)
     return {
-      title: 'Community wallet',
+      title: 'Crypto Stokvel',
       subtitle: `R${formattedFunds.major}${formattedFunds.cents === '00' ? '' : ` ${formattedFunds.cents}`} available`,
     }
   }

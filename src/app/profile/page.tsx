@@ -180,7 +180,7 @@ export default function ProfilePage() {
                   <div className="stat-divider" />
                   <div className="stat">
                     <div className="stat-value">8,122</div>
-                    <div className="stat-sub">Circles</div>
+                    <div className="stat-sub">Joined</div>
                   </div>
                   <div className="stat-divider" />
                   <div className="stat">
@@ -192,7 +192,7 @@ export default function ProfilePage() {
                   <div className="network-track">
                     <div className="network-fill" />
                   </div>
-                  <div className="network-label">Savings community</div>
+                  <div className="network-label">StockFell Community</div>
                 </div>
               </div>
 

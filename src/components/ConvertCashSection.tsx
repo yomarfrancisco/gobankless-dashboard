@@ -16,14 +16,14 @@ export default function ConvertCashSection() {
       <div className={styles.mapHeader}>
         <div className={styles.headerRow}>
           <h2 id="convert-title" className={styles.mapHeaderTitle}>
-            Explore savings circles
+            Explore investment collectives
           </h2>
           <button className={styles.helpBtn} aria-label="Help">
             ?
           </button>
         </div>
         <p className={styles.mapHeaderSub}>
-          Join local groups — or start your own.
+          Join local collectives — or start your own.
         </p>
       </div>
 

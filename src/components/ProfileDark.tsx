@@ -54,7 +54,7 @@ export default function ProfileDark() {
             <div className={styles.divider} />
             <div className={styles.statUnit}>
               <div className={styles.text}>8,122</div>
-              <div className={styles.k}>Circles</div>
+              <div className={styles.k}>Joined</div>
             </div>
             <div className={styles.divider} />
             <div className={styles.statUnit}>
@@ -68,7 +68,7 @@ export default function ProfileDark() {
                 <div className={styles.filled} />
               </div>
             </div>
-            <div className={styles.myDealerNetwork}>Savings community</div>
+            <div className={styles.myDealerNetwork}>StockFell Community</div>
           </div>
         </div>
       </div>

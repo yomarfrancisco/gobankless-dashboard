@@ -80,7 +80,7 @@ export default function FinancialInboxSheet() {
   }
 
   // Determine title based on view mode
-  const sheetTitle = inboxViewMode === 'inbox' ? 'Saving circles' : ''
+  const sheetTitle = inboxViewMode === 'inbox' ? 'Stokvels around you' : ''
 
   return (
     <ActionSheet
