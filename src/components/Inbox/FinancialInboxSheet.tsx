@@ -79,7 +79,7 @@ export default function FinancialInboxSheet() {
   }
 
   // Determine title based on view mode
-  const sheetTitle = inboxViewMode === 'inbox' ? 'Financial inbox' : ''
+  const sheetTitle = inboxViewMode === 'inbox' ? 'Collectives' : ''
 
   return (
     <ActionSheet
@@ -92,7 +92,7 @@ export default function FinancialInboxSheet() {
       {inboxViewMode === 'inbox' ? (
         // Inbox list view
         <div className={listStyles.content}>
-          <p className={listStyles.subtitle}>Messages from your financial agent.</p>
+          <p className={listStyles.subtitle}>Join communities saving toward shared goals.</p>
           <div className={listStyles.divider} />
           
           {/* Search bar */}
@@ -147,6 +147,20 @@ export default function FinancialInboxSheet() {
                 </div>
               </button>
             ))}
+          </div>
+
+          {/* Sticky bottom button */}
+          <div className={listStyles.stickyButtonContainer}>
+            <button
+              className={listStyles.launchMissionButton}
+              onClick={() => {
+                console.log('Launch a Mission clicked')
+                // TODO: implement launch mission flow
+              }}
+              type="button"
+            >
+              Launch a Mission
+            </button>
           </div>
         </div>
       ) : (
