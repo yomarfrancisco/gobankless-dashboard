@@ -26,16 +26,18 @@ export type ChatMessage = {
   createdAt: string
 }
 
+export type InboxViewMode = 'inbox' | 'chat'
+
 type FinancialInboxState = {
   threads: Thread[]
   messagesByThreadId: Record<ThreadId, ChatMessage[]>
   activeThreadId: ThreadId | null
   isInboxOpen: boolean
-  isChatSheetOpen: boolean // Separate state for the chat sheet (DM view)
+  inboxViewMode: InboxViewMode // 'inbox' or 'chat' - controls which view to show
   openInbox: () => void
   closeInbox: () => void
   openChatSheet: (threadId: ThreadId) => void // Open chat sheet for a specific thread
-  closeChatSheet: () => void
+  goBackToInbox: () => void // Go back to inbox view without closing sheet
   sendMessage: (threadId: ThreadId, from: 'user' | 'ai', text: string) => void
   setActiveThread: (threadId: ThreadId | null) => void
   ensurePortfolioManagerThread: () => void
@@ -85,7 +87,7 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
   },
   activeThreadId: null,
   isInboxOpen: false,
-  isChatSheetOpen: false,
+  inboxViewMode: 'inbox',
 
   ensurePortfolioManagerThread: () => {
     const state = get()
@@ -119,6 +121,7 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
   openInbox: () => {
     set({
       isInboxOpen: true,
+      inboxViewMode: 'inbox', // Always start with inbox view
     })
   },
 
@@ -126,21 +129,20 @@ export const useFinancialInboxStore = create<FinancialInboxState>((set, get) => 
     set({
       isInboxOpen: false,
       activeThreadId: null,
+      inboxViewMode: 'inbox', // Reset to inbox when closing
     })
   },
 
   openChatSheet: (threadId: ThreadId) => {
     set({
-      isChatSheetOpen: true,
       activeThreadId: threadId,
-      isInboxOpen: false, // Close inbox when opening chat
+      inboxViewMode: 'chat', // Switch to chat view, keep sheet open
     })
   },
 
-  closeChatSheet: () => {
+  goBackToInbox: () => {
     set({
-      isChatSheetOpen: false,
-      activeThreadId: null,
+      inboxViewMode: 'inbox', // Go back to inbox view, keep sheet open
     })
   },
 

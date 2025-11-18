@@ -1,4 +1,4 @@
-/* Financial Inbox List Sheet - tall bottom sheet matching chat sheet height */
+/* Financial Inbox Sheet - unified for both inbox and chat views */
 
 .financialInboxSheet :global(.as-title) {
   text-align: center !important;

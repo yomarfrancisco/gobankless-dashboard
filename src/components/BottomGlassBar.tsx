@@ -7,8 +7,7 @@ import { useWalletMode } from '@/state/walletMode'
 import { useTransactSheet } from '@/store/useTransactSheet'
 import { useAiFabHighlightStore } from '@/state/aiFabHighlight'
 import { useFinancialInboxStore } from '@/state/financialInbox'
-import FinancialInboxListSheet from './Inbox/FinancialInboxListSheet'
-import FinancialInboxChatSheet from './Inbox/FinancialInboxChatSheet'
+import FinancialInboxSheet from './Inbox/FinancialInboxSheet'
 import '@/styles/bottom-glass.css'
 
 interface BottomGlassBarProps {
@@ -105,8 +104,7 @@ export default function BottomGlassBar({ currentPath = '/', onDollarClick }: Bot
             </button>
             <div className="nav-label">{isAutonomousMode ? 'Financial Inbox' : 'Direct payment'}</div>
           </div>
-          <FinancialInboxListSheet />
-          <FinancialInboxChatSheet />
+          <FinancialInboxSheet />
           <div className="nav-item">
             <Link href="/profile" aria-label="Profile">
               <Image 
