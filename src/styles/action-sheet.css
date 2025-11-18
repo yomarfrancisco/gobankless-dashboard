@@ -58,9 +58,18 @@
 
 /* Financial inbox sheet - remove square overlay, ensure clean rounded corners, taller height */
 .as-sheet.financial-inbox-sheet {
+  height: 90vh; /* Force height to be taller */
   max-height: 90vh; /* Increased height for more breathing room */
+  min-height: 90vh; /* Ensure it doesn't shrink below this */
   overflow: hidden; /* Prevent square background from showing */
   background: #fff;
+}
+
+/* Override the tall class max-height when combined with financial-inbox-sheet */
+.as-sheet-tall.financial-inbox-sheet {
+  height: 90vh !important;
+  max-height: 90vh !important;
+  min-height: 90vh !important;
 }
 
 /* Remove default as-body padding for financial inbox sheet - let internal container control spacing */
