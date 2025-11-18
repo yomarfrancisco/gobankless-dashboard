@@ -11,6 +11,7 @@ import AmountSheet from '@/components/AmountSheet'
 import SendDetailsSheet from '@/components/SendDetailsSheet'
 import SuccessSheet from '@/components/SuccessSheet'
 import { formatUSDT } from '@/lib/money'
+import AutonomyToggle from '@/components/AutonomyToggle'
 import { useActivityStore } from '@/store/activity'
 import { useProfileEditSheet } from '@/store/useProfileEditSheet'
 import { useTransactSheet } from '@/store/useTransactSheet'
@@ -141,6 +142,11 @@ export default function ProfilePage() {
                 />
                 <h1 className="profile-name">{profile.fullName}</h1>
                 <div className="profile-handle">{profile.userHandle}</div>
+
+                {/* Autonomous mode toggle */}
+                <div style={{ marginTop: 8, marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
+                  <AutonomyToggle />
+                </div>
 
                 {/* Bio */}
                 <p className="profile-bio">
