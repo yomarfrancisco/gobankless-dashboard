@@ -47,16 +47,23 @@
   padding: 0; /* No extra horizontal padding */
 }
 
+/* Map container - mirrors .stack structure exactly */
+.mapContainer {
+  width: 100%;
+  max-width: 398px; /* same as card */
+  margin: 16px auto 24px; /* similar vertical spacing as .stack */
+  padding: 0; /* IMPORTANT: no horizontal padding */
+  box-sizing: border-box;
+}
+
 /* Map card wrapper - fixed height to avoid resize churn */
-/* Directly inside .sectionShell like .stack - no wrapper container */
 .mapCard {
   position: relative;
-  width: 100%; /* Full width of .sectionShell */
-  max-width: 398px; /* Match .stack max-width */
-  margin: 16px auto 0; /* Match .stack margin pattern (16px top, auto for centering) */
-  height: 512px; /* Fixed height to match design */
-  border-radius: 24px; /* match card corner radius */
+  width: 100%; /* Fill .mapContainer */
+  border-radius: 24px; /* match the card's radius */
   overflow: hidden;
+  margin: 0; /* No margins - container handles spacing */
+  height: 512px; /* Fixed height to match design */
   background: #efece7;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;

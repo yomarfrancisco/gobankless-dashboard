@@ -27,32 +27,34 @@ export default function ConvertCashSection() {
         </p>
       </div>
 
-      <div className={styles.mapCard}>
-        {/* Empty map container - Mapbox will attach here */}
-        <div className={styles.mapInnerContainer} id="mapbox-container" />
-        
-        {/* Live map component - renders into mapContainer */}
-        <MapboxMap
-          containerId="mapbox-container"
-          markers={[sandtonBranch]}
-          styleUrl="mapbox://styles/mapbox/streets-v12"
-        />
+      <div className={styles.mapContainer}>
+        <div className={styles.mapCard}>
+          {/* Empty map container - Mapbox will attach here */}
+          <div className={styles.mapInnerContainer} id="mapbox-container" />
+          
+          {/* Live map component - renders into mapContainer */}
+          <MapboxMap
+            containerId="mapbox-container"
+            markers={[sandtonBranch]}
+            styleUrl="mapbox://styles/mapbox/streets-v12"
+          />
 
-        {/* Paper/fold overlays as siblings, not children of map container */}
-        <Image
-          src="/assets/fold1.png"
-          alt=""
-          fill
-          className={styles.fold1}
-          priority
-        />
-        <Image
-          src="/assets/fold2.png"
-          alt=""
-          fill
-          className={styles.fold2}
-          priority
-        />
+          {/* Paper/fold overlays as siblings, not children of map container */}
+          <Image
+            src="/assets/fold1.png"
+            alt=""
+            fill
+            className={styles.fold1}
+            priority
+          />
+          <Image
+            src="/assets/fold2.png"
+            alt=""
+            fill
+            className={styles.fold2}
+            priority
+          />
+        </div>
       </div>
     </section>
   )

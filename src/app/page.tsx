@@ -39,21 +39,26 @@ export default function Home() {
   const cardStackRef = useRef<CardStackHandle>(null)
   const { setOnSelect, open } = useTransactSheet()
 
-  // Debug: verify card and map widths match
+  // Debug: verify card and map widths match - instrument parent chain
   useEffect(() => {
-    // Find card stack (first .sectionShell .stack)
     const cardShells = document.querySelectorAll('.sectionShell')
     const card = cardShells[0]?.querySelector('.stack') as HTMLElement | null
-    // Find map card (second .sectionShell, look for element with mapbox-container id, then go up one level to .mapCard)
-    const mapShell = cardShells[1]
-    const map = mapShell?.querySelector('[id="mapbox-container"]')?.parentElement as HTMLElement | null
-    if (card && map) {
+    const mapCard = cardShells[1]?.querySelector('[id="mapbox-container"]')?.parentElement as HTMLElement | null
+    
+    if (card && mapCard) {
+      const mapParent = mapCard.parentElement as HTMLElement | null
+      const mapGrandparent = mapParent?.parentElement as HTMLElement | null
+      
       const cardWidth = card.getBoundingClientRect().width
-      const mapWidth = map.getBoundingClientRect().width
+      const mapWidth = mapCard.getBoundingClientRect().width
+      
       console.log('CARD width:', cardWidth)
       console.log('MAP  width:', mapWidth)
+      console.log('MAP parent width:', mapParent?.getBoundingClientRect().width)
+      console.log('MAP grandparent (.sectionShell?) width:', mapGrandparent?.getBoundingClientRect().width)
+      
       if (Math.abs(cardWidth - mapWidth) > 1) {
-        console.warn('⚠️ Width mismatch! Card:', cardWidth, 'Map:', mapWidth)
+        console.warn('⚠️ Width mismatch! Card vs Map')
       } else {
         console.log('✅ Widths match!')
       }
