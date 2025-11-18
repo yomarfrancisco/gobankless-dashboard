@@ -38,6 +38,23 @@ export default function Home() {
   const [helperWalletKey, setHelperWalletKey] = useState<'pepe' | 'savings' | 'yield' | 'mzn' | 'btc' | null>(null)
   const cardStackRef = useRef<CardStackHandle>(null)
   const { setOnSelect, open } = useTransactSheet()
+
+  // Debug: verify card and map widths match
+  useEffect(() => {
+    const card = document.querySelector('.sectionShell .stack') as HTMLElement | null
+    const map = document.querySelector('.sectionShell [class*="mapCard"]') as HTMLElement | null
+    if (card && map) {
+      const cardWidth = card.getBoundingClientRect().width
+      const mapWidth = map.getBoundingClientRect().width
+      console.log('CARD width:', cardWidth)
+      console.log('MAP  width:', mapWidth)
+      if (Math.abs(cardWidth - mapWidth) > 1) {
+        console.warn('⚠️ Width mismatch! Card:', cardWidth, 'Map:', mapWidth)
+      } else {
+        console.log('✅ Widths match!')
+      }
+    }
+  }, [])
   const [openDeposit, setOpenDeposit] = useState(false)
   const [openWithdraw, setOpenWithdraw] = useState(false)
   const [openAmount, setOpenAmount] = useState(false)
@@ -266,7 +283,8 @@ export default function Home() {
           {/* Scrollable content */}
           <div className="scroll-content">
             <div className="content">
-              <div className="card-switch">
+              {/* Card section with shared shell */}
+              <div className="sectionShell">
                 <div className="frame-parent">
                   <div className="wallet-header">
                     <h1 className="wallet-title">{title}</h1>
@@ -299,7 +317,7 @@ export default function Home() {
                 <CardStack ref={cardStackRef} onTopCardChange={setTopCardType} />
               </div>
 
-              {/* Explore savings circles section */}
+              {/* Explore savings circles section with shared shell */}
               <div 
                 className="convertCashSpacing"
                 style={{ marginTop: '4px' }}

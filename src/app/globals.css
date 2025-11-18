@@ -190,6 +190,16 @@ body {
   position: relative;
 }
 
+/* Shared section shell - used by both card and map sections */
+.sectionShell {
+  width: 100%;
+  max-width: 398px; /* match the actual visual width of the card */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
 .card-switch {
   width: 100%;
   display: flex;

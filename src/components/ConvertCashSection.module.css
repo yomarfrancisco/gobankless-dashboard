@@ -1,9 +1,7 @@
-.wrap {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 8px 24px 0; /* Match .frame-parent padding exactly for text alignment */
-  gap: 8px;
+/* Section shell is now in globals.css - shared with card section */
+
+.mapHeader {
+  padding: 8px 24px 0; /* Match .frame-parent padding exactly */
   color: #0a0a0a;
   font-family: Figtree, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
@@ -13,10 +11,10 @@
   gap: 12px;
   align-items: center;
   justify-content: space-between;
-  padding: 0; /* Remove padding - .wrap already has 24px padding */
+  padding: 0;
 }
 
-.title {
+.mapHeaderTitle {
   font-family: Figtree, system-ui;
   font-weight: 300;
   font-size: 22px;
@@ -41,23 +39,27 @@
   flex-shrink: 0;
 }
 
-.sub {
+.mapHeaderSub {
   opacity: 0.5;
   margin-top: 6px;
   letter-spacing: 0.08px;
   font-weight: 300;
-  padding: 0; /* Remove padding - .wrap already has 24px padding */
+  padding: 0; /* No extra horizontal padding */
+}
+
+.mapContainer {
+  width: 100%;
+  margin-top: 16px; /* Spacing from header */
+  padding: 0 24px 24px; /* Match .frame-parent horizontal padding */
+  box-sizing: border-box;
 }
 
 /* Map card wrapper - fixed height to avoid resize churn */
 .mapCard {
   position: relative;
-  margin-top: 12px;
-  width: calc(100% + 48px); /* Extend beyond .wrap padding to match card width: 100% + 24px*2 */
-  margin-left: -24px; /* Offset the padding to align with card stack */
-  margin-right: -24px;
+  width: 100%; /* Simple 100% - no hack needed */
   height: 512px; /* Fixed height to match design */
-  border-radius: 24px;
+  border-radius: 24px; /* match card corner radius */
   overflow: hidden;
   background: #efece7;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
@@ -70,7 +72,7 @@
 }
 
 /* Empty map container - Mapbox will attach here */
-.mapContainer {
+.mapInnerContainer {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -93,9 +95,13 @@
   opacity: 0.18;
 }
 
-/* Respect safe areas - .wrap padding handles this */
+/* Respect safe areas */
 @supports (padding: max(0px)) {
-  .wrap {
+  .mapHeader {
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+  }
+  .mapContainer {
     padding-left: max(24px, env(safe-area-inset-left));
     padding-right: max(24px, env(safe-area-inset-right));
   }
